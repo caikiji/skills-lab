@@ -76,6 +76,14 @@ Do not use when:
 9. **Execute and consolidate**
    Dispatch task packets, collect results, and validate the aggregate outcome against the spec before declaring success.
 
+10. **Feed corrections back into the shared guidance**
+   If user feedback or execution results expose a mistaken rule, missing exception, or ambiguous instruction:
+   - pause affected downstream work
+   - clarify remaining uncertainty with the user if needed
+   - update the shared rules specification
+   - update task notes for later rounds
+   - reissue the changed guidance before resuming implementation
+
 ## Clarification Checklist
 
 The primary agent must gather all of the following:
@@ -150,6 +158,20 @@ Calibration requirements:
 
 If calibration exposes a core misunderstanding, return to clarification before partitioning.
 
+## Feedback Incorporation
+
+When the user reports that a completed subtask is wrong, treat it as a possible rules problem first, not only as a local fix.
+
+Required response:
+
+1. Determine whether the issue is local, pattern-wide, or spec-wide.
+2. If the primary agent still has doubts, clarify with the user before more delegation.
+3. Update the shared rules specification with the corrected rule, exception, or example.
+4. Update the task notes for all future or paused rounds so subagents do not keep following stale guidance.
+5. Pause or reissue affected tasks before resuming execution.
+
+Never fix one result silently and continue with stale task packets.
+
 ## Execution Mode Selection
 
 Use **single-round** execution only when:
@@ -217,6 +239,8 @@ Default shared files for the primary agent:
 - Acceptance criteria:
 - Agent decision boundary:
 - Open questions:
+- Rule revisions:
+- Latest correction summary:
 - Sample reference:
 ```
 
@@ -259,6 +283,8 @@ Default shared files for the primary agent:
 - May expand to new files?:
 - Shared-file handling rule:
 - What to do if the spec does not cover a case:
+- Latest rule updates to honor:
+- Superseded guidance to ignore:
 - Required output:
 - Self-check:
 - Constraints:
@@ -301,3 +327,4 @@ Stop if the primary agent starts thinking any of these:
 | "This shared file is tiny, anyone can edit it." | Keep it with the primary agent unless ownership is explicitly isolated. |
 | "The user already asked for the change, so approval is implied." | Present the execution checkpoint before broad implementation. |
 | "Project patterns are consistent enough; we can skip samples." | Skip calibration only if the primary agent can explain why the risk is truly low. |
+| "We fixed that bad result already, so there is no need to update the packets." | Update the shared spec and future task notes before resuming later rounds. |

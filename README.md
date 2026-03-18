@@ -13,7 +13,7 @@ This repository stores reusable local agent skills and their supporting document
 
 | Skill | Purpose | Status | Key Files |
 | --- | --- | --- | --- |
-| `semantic-batch-refactor-orchestrator` | Specification-first orchestration for large semantic batch refactors with safe multi-subagent execution | Active | `semantic-batch-refactor-orchestrator/SKILL.md`, `semantic-batch-refactor-orchestrator/pressure-scenarios.md` |
+| `semantic-batch-refactor-orchestrator` | Specification-first orchestration for large semantic batch refactors with safe multi-subagent execution and feedback-driven rule updates | Active | `semantic-batch-refactor-orchestrator/SKILL.md`, `semantic-batch-refactor-orchestrator/pressure-scenarios.md` |
 
 ## Current Skills
 
