@@ -5,6 +5,7 @@ This repository stores reusable local agent skills and their supporting document
 ## Repository Layout
 
 - `semantic-batch-refactor-orchestrator/`: the skill itself and its validation scenarios
+- `superpowers/`: git submodule dependency from `https://github.com/Cai-ki/superpowers`
 - `docs/superpowers/specs/`: design documents for skills
 - `docs/superpowers/plans/`: implementation plans for skills
 
@@ -45,6 +46,7 @@ Recommended pattern:
 
 ## Maintenance Notes
 
+- Run `git submodule update --init --recursive` after cloning this repository.
 - Keep the `Skill Index` table updated when adding or renaming skills.
 - Prefer one top-level directory per skill.
 - Store design and plan documents under `docs/superpowers/` so they stay easy to browse.
