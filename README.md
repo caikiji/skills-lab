@@ -73,3 +73,4 @@ Recommended pattern:
 - Keep the `Skill Index` table updated when adding or renaming skills.
 - Prefer one top-level directory per skill.
 - Store orchestration design, plan, and research documents under `docs/orchestration/` so they stay easy to browse.
+- Resolve `docs/orchestration/` paths relative to the current repository root. If the workspace is not a git repository, resolve them relative to the current working directory unless the user explicitly chooses another location.
