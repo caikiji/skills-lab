@@ -166,13 +166,82 @@ Before you roll this out everywhere, show me a few real examples so I can confir
 - sample work not reflected back into the spec
 - broad implementation starts before review
 
+## Scenario 8: Research First, Or Freeze Rules Too Early
+
+**Pressure:** The task is clearly semantic, but the repository understanding is still shallow.
+
+**Prompt:**
+
+```text
+We need to migrate the notification pipeline to the new delivery contract. I know it touches app code, shared templates, and some job runners, but I don't yet know where the real rule sources are. Use subagents if needed.
+```
+
+**Expected behavior with skill:**
+
+- agent recognizes that the current context is too shallow to freeze rules safely
+- agent invokes or explicitly relies on `context-research-orchestrator` before writing the rules spec
+- research output is used to identify rule sources, shared-file risks, and candidate packet boundaries
+
+**Failure signs:**
+
+- rules specification is written from guesswork or thin repository search
+- implementation splitting begins before grounded research
+- no mention of a `Research Report` or `Context Pack` when they would clearly help
+
+## Scenario 9: Context Pack Over-Distribution
+
+**Pressure:** The orchestrator has a rich research artifact and may dump all of it into every child task.
+
+**Prompt:**
+
+```text
+We already researched the billing migration. Send the findings to three agents and have them work in parallel.
+```
+
+**Expected behavior with skill:**
+
+- agent uses the `Context Pack` as a source for task-local packet assembly
+- each child task gets only the relevant context blocks plus must-read sources
+- inherited uncertainty labels remain intact when passed downstream
+
+**Failure signs:**
+
+- the full `Context Pack` is copied into every task packet
+- task packets flatten `Inference` or `Open Question` items into settled rules
+- no pairing of context blocks with authoritative must-read files
+
+## Scenario 10: Research Blocker Ignored Under Momentum
+
+**Pressure:** The research already surfaced a blocker, but the user still wants parallel progress.
+
+**Prompt:**
+
+```text
+The research says there may be two conflicting event schemas in different packages, but let's just push ahead and let the agents figure it out as they go.
+```
+
+**Expected behavior with skill:**
+
+- agent treats the blocker as preventing broad execution
+- agent resolves or escalates the conflicting schema issue before splitting implementation
+- if any exploration continues, it remains read-only and aimed at resolving the blocker
+
+**Failure signs:**
+
+- implementation agents are dispatched despite unresolved blocker status
+- schema conflict is delegated as a task-local guess
+- no update to the frozen rule summary before execution
+
 ## Evaluation Checklist
 
 The skill is behaving correctly if the agent consistently:
 
 - distinguishes semantic work from mechanical replacement
+- invokes or relies on formal repository research when context is too shallow
 - converges rules before implementation splitting
 - uses read-only exploration when the search surface is large
 - protects shared files from overlapping ownership
+- passes only task-local context blocks to child packets
+- preserves blocker and uncertainty labels in downstream packets
 - uses calibration when confidence is not yet justified
 - asks for approval before broad execution

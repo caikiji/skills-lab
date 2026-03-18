@@ -4,6 +4,7 @@ This repository stores reusable local agent skills and their supporting document
 
 ## Repository Layout
 
+- `context-research-orchestrator/`: the skill itself and its reusable reference files
 - `semantic-batch-refactor-orchestrator/`: the skill itself and its validation scenarios
 - `superpowers/`: git submodule dependency from `https://github.com/Cai-ki/superpowers`
 - `docs/superpowers/specs/`: design documents for skills
@@ -13,13 +14,32 @@ This repository stores reusable local agent skills and their supporting document
 
 | Skill | Purpose | Status | Key Files |
 | --- | --- | --- | --- |
-| `semantic-batch-refactor-orchestrator` | Specification-first orchestration for large semantic batch refactors with safe multi-subagent execution, source-bound task context, and feedback-driven rule updates | Active | `semantic-batch-refactor-orchestrator/SKILL.md`, `semantic-batch-refactor-orchestrator/pressure-scenarios.md` |
+| `context-research-orchestrator` | Evidence-driven codebase research and context packaging for complex tasks, with optional read-only exploration subagents and reusable source-bound outputs | Active | `context-research-orchestrator/SKILL.md`, `context-research-orchestrator/references/output-templates.md`, `context-research-orchestrator/references/delegation-guidance.md`, `context-research-orchestrator/pressure-scenarios.md` |
+| `semantic-batch-refactor-orchestrator` | Specification-first orchestration for large semantic batch refactors with safe multi-subagent execution, source-bound task context, feedback-driven rule updates, and formal handoff from `context-research-orchestrator` when repository understanding is still shallow | Active | `semantic-batch-refactor-orchestrator/SKILL.md`, `semantic-batch-refactor-orchestrator/pressure-scenarios.md` |
 
 ## Current Skills
 
+### `context-research-orchestrator`
+
+Use this skill when a task needs grounded project research before planning, rule freezing, or subagent orchestration, and the output should be reusable as a `Research Report` plus `Context Pack`.
+
+Main files:
+
+- `context-research-orchestrator/SKILL.md`
+- `context-research-orchestrator/references/output-templates.md`
+- `context-research-orchestrator/references/delegation-guidance.md`
+- `context-research-orchestrator/pressure-scenarios.md`
+- `docs/superpowers/specs/2026-03-18-context-research-orchestrator-design.md`
+- `docs/superpowers/plans/2026-03-18-context-research-orchestrator.md`
+
+Related docs:
+
+- Design spec: `docs/superpowers/specs/2026-03-18-context-research-orchestrator-design.md`
+- Implementation plan: `docs/superpowers/plans/2026-03-18-context-research-orchestrator.md`
+
 ### `semantic-batch-refactor-orchestrator`
 
-Use this skill when a large semantic codebase change needs careful requirement convergence, read-only exploration, safe task partitioning, and controlled multi-subagent execution.
+Use this skill when a large semantic codebase change needs careful requirement convergence, safe consumption of repository research, read-only exploration, task-local context packets, and controlled multi-subagent execution.
 
 Main files:
 
