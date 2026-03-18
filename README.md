@@ -8,8 +8,9 @@ This repository stores reusable local agent skills and their supporting document
 - `context-research-orchestrator/`: the skill itself and its reusable reference files
 - `semantic-batch-refactor-orchestrator/`: the skill itself and its validation scenarios
 - `superpowers/`: git submodule dependency from `https://github.com/Cai-ki/superpowers`
-- `docs/superpowers/specs/`: design documents for skills
-- `docs/superpowers/plans/`: implementation plans for skills
+- `docs/orchestration/specs/`: design documents for skills
+- `docs/orchestration/plans/`: implementation plans for skills
+- `docs/orchestration/research/`: persisted research reports and context packs
 
 ## Skill Index
 
@@ -30,13 +31,13 @@ Main files:
 - `context-research-orchestrator/references/output-templates.md`
 - `context-research-orchestrator/references/delegation-guidance.md`
 - `context-research-orchestrator/pressure-scenarios.md`
-- `docs/superpowers/specs/2026-03-18-context-research-orchestrator-design.md`
-- `docs/superpowers/plans/2026-03-18-context-research-orchestrator.md`
+- `docs/orchestration/specs/2026-03-18-context-research-orchestrator-design.md`
+- `docs/orchestration/plans/2026-03-18-context-research-orchestrator.md`
 
 Related docs:
 
-- Design spec: `docs/superpowers/specs/2026-03-18-context-research-orchestrator-design.md`
-- Implementation plan: `docs/superpowers/plans/2026-03-18-context-research-orchestrator.md`
+- Design spec: `docs/orchestration/specs/2026-03-18-context-research-orchestrator-design.md`
+- Implementation plan: `docs/orchestration/plans/2026-03-18-context-research-orchestrator.md`
 
 ### `semantic-batch-refactor-orchestrator`
 
@@ -46,28 +47,29 @@ Main files:
 
 - `semantic-batch-refactor-orchestrator/SKILL.md`
 - `semantic-batch-refactor-orchestrator/pressure-scenarios.md`
-- `docs/superpowers/specs/2026-03-18-semantic-batch-refactor-orchestrator-design.md`
-- `docs/superpowers/plans/2026-03-18-semantic-batch-refactor-orchestrator.md`
+- `docs/orchestration/specs/2026-03-18-semantic-batch-refactor-orchestrator-design.md`
+- `docs/orchestration/plans/2026-03-18-semantic-batch-refactor-orchestrator.md`
 
 Related docs:
 
-- Design spec: `docs/superpowers/specs/2026-03-18-semantic-batch-refactor-orchestrator-design.md`
-- Implementation plan: `docs/superpowers/plans/2026-03-18-semantic-batch-refactor-orchestrator.md`
+- Design spec: `docs/orchestration/specs/2026-03-18-semantic-batch-refactor-orchestrator-design.md`
+- Implementation plan: `docs/orchestration/plans/2026-03-18-semantic-batch-refactor-orchestrator.md`
 - Validation scenarios: `semantic-batch-refactor-orchestrator/pressure-scenarios.md`
 
 ## Adding New Skills
 
 Recommended pattern:
 
-1. Write a design spec in `docs/superpowers/specs/`
-2. Write an implementation plan in `docs/superpowers/plans/`
-3. Create a new top-level skill directory with `SKILL.md`
-4. Add any focused validation or reference files next to the skill
-5. Update this README with the new skill entry
+1. Write a design spec in `docs/orchestration/specs/`
+2. Write an implementation plan in `docs/orchestration/plans/`
+3. Persist reusable research artifacts in `docs/orchestration/research/` when the task warrants it
+4. Create a new top-level skill directory with `SKILL.md`
+5. Add any focused validation or reference files next to the skill
+6. Update this README with the new skill entry
 
 ## Maintenance Notes
 
 - Run `git submodule update --init --recursive` after cloning this repository.
 - Keep the `Skill Index` table updated when adding or renaming skills.
 - Prefer one top-level directory per skill.
-- Store design and plan documents under `docs/superpowers/` so they stay easy to browse.
+- Store orchestration design, plan, and research documents under `docs/orchestration/` so they stay easy to browse.

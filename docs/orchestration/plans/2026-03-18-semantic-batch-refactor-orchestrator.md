@@ -14,7 +14,7 @@
 
 **Files:**
 - Create: `D:\workspace\skills\semantic-batch-refactor-orchestrator\SKILL.md`
-- Modify: `D:\workspace\skills\docs\superpowers\plans\2026-03-18-semantic-batch-refactor-orchestrator.md`
+- Modify: `D:\workspace\skills\docs\orchestration\plans\2026-03-18-semantic-batch-refactor-orchestrator.md`
 
 - [ ] **Step 1: Confirm the target skill directory does not already exist**
 
@@ -35,7 +35,7 @@ Expected: includes `semantic-batch-refactor-orchestrator`
 
 **Files:**
 - Create: `D:\workspace\skills\semantic-batch-refactor-orchestrator\SKILL.md`
-- Reference: `D:\workspace\skills\docs\superpowers\specs\2026-03-18-semantic-batch-refactor-orchestrator-design.md`
+- Reference: `D:\workspace\skills\docs\orchestration\specs\2026-03-18-semantic-batch-refactor-orchestrator-design.md`
 
 - [ ] **Step 1: Write YAML frontmatter with compliant name and trigger-focused description**
 

@@ -83,6 +83,7 @@ Choose one:
 - use multi-round exploration
 
 Read [references/delegation-guidance.md](references/delegation-guidance.md) before dispatching any exploration subagent.
+For shared child-agent role guidance, use [../agents/read-only-exploration-agent.md](../agents/read-only-exploration-agent.md) as the default role contract for read-only exploration work.
 
 ### 4. Focused exploration
 
@@ -96,6 +97,7 @@ Collect evidence about:
 - exceptions and ambiguous cases
 
 If subagents are used, they must remain read-only and return summaries with source references.
+Prefer dispatch packets that explicitly declare `Role: read-only-exploration-agent` and provide must-read sources before wide searching begins.
 
 ### 5. Synthesis
 
@@ -168,7 +170,14 @@ Persist artifacts when:
 - later planning or orchestration will consume it
 - the context would be expensive to reconstruct
 
-When persisting, save the `Research Report` and `Context Pack`. Add a short handoff note only when it helps later agents find the right blocks quickly.
+When persisting, save the `Research Report` and `Context Pack` under `docs/orchestration/research/`.
+
+Default file naming:
+
+- `YYYY-MM-DD-<topic>-research-report.md`
+- `YYYY-MM-DD-<topic>-context-pack.md`
+
+Add a short handoff note only when it helps later agents find the right blocks quickly.
 
 ## Downstream Integration
 

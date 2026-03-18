@@ -67,7 +67,7 @@ Do not use when:
    Turn the clarified requirements into an execution spec. This is not a summary. It must be detailed enough that multiple agents will make the same decision on the same input.
 
 5. **Choose an exploration strategy**
-   The primary agent may explore critical files directly. If a `Context Pack` already exists, use it to identify likely rule sources, contention surfaces, and candidate search areas first. If the search surface is still too large, dispatch read-only exploration subagents to gather patterns, candidate files, and likely contention points.
+   The primary agent may explore critical files directly. If a `Context Pack` already exists, use it to identify likely rule sources, contention surfaces, and candidate search areas first. If the search surface is still too large, dispatch read-only exploration subagents to gather patterns, candidate files, and likely contention points. Use [../agents/read-only-exploration-agent.md](../agents/read-only-exploration-agent.md) as the default shared role contract for those subagents.
 
 6. **Run trial calibration**
    First reason through representative examples. Then make a small real sample edit set that covers multiple common patterns. Use the results to expose missing rules, hidden exceptions, and contested files.
@@ -82,7 +82,7 @@ Do not use when:
    Split by explicit file ownership first. Directory or module boundaries are acceptable only when they resolve cleanly into non-overlapping file sets.
 
 9. **Bind source-backed context into each task packet**
-   Every task packet must include the exact documents or code files the subagent must read before acting. If a `Context Pack` exists, extract only the task-relevant blocks and pair them with must-read source paths. Summaries may help orient the work, but they are not the authority.
+   Every task packet must include the exact documents or code files the subagent must read before acting. If a `Context Pack` exists, extract only the task-relevant blocks and pair them with must-read source paths. Summaries may help orient the work, but they are not the authority. Use [../agents/implementation-agent.md](../agents/implementation-agent.md) as the default shared role contract for implementation subagents.
 
 10. **Ask the user to approve the plan**
    Present the frozen rule summary, execution mode, primary-agent responsibilities, subagent responsibilities, and known risks. Do not start broad implementation before approval.
@@ -133,6 +133,7 @@ If `context-research-orchestrator` has already been run, review its outputs for:
 - `Open Question` and `Decision Blocker` items that limit execution
 - `Shared Files` or equivalent contention notes
 - task-specific blocks that may later become child task packet context
+- whether the latest persisted `Context Pack` in `docs/orchestration/research/` is still fresh enough to use directly
 
 ## Exploration Modes
 
@@ -219,6 +220,8 @@ Required response:
 5. Pause or reissue affected tasks before resuming execution.
 
 Never fix one result silently and continue with stale task packets.
+
+When the primary agent wants a focused standards check after implementation, use [../agents/spec-conformance-reviewer.md](../agents/spec-conformance-reviewer.md) as the default shared role contract for conformance review.
 
 ## Execution Mode Selection
 

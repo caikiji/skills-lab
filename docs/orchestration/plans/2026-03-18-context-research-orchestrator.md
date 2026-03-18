@@ -6,7 +6,7 @@
 
 **Architecture:** The implementation centers on a concise `SKILL.md` that encodes the workflow, decision rules, and output contracts, plus focused bundled references for output templates and delegation guidance. The skill should stay lightweight in core instructions while offloading reusable schemas and packet templates into reference files that can be loaded only when needed.
 
-**Tech Stack:** Markdown skill files, repository docs under `docs/superpowers/`, optional bundled references
+**Tech Stack:** Markdown skill files, repository docs under `docs/orchestration/`, optional bundled references
 
 ---
 
@@ -20,7 +20,7 @@
 
 - [ ] **Step 1: Confirm the target skill shape from the approved design**
 
-Read: `docs/superpowers/specs/2026-03-18-context-research-orchestrator-design.md`
+Read: `docs/orchestration/specs/2026-03-18-context-research-orchestrator-design.md`
 Expected: Clear list of required workflow sections, artifact shapes, and reference files to create.
 
 - [ ] **Step 2: Create the new skill directory and references directory**
@@ -48,7 +48,7 @@ Expected: Skill list mentions `context-research-orchestrator` and points to the 
 - [ ] **Step 5: Commit the scaffolding**
 
 ```bash
-git add README.md context-research-orchestrator docs/superpowers/plans/2026-03-18-context-research-orchestrator.md docs/superpowers/specs/2026-03-18-context-research-orchestrator-design.md
+git add README.md context-research-orchestrator docs/orchestration/plans/2026-03-18-context-research-orchestrator.md docs/orchestration/specs/2026-03-18-context-research-orchestrator-design.md
 git commit -m "chore: scaffold context research orchestrator skill"
 ```
 
@@ -56,7 +56,7 @@ git commit -m "chore: scaffold context research orchestrator skill"
 
 **Files:**
 - Modify: `context-research-orchestrator/SKILL.md`
-- Reference: `docs/superpowers/specs/2026-03-18-context-research-orchestrator-design.md`
+- Reference: `docs/orchestration/specs/2026-03-18-context-research-orchestrator-design.md`
 
 - [ ] **Step 1: Write the YAML frontmatter**
 
@@ -142,7 +142,7 @@ git commit -m "feat: add context research orchestrator workflow"
 
 **Files:**
 - Modify: `context-research-orchestrator/references/output-templates.md`
-- Reference: `docs/superpowers/specs/2026-03-18-context-research-orchestrator-design.md`
+- Reference: `docs/orchestration/specs/2026-03-18-context-research-orchestrator-design.md`
 
 - [ ] **Step 1: Define the `Research Report` template**
 
@@ -197,7 +197,7 @@ git commit -m "feat: add context research output templates"
 
 **Files:**
 - Modify: `context-research-orchestrator/references/delegation-guidance.md`
-- Reference: `docs/superpowers/specs/2026-03-18-context-research-orchestrator-design.md`
+- Reference: `docs/orchestration/specs/2026-03-18-context-research-orchestrator-design.md`
 
 - [ ] **Step 1: Write delegation decision criteria**
 
@@ -257,7 +257,7 @@ git commit -m "feat: add context research delegation guidance"
 - [ ] **Step 1: Cross-check the skill files against the approved design**
 
 Read:
-- `docs/superpowers/specs/2026-03-18-context-research-orchestrator-design.md`
+- `docs/orchestration/specs/2026-03-18-context-research-orchestrator-design.md`
 - `context-research-orchestrator/SKILL.md`
 - `context-research-orchestrator/references/output-templates.md`
 - `context-research-orchestrator/references/delegation-guidance.md`
