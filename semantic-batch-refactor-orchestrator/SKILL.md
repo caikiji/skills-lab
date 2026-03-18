@@ -9,6 +9,8 @@ description: Use when a codebase-wide semantic change is large enough for parall
 
 Use this skill for large semantic code changes where each edit may be simple, but the overall task is risky because the rules are unclear, the search surface is wide, and parallel agents could diverge or collide. The primary agent must freeze the rules before broad implementation begins.
 
+When repository understanding is still too shallow to freeze rules safely, use `context-research-orchestrator` first to produce a `Research Report` and `Context Pack`. Treat those artifacts as input to orchestration, not as a replacement for rule-freezing.
+
 ## When to Use
 
 Use when:
@@ -35,6 +37,7 @@ Do not use when:
 - Shared definition files should stay with the primary agent unless ownership is explicitly isolated.
 - Broad execution requires an explicit user approval checkpoint.
 - Parallel exploration may begin early; parallel modification may not.
+- If `context-research-orchestrator` reports a `Decision Blocker`, broad execution must not begin until it is resolved.
 
 ## Workflow
 
@@ -53,34 +56,41 @@ Do not use when:
    - autonomous decision boundaries
    - unresolved questions
 
-3. **Write a rules specification**
+3. **Decide whether repository research must be formalized first**
+   If the current session context is not enough to freeze rules safely, run `context-research-orchestrator` before continuing. This is especially important when:
+   - the task crosses multiple modules
+   - shared definitions or ownership boundaries are still fuzzy
+   - later task packets will need source-backed context
+   - the likely rule sources are still being inferred rather than read directly
+
+4. **Write a rules specification**
    Turn the clarified requirements into an execution spec. This is not a summary. It must be detailed enough that multiple agents will make the same decision on the same input.
 
-4. **Choose an exploration strategy**
-   The primary agent may explore critical files directly. If the search surface is too large, dispatch read-only exploration subagents to gather patterns, candidate files, and likely contention points.
+5. **Choose an exploration strategy**
+   The primary agent may explore critical files directly. If a `Context Pack` already exists, use it to identify likely rule sources, contention surfaces, and candidate search areas first. If the search surface is still too large, dispatch read-only exploration subagents to gather patterns, candidate files, and likely contention points.
 
-5. **Run trial calibration**
+6. **Run trial calibration**
    First reason through representative examples. Then make a small real sample edit set that covers multiple common patterns. Use the results to expose missing rules, hidden exceptions, and contested files.
 
-6. **Assess conflicts and select execution mode**
+7. **Assess conflicts and select execution mode**
    Use single-round parallel execution only when the rules are stable and ownership is clear. Otherwise use two rounds:
    - round 1: read-only exploration
    - middle: primary-agent consolidation and shared-file handling
    - round 2: implementation on non-overlapping file sets
 
-7. **Partition by ownership**
+8. **Partition by ownership**
    Split by explicit file ownership first. Directory or module boundaries are acceptable only when they resolve cleanly into non-overlapping file sets.
 
-8. **Bind source-backed context into each task packet**
-   Every task packet must include the exact documents or code files the subagent must read before acting. Summaries may help orient the work, but they are not the authority.
+9. **Bind source-backed context into each task packet**
+   Every task packet must include the exact documents or code files the subagent must read before acting. If a `Context Pack` exists, extract only the task-relevant blocks and pair them with must-read source paths. Summaries may help orient the work, but they are not the authority.
 
-9. **Ask the user to approve the plan**
+10. **Ask the user to approve the plan**
    Present the frozen rule summary, execution mode, primary-agent responsibilities, subagent responsibilities, and known risks. Do not start broad implementation before approval.
 
-10. **Execute and consolidate**
+11. **Execute and consolidate**
    Dispatch task packets, collect results, and validate the aggregate outcome against the spec before declaring success.
 
-11. **Feed corrections back into the shared guidance**
+12. **Feed corrections back into the shared guidance**
    If user feedback or execution results expose a mistaken rule, missing exception, or ambiguous instruction:
    - pause affected downstream work
    - clarify remaining uncertainty with the user if needed
@@ -115,6 +125,14 @@ The primary agent must gather all of the following:
 
 8. **Open questions**
    List unresolved items explicitly. If any unresolved item affects the core mapping logic, stop before splitting.
+
+If `context-research-orchestrator` has already been run, review its outputs for:
+
+- `Fact` findings that can support rule freezing
+- `Inference` findings that still need verification
+- `Open Question` and `Decision Blocker` items that limit execution
+- `Shared Files` or equivalent contention notes
+- task-specific blocks that may later become child task packet context
 
 ## Exploration Modes
 
@@ -167,11 +185,15 @@ If calibration exposes a core misunderstanding, return to clarification before p
 
 Summaries are only orientation aids. Any rule that affects implementation must be backed by explicit, readable sources inside the task packet.
 
+If `context-research-orchestrator` has produced a `Context Pack`, treat it as a context index, not as the authority itself. The pack helps choose what to pass, but must-read sources still carry final authority.
+
 Each task packet should separate:
 
 - `Must-read sources`
 - `Reference sources`
 - `Authoritative source for rule conflicts`
+- `Relevant context blocks`
+- `Open questions or blockers that still affect this task`
 
 Required behavior:
 
@@ -179,6 +201,8 @@ Required behavior:
 2. If the task packet summary conflicts with an authoritative source, the authoritative source wins.
 3. If the required sources do not support a needed judgment, the subagent must stop and report instead of inferring.
 4. If the primary agent wants a specific sample or rule to guide implementation, it must include the file path directly.
+5. If a `Context Pack` exists, include only the task-local blocks the subagent needs; do not dump the entire pack into every child task.
+6. If a relevant context block is marked `Inference`, `Open Question`, or `Decision Blocker`, keep that label in the task packet instead of flattening it into a settled rule.
 
 Never rely on "the primary agent probably summarized it correctly" as a substitute for source-backed context.
 
@@ -205,6 +229,7 @@ Use **single-round** execution only when:
 - shared-file risk is low
 - sample calibration did not expose major ambiguity
 - files can be partitioned cleanly
+- no unresolved `Decision Blocker` remains in the latest research output
 
 Use **two-round** execution when:
 
@@ -246,6 +271,20 @@ Default shared files for the primary agent:
 - global config and adapter layers
 
 ## Required Templates
+
+### Research Intake Template
+
+```md
+## Research Intake
+- Was `context-research-orchestrator` run?:
+- Research artifact locations:
+- Facts safe to rely on:
+- Inferences that still need verification:
+- Open questions:
+- Decision blockers:
+- Shared-file or ownership warnings:
+- Candidate task-local context blocks:
+```
 
 ### Rules Specification Template
 
@@ -307,6 +346,8 @@ Default shared files for the primary agent:
 - Must-read sources:
 - Reference sources:
 - Authoritative source for rule conflicts:
+- Relevant context blocks:
+- Inherited open questions or blockers:
 - Allowed files:
 - Forbidden files:
 - May expand to new files?:
@@ -340,6 +381,7 @@ Default shared files for the primary agent:
 ## Failure Recovery
 
 - If the core semantics are unresolved, return to clarification.
+- If a research artifact is stale, refresh the affected sources or rerun `context-research-orchestrator` before broad execution.
 - If ownership boundaries are unsafe, redesign the split or switch to two rounds.
 - If shared files dominate the work, have the primary agent consolidate them first.
 - If implementation outputs diverge, pause the rollout, update the rules spec, and resume only after reconvergence.

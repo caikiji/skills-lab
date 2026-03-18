@@ -38,25 +38,31 @@ It does not target:
 
 The skill is a specification-first orchestration skill with lightweight execution guidance.
 
+When repository understanding is still too shallow to freeze rules safely, the orchestrator should rely on `context-research-orchestrator` as a formal upstream research layer. That skill produces a `Research Report` and `Context Pack` that help the orchestrator identify real rule sources, ownership risks, and task-local context boundaries before broad execution.
+
 It is responsible for:
 
 - Forcing detailed requirement clarification
+- Deciding when formal repository research must happen before rule-freezing
 - Producing a rules specification all subagents must follow
 - Deciding whether the work should run in one round or two rounds
 - Distinguishing read-only exploration agents from implementation agents
 - Identifying shared-file and ownership conflicts before broad execution
 - Generating task packet templates and user confirmation checkpoints
+- Consuming research artifacts without flattening uncertainty into settled rules
 
 It is not responsible for binding execution to one specific subagent platform.
 
 ## Required Operating Principles
 
 - If the rules are not converged, the work must not be split.
+- If repository understanding is still shallow, formal research must happen before the rules are treated as frozen.
 - If two tasks may touch the same file, the split is invalid until corrected.
 - Exploration subagents are read-only.
 - Implementation subagents must not invent rules.
 - Parallel exploration may start early; parallel modification may not.
 - The primary agent must present the execution plan to the user and ask for confirmation before the broad implementation phase starts.
+- If upstream research contains a `Decision Blocker`, broad implementation must not begin until it is resolved.
 
 ## Workflow
 
@@ -74,37 +80,40 @@ It is not responsible for binding execution to one specific subagent platform.
    - autonomous decision boundaries
    - open questions
 
-3. **Rule specification**
+3. **Formal research decision**
+   Decide whether the current understanding is strong enough to freeze rules directly. If not, run `context-research-orchestrator` first and treat its `Research Report` and `Context Pack` as formal orchestration inputs.
+
+4. **Rule specification**
    Convert the clarified requirements into an execution-ready spec instead of a conversational summary.
 
-4. **Exploration strategy**
-   Decide whether the primary agent can gather enough context alone or needs read-only exploration subagents to scan a large search surface and summarize findings.
+5. **Exploration strategy**
+   Decide whether the primary agent can gather enough context alone or needs read-only exploration subagents to scan a large search surface and summarize findings. If a `Context Pack` already exists, use it to identify rule sources, candidate search areas, and likely contention surfaces before dispatching more exploration work.
 
-5. **Trial calibration**
+6. **Trial calibration**
    Perform a small verification cycle:
    - read and reason through representative patterns
    - make a tiny real sample edit set
    - surface missing rules, hidden exceptions, and ownership issues
    - return to clarification if necessary
 
-6. **Conflict assessment and execution mode selection**
+7. **Conflict assessment and execution mode selection**
    Choose between:
    - single-round parallel implementation
    - two-round execution: exploration first, primary-agent consolidation second, implementation third
 
-7. **Task partitioning**
+8. **Task partitioning**
    Split by non-overlapping file ownership first, not by equal work volume.
 
-8. **Source-bound task packet assembly**
-   Every task packet must include concrete must-read sources such as the rule spec, correction notes, authoritative code files, or sample edits. The primary agent summary is only an orientation layer, not the source of truth.
+9. **Source-bound task packet assembly**
+   Every task packet must include concrete must-read sources such as the rule spec, correction notes, authoritative code files, or sample edits. If a `Context Pack` exists, the orchestrator should extract only the task-local blocks that matter to that child task. The primary agent summary is only an orientation layer, not the source of truth.
 
-9. **User approval gate**
+10. **User approval gate**
    Present the plan, risk points, execution mode, and primary-agent responsibilities to the user. Only proceed when the user approves or adjusts the plan.
 
-10. **Execution and consolidation**
+11. **Execution and consolidation**
    Dispatch task packets according to the selected mode and validate the aggregate result against the spec.
 
-11. **Feedback incorporation**
+12. **Feedback incorporation**
    If user feedback or execution output exposes a bad assumption, the primary agent must:
    - determine whether the issue is local or spec-wide
    - clarify unresolved doubt with the user
@@ -127,6 +136,14 @@ The skill should force the primary agent to gather eight categories of informati
 
 If the agent cannot answer what the new rule is, what exceptions exist, or how correctness will be judged, it must not proceed to task splitting.
 
+If `context-research-orchestrator` has already been used, the orchestrator must review its outputs for:
+
+- `Fact` items that are safe candidates for rule-freezing
+- `Inference` items that still need direct verification
+- `Open Question` and `Decision Blocker` items that constrain execution
+- shared-file or ownership warnings
+- task-specific context blocks that may later be passed to implementation subagents
+
 ## Exploration Model
 
 The skill distinguishes two subagent roles.
@@ -148,6 +165,8 @@ Not allowed to:
 - silently expand scope
 
 They should also cite concrete sources when reporting findings that may influence the shared rules.
+
+When upstream research already exists, exploration subagents should build on that map rather than rediscovering it blindly.
 
 ### Implementation subagents
 
@@ -191,6 +210,7 @@ Use only when:
 - file ownership can be partitioned clearly
 - shared-file risk is low
 - trial calibration did not expose major ambiguity
+- no unresolved `Decision Blocker` remains in the latest research artifact or rule spec
 
 ### Two-round execution
 
@@ -244,14 +264,23 @@ This may happen before implementation dispatch or between round one and round tw
 
 The skill should provide the following reusable templates:
 
-1. Rules Specification Template
-2. Exploration Task Template
-3. Trial Calibration Template
-4. Implementation Task Template
-5. Execution Strategy and Aggregate Acceptance Template
-6. User Approval Prompt Template
-7. Feedback Update Template
-8. Source-Bound Task Packet Fields
+1. Research Intake Template
+2. Rules Specification Template
+3. Exploration Task Template
+4. Trial Calibration Template
+5. Implementation Task Template
+6. Execution Strategy and Aggregate Acceptance Template
+7. User Approval Prompt Template
+8. Feedback Update Template
+9. Source-Bound Task Packet Fields
+
+The Research Intake Template should capture:
+
+- whether formal repository research was already run
+- where the research artifacts live
+- which findings are `Fact` vs `Inference`
+- what blockers remain unresolved
+- which task-local context blocks are candidates for later packet assembly
 
 ## Expected User Checkpoint
 
@@ -270,12 +299,14 @@ Before broad execution, the primary agent must present:
 If the process discovers:
 
 - unresolved core semantics -> return to clarification
+- stale or insufficient upstream research -> refresh the sources or rerun `context-research-orchestrator`
 - unclear ownership boundaries -> switch to two rounds or redesign split
 - too many contested central files -> primary agent consolidates them first
 - inconsistent subagent outputs -> pause, update the spec, and resume only after reconvergence
 - user-confirmed rule deviation -> update the spec and downstream task notes before further rounds
 - missing authoritative context in task packets -> stop dispatch and add must-read sources first
+- context-pack over-distribution -> rebuild child packets using only task-local blocks plus authoritative sources
 
 ## Outcome
 
-The resulting skill should give a primary agent a disciplined way to convert ambiguous large-scale semantic edits into a spec-driven, conflict-aware, user-approved multi-subagent execution plan.
+The resulting skill should give a primary agent a disciplined way to convert ambiguous large-scale semantic edits into a spec-driven, conflict-aware, research-aware, user-approved multi-subagent execution plan.
