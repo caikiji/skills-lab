@@ -4,6 +4,7 @@ This repository stores reusable local agent skills and their supporting document
 
 ## Repository Layout
 
+- `agents/`: shared child-agent role contracts used across multiple skills
 - `context-research-orchestrator/`: the skill itself and its reusable reference files
 - `semantic-batch-refactor-orchestrator/`: the skill itself and its validation scenarios
 - `superpowers/`: git submodule dependency from `https://github.com/Cai-ki/superpowers`
