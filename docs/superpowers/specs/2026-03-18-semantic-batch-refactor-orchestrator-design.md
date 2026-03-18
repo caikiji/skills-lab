@@ -101,6 +101,14 @@ It is not responsible for binding execution to one specific subagent platform.
 9. **Execution and consolidation**
    Dispatch task packets according to the selected mode and validate the aggregate result against the spec.
 
+10. **Feedback incorporation**
+   If user feedback or execution output exposes a bad assumption, the primary agent must:
+   - determine whether the issue is local or spec-wide
+   - clarify unresolved doubt with the user
+   - update the shared rules specification
+   - update future task guidance
+   - pause and reissue affected rounds before continuing
+
 ## Clarification Model
 
 The skill should force the primary agent to gather eight categories of information:
@@ -237,6 +245,7 @@ The skill should provide the following reusable templates:
 4. Implementation Task Template
 5. Execution Strategy and Aggregate Acceptance Template
 6. User Approval Prompt Template
+7. Feedback Update Template
 
 ## Expected User Checkpoint
 
@@ -258,6 +267,7 @@ If the process discovers:
 - unclear ownership boundaries -> switch to two rounds or redesign split
 - too many contested central files -> primary agent consolidates them first
 - inconsistent subagent outputs -> pause, update the spec, and resume only after reconvergence
+- user-confirmed rule deviation -> update the spec and downstream task notes before further rounds
 
 ## Outcome
 
