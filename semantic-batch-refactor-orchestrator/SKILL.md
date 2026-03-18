@@ -28,6 +28,7 @@ Do not use when:
 
 - Violating the letter of these rules is violating the spirit of these rules.
 - If the primary agent cannot state the new rule, the exceptions, and the acceptance criteria, it must not split the work.
+- Task packets must include concrete must-read sources, not only summaries.
 - Exploration subagents are strictly read-only.
 - Implementation subagents must not invent new mappings, event schemas, or exception logic.
 - If two task packets may touch the same file, the partition is invalid.
@@ -70,13 +71,16 @@ Do not use when:
 7. **Partition by ownership**
    Split by explicit file ownership first. Directory or module boundaries are acceptable only when they resolve cleanly into non-overlapping file sets.
 
-8. **Ask the user to approve the plan**
+8. **Bind source-backed context into each task packet**
+   Every task packet must include the exact documents or code files the subagent must read before acting. Summaries may help orient the work, but they are not the authority.
+
+9. **Ask the user to approve the plan**
    Present the frozen rule summary, execution mode, primary-agent responsibilities, subagent responsibilities, and known risks. Do not start broad implementation before approval.
 
-9. **Execute and consolidate**
+10. **Execute and consolidate**
    Dispatch task packets, collect results, and validate the aggregate outcome against the spec before declaring success.
 
-10. **Feed corrections back into the shared guidance**
+11. **Feed corrections back into the shared guidance**
    If user feedback or execution results expose a mistaken rule, missing exception, or ambiguous instruction:
    - pause affected downstream work
    - clarify remaining uncertainty with the user if needed
@@ -139,6 +143,7 @@ Exploration subagent constraints:
 - no edits
 - no rule invention
 - no scope expansion without reporting it
+- cite the provided sources when reporting rule-relevant findings
 
 ## Trial Calibration
 
@@ -157,6 +162,25 @@ Calibration requirements:
 - record newly discovered rules, ambiguities, and contention files
 
 If calibration exposes a core misunderstanding, return to clarification before partitioning.
+
+## Source-Bound Context
+
+Summaries are only orientation aids. Any rule that affects implementation must be backed by explicit, readable sources inside the task packet.
+
+Each task packet should separate:
+
+- `Must-read sources`
+- `Reference sources`
+- `Authoritative source for rule conflicts`
+
+Required behavior:
+
+1. The subagent reads the must-read sources before acting.
+2. If the task packet summary conflicts with an authoritative source, the authoritative source wins.
+3. If the required sources do not support a needed judgment, the subagent must stop and report instead of inferring.
+4. If the primary agent wants a specific sample or rule to guide implementation, it must include the file path directly.
+
+Never rely on "the primary agent probably summarized it correctly" as a substitute for source-backed context.
 
 ## Feedback Incorporation
 
@@ -249,11 +273,13 @@ Default shared files for the primary agent:
 ```md
 ## Exploration Task
 - Objective:
+- Documents/code files that must be read before searching:
 - Search area:
 - Questions to answer:
 - Patterns to classify:
 - Shared-file types to identify:
 - Output required:
+- Findings that require source citation:
 - Constraints: read-only, no edits, no rule invention
 ```
 
@@ -278,11 +304,15 @@ Default shared files for the primary agent:
 ## Implementation Task
 - Objective:
 - Rules specification reference:
+- Must-read sources:
+- Reference sources:
+- Authoritative source for rule conflicts:
 - Allowed files:
 - Forbidden files:
 - May expand to new files?:
 - Shared-file handling rule:
 - What to do if the spec does not cover a case:
+- If required context is missing: stop, report, and do not infer
 - Latest rule updates to honor:
 - Superseded guidance to ignore:
 - Required output:
@@ -328,3 +358,4 @@ Stop if the primary agent starts thinking any of these:
 | "The user already asked for the change, so approval is implied." | Present the execution checkpoint before broad implementation. |
 | "Project patterns are consistent enough; we can skip samples." | Skip calibration only if the primary agent can explain why the risk is truly low. |
 | "We fixed that bad result already, so there is no need to update the packets." | Update the shared spec and future task notes before resuming later rounds. |
+| "The summary is enough; the subagent does not need the actual files." | Add must-read source paths to the packet before dispatch. |
