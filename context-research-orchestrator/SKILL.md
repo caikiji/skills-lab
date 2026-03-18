@@ -172,6 +172,8 @@ Persist artifacts when:
 
 When persisting, save the `Research Report` and `Context Pack` under `docs/orchestration/research/`.
 
+Resolve that path relative to the current repository root. If the workspace is not a git repository, resolve it relative to the current working directory unless the user explicitly chooses another output location.
+
 Default file naming:
 
 - `YYYY-MM-DD-<topic>-research-report.md`
