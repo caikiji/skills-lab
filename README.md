@@ -18,7 +18,133 @@ This repository stores reusable local agent skills and their supporting document
 | `deepresearch` | User-facing codebase research skill that produces a layered Markdown report with embedded Mermaid diagrams, from shallow project overview to deep module analysis, using parallel subagents and persistent multi-round state | Active | `deepresearch/SKILL.md`, `deepresearch/agents/exploration-agent.md`, `deepresearch/references/subagent-scaling.md`, `deepresearch/references/plan-template.md`, `deepresearch/references/output-document-template.md` |
 | `semantic-batch-refactor-orchestrator` | Specification-first orchestration for large semantic batch refactors with safe multi-subagent execution, source-bound task context, feedback-driven rule updates, and formal handoff from `context-research-orchestrator` when repository understanding is still shallow | Active | `semantic-batch-refactor-orchestrator/SKILL.md`, `semantic-batch-refactor-orchestrator/pressure-scenarios.md` |
 
+## Skill Relationships
+
+The three skills serve different masters and connect at defined handoff points.
+
+```
+deepresearch ──────────────────────────────────→ human reader
+                                                  │
+                    (if research reveals a         │
+                     codebase-wide change need)    ▼
+                                             suggest running CRO
+
+context-research-orchestrator (CRO)
+  │
+  │  produces: Research Report + Context Pack
+  │            Context Pack includes:
+  │              sbro_readiness: ready_to_freeze
+  │                              needs_verification
+  │                              blocked
+  │              SBRO Handoff Block
+  │
+  ▼
+semantic-batch-refactor-orchestrator (SBRO)
+  │
+  │  step 3: checks sbro_readiness before proceeding
+  │  step 12: writes corrections.md in Context Pack schema
+  │           → future CRO runs treat it as prior research
+  ▼
+  executed refactor
+```
+
+**When to run CRO before SBRO:**
+
+| Situation | Action |
+|-----------|--------|
+| Task crosses ≥ 3 modules | Run CRO first |
+| Shared files / types / event definitions not yet located | Run CRO first |
+| Primary agent cannot write rules without reading source | Run CRO first |
+| Task limited to 1–2 modules with clear boundaries | Inline exploration in SBRO |
+| Fresh Context Pack already exists | Consume directly — skip CRO |
+
+**deepresearch vs CRO:** Both research codebases but serve different consumers.
+Use `deepresearch` when the output is a document for a human to read.
+Use `context-research-orchestrator` when the output feeds downstream agents or SBRO.
+
 ## Current Skills
+
+### `context-research-orchestrator`
+
+Use this skill when a task needs grounded project research before planning, rule freezing, or subagent orchestration, and the output should be reusable as a `Research Report` plus `Context Pack`.
+
+Produces a `Context Pack` with a `sbro_readiness` field and `SBRO Handoff Block`
+when downstream semantic batch execution is likely. SBRO checks this field before
+proceeding to rule-freezing.
+
+Main files:
+
+- `context-research-orchestrator/SKILL.md`
+- `context-research-orchestrator/references/output-templates.md`
+- `context-research-orchestrator/references/delegation-guidance.md`
+- `context-research-orchestrator/pressure-scenarios.md`
+- `docs/orchestration/specs/2026-03-18-context-research-orchestrator-design.md`
+
+Related docs:
+
+- Design spec: `docs/orchestration/specs/2026-03-18-context-research-orchestrator-design.md`
+
+### `deepresearch`
+
+User-facing codebase research skill. Produces a single Markdown document with
+embedded Mermaid diagrams, layered from shallow project overview to deep module
+analysis. Uses parallel subagents and persistent multi-round state so large
+codebases can be researched safely across context resets.
+
+Not a substitute for `context-research-orchestrator` when agent-consumable
+structured output is needed. If research reveals a codebase-wide semantic change,
+run CRO before SBRO.
+
+**Key files:**
+- `deepresearch/SKILL.md`
+- `deepresearch/agents/exploration-agent.md`
+- `deepresearch/references/subagent-scaling.md`
+- `deepresearch/references/plan-template.md`
+- `deepresearch/references/output-document-template.md`
+- `docs/orchestration/specs/2026-03-19-deepresearch-skill-design.md`
+
+**Depth modes:** `quick` | `standard` | `deep`
+
+**Design spec:** `docs/orchestration/specs/2026-03-19-deepresearch-skill-design.md`
+
+### `semantic-batch-refactor-orchestrator`
+
+Use this skill when a large semantic codebase change needs careful requirement convergence, safe consumption of repository research, read-only exploration, task-local context packets, and controlled multi-subagent execution.
+
+Consumes a `Context Pack` from CRO when one exists. Checks `sbro_readiness`
+before rule-freezing and gates execution on `blocked` or `needs_verification`
+states. Writes `corrections.md` in Context Pack block schema after execution so
+future CRO runs can treat corrections as prior research.
+
+Main files:
+
+- `semantic-batch-refactor-orchestrator/SKILL.md`
+- `semantic-batch-refactor-orchestrator/pressure-scenarios.md`
+- `docs/orchestration/specs/2026-03-18-semantic-batch-refactor-orchestrator-design.md`
+
+Related docs:
+
+- Design spec: `docs/orchestration/specs/2026-03-18-semantic-batch-refactor-orchestrator-design.md`
+- Validation scenarios: `semantic-batch-refactor-orchestrator/pressure-scenarios.md`
+
+## Adding New Skills
+
+Recommended pattern:
+
+1. Write a design spec in `docs/orchestration/specs/`
+2. Create a new top-level skill directory with `SKILL.md`
+3. Add any focused validation or reference files next to the skill
+4. Update this README with the new skill entry
+
+## Maintenance Notes
+
+- Run `git submodule update --init --recursive` after cloning this repository.
+- Keep the `Skill Index` table updated when adding or renaming skills.
+- Prefer one top-level directory per skill.
+- Store orchestration design and research documents under `docs/orchestration/` so they stay easy to browse.
+- Resolve `docs/orchestration/` paths relative to the current repository root. If the workspace is not a git repository, resolve them relative to the current working directory unless the user explicitly chooses another location.
+- When editing canonical agent files under `agents/`, sync the same change to any local copies in skill-specific `agents/` directories.
+
 
 ### `context-research-orchestrator`
 
