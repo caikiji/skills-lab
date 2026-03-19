@@ -57,6 +57,11 @@ If the `dispatching-parallel-agents` skill is not available, dispatch subagents
 sequentially instead. Mark each chunk complete in `plan.md` as it finishes before
 dispatching the next.
 
+**Mandatory before any dispatch:** Read `agents/exploration-agent.md` in full.
+Paste its complete content verbatim at the top of every subagent prompt, before
+any task-specific fields. Dispatching without the embedded role content is not
+allowed — the subagent will not know its constraints or output format otherwise.
+
 For each shard, construct a dispatch packet with all required fields (see
 [agents/exploration-agent.md](agents/exploration-agent.md)):
 

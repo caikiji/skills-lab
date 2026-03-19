@@ -25,7 +25,7 @@ Classify as Small, Medium, or Large.
 ### Deep Mode Ceiling (Large codebases)
 
 In deep mode for large codebases, shard by functional domain with at most
-50 files per shard. Cap total subagent count at **12** regardless of
+50 files per shard. Cap total subagent count at **6** regardless of
 codebase size. If the codebase has more domains than the cap allows,
 merge smaller domains and note which ones were combined in `plan.md`.
 

@@ -91,7 +91,12 @@ Choose one:
 - use multi-round exploration
 
 Read [references/delegation-guidance.md](references/delegation-guidance.md) before dispatching any exploration subagent.
-For runtime child-agent role guidance, use [agents/read-only-exploration-agent.md](agents/read-only-exploration-agent.md) as the default role contract for read-only exploration work.
+
+**Mandatory before any subagent dispatch:** Read `agents/read-only-exploration-agent.md`
+in full. Paste its complete content verbatim at the top of every subagent prompt,
+before any task-specific fields. The subagent has no other way to learn its role,
+constraints, or output contract. Dispatching without embedded role content is not
+allowed.
 
 ### 4. Focused exploration
 
