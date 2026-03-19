@@ -11,6 +11,15 @@ After cloning:
 git submodule update --init --recursive
 ```
 
+### Two skill sets
+
+| Location | What it contains |
+|----------|-----------------|
+| `context-research-orchestrator/`, `semantic-batch-refactor-orchestrator/`, `deepresearch/` | Skills in this repo — for orchestration, research, and batch refactoring |
+| `superpowers/skills/` | Git submodule (https://github.com/obra/superpowers) — general-purpose skills: TDD, debugging, brainstorming, plan writing, parallel agents, git worktrees, etc. |
+
+Both skill sets are registered with Claude Code via the plugin manifests in `superpowers/.claude-plugin/`.
+
 ## Converting deepresearch Output to PDF/DOCX
 
 ```bash
@@ -33,11 +42,11 @@ Role Contract  (agents/*.md or <skill>/agents/*.md)
 ```
 
 **Shared role contracts** live in `agents/` and are referenced (or locally copied for portability) by each skill:
-- `read-only-exploration-agent.md` — gathers source-bound findings, never edits files, classifies claims as `Fact` / `Inference` / `Open Question`
+- `read-only-exploration-agent.md` — gathers source-bound findings, never edits files, classifies claims as `Fact` / `Inference` / `Open Question` / `Decision Blocker`
 - `implementation-agent.md` — executes within a frozen rule set, escalates scope conflicts
-- `spec-conformance-reviewer.md` — compares delivered work against a spec, returns Conformant / Partially Conformant / Non-Conformant
+- `spec-conformance-reviewer.md` — compares delivered work against a spec, returns `Conformant` / `Partially Conformant` / `Non-Conformant`
 
-The `Fact` / `Inference` / `Open Question` / `Decision Blocker` certainty labels are used consistently across all skills and all agent roles.
+The four certainty labels `Fact` / `Inference` / `Open Question` / `Decision Blocker` are used consistently across all skills and all agent roles. Never flatten an `Inference` or `Open Question` into a `Fact`.
 
 ## Skills and Their Relationships
 
@@ -63,6 +72,23 @@ Each skill follows this layout:
 ├── scripts/                  # supporting scripts (e.g., deepresearch/scripts/convert.py)
 └── pressure-scenarios.md     # adversarial validation scenarios (where present)
 ```
+
+### SKILL.md front-matter
+
+Every `SKILL.md` begins with YAML front-matter that controls discovery and triggering:
+
+```yaml
+---
+name: skill-name
+description: One-sentence description used by Claude to decide when to invoke this skill.
+---
+```
+
+The `description` field is the trigger signal — write it to match the situations where the skill should fire, not just what the skill does.
+
+### Agent portability pattern
+
+Shared role contracts in `agents/` are the canonical source. Each skill that dispatches subagents also keeps a local copy in `<skill>/agents/` so the skill directory can be dropped into any project and work without depending on the repo-level `agents/` directory.
 
 ## deepresearch Persistent State
 
