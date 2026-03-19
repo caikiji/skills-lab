@@ -50,6 +50,8 @@ When the main agent starts (or restarts), read `plan.md` first:
 
 ## Batch Synthesis Rule
 
-If the number of completed chunks is large (> 4), read chunks in batches of 3.
-Write an intermediate partial synthesis per batch, then merge all partial
-syntheses into the final `synthesis.md`. Record batch boundaries in `plan.md`.
+If total chunk content is large (does not fit comfortably in context — typically
+more than 4 chunks, or any number of large chunks in deep mode), read chunks in
+batches of 3. Write an intermediate partial synthesis per batch, then merge all
+partial syntheses into the final `synthesis.md`. Record batch boundaries in
+`plan.md`. When in doubt, prefer batching.
