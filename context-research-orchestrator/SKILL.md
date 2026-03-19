@@ -74,6 +74,14 @@ Perform the smallest useful pass through:
 
 Use the result to decide whether the primary agent can continue alone.
 
+The light probe is sufficient when the primary agent can answer:
+- Which files or modules are directly relevant to the task?
+- Are there obvious shared definitions or cross-cutting concerns?
+- Is the search surface narrow enough to continue inline, or does it require subagent dispatch?
+
+If all three can be answered with reasonable confidence, proceed to step 3.
+If not, escalate depth before continuing.
+
 ### 3. Research planning
 
 Choose one:
@@ -158,6 +166,20 @@ Stop and escalate when the unresolved issue depends on:
 - ambiguous target behavior that project evidence cannot settle
 
 Never silently upgrade an `Inference` into a mandatory implementation rule.
+
+## Rationalization Traps
+
+Stop if the primary agent starts thinking any of these:
+
+| Rationalization | Required response |
+| --- | --- |
+| "The task is small, I don't need citations." | Evidence is reused by downstream agents. Always cite important claims. |
+| "The codebase strongly implies this pattern, so it must be Fact." | If no source explicitly confirms it, label it `Inference`. |
+| "I'll escalate to deep research just to be safe." | Start with targeted research. Escalate only when evidence requires it. |
+| "This summary is close enough to pass downstream." | If it will guide later agents, back it with source references. |
+| "I didn't find the answer, so I'll infer it." | Surface the gap as `Open Question` or `Decision Blocker` instead. |
+| "The context pack is getting large, I'll trim the citations." | Preserve citations. Downstream agents need them to judge authority. |
+| "The file changed slightly but the claim still seems right." | Re-check the source. Mark as stale-risk if you cannot re-verify. |
 
 ## Persistence
 
