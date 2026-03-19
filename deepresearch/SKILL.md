@@ -15,15 +15,17 @@ Accept:
 - `depth`: `quick` | `standard` | `deep` (default: `standard`)
 - `target`: path to the repository root (default: current working directory)
 
-Determine the state directory path:
+Determine the session directory path:
 ```
 docs/deepresearch/<repo-name>-<YYYY-MM-DD>/
 ```
 
+Determine `<repo-name>` from: (1) the final path component of the `git remote get-url origin` URL (strip `.git` suffix if present), or (2) the root directory name if no git remote exists.
+
 ## Phase 1: Resume Check
 
 Before doing any research, check whether `state/plan.md` already exists inside the
-state directory.
+session directory.
 
 Read [references/plan-template.md](references/plan-template.md) for the resume
 logic table. Follow it exactly:
@@ -51,6 +53,10 @@ Create `state/chunks/` directory.
 
 Dispatch subagents in parallel using the `dispatching-parallel-agents` skill.
 
+If the `dispatching-parallel-agents` skill is not available, dispatch subagents
+sequentially instead. Mark each chunk complete in `plan.md` as it finishes before
+dispatching the next.
+
 For each shard, construct a dispatch packet with all required fields (see
 [agents/exploration-agent.md](agents/exploration-agent.md)):
 
@@ -73,11 +79,17 @@ re-dispatch that subagent before proceeding.
 
 When all chunks are marked complete in `plan.md`:
 
-If chunks ≤ 4: read all chunks and write `state/synthesis.md` in one pass.
+Estimate total chunk content size before synthesizing.
 
-If chunks > 4: process in batches of 3 (see batch synthesis rule in
+If total chunk content is small (all chunks fit comfortably in context — typically
+chunks ≤ 4 for quick/standard mode on a Small or Medium codebase): read all chunks
+and write `state/synthesis.md` in one pass.
+
+Otherwise: process in batches of 3 (see batch synthesis rule in
 [references/plan-template.md](references/plan-template.md)). Write one partial
 synthesis per batch, then merge into `state/synthesis.md`.
+
+When in doubt, prefer batching over a single pass.
 
 Update `plan.md`: mark synthesis complete, set `current: generating`.
 
@@ -91,7 +103,7 @@ will resume from this point.
 Read `state/synthesis.md`. Generate the final document following the template
 and mode coverage matrix in [references/output-document-template.md](references/output-document-template.md).
 
-Write to: `output/YYYY-MM-DD-<repo>-research.md` (relative to the state directory).
+Write to: `output/YYYY-MM-DD-<repo>-research.md` (relative to the session directory).
 
 Update `plan.md`: mark output complete, set `current: done`.
 
