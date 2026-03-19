@@ -21,6 +21,7 @@ temp/
 # Local test artifacts
 output/
 
-# Allow deepresearch research output
+# Claude Code local settings (machine-specific)
+.claude/settings.local.json
 !docs/deepresearch/**/output/
 !docs/deepresearch/**/output/**
