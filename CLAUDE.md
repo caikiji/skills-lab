@@ -115,6 +115,8 @@ The `description` field is the trigger signal — write it to match the situatio
 
 Shared role contracts in `agents/` are the canonical source. Each skill that dispatches subagents also keeps a local copy in `<skill>/agents/` so the skill directory can be dropped into any project and work without depending on the repo-level `agents/` directory.
 
+**Sync rule:** When editing a canonical agent file under `agents/`, apply the same change to every `<skill>/agents/` copy of that file.
+
 ## deepresearch Persistent State
 
 When `deepresearch` runs, it creates a resumable session under:
@@ -140,5 +142,6 @@ docs/deepresearch/<repo-name>-<YYYY-MM-DD>/
 ## Adding a New Skill
 
 1. Write a design spec → `docs/orchestration/specs/YYYY-MM-DD-<name>-design.md`
-2. Create `skills/<skill>/SKILL.md` and supporting files
+2. Create `skills/<skill>/SKILL.md` and supporting files — one top-level directory per skill
 3. Update the `README.md` skill index table
+4. If the skill dispatches subagents, copy relevant canonical `agents/` contracts into `skills/<skill>/agents/`
