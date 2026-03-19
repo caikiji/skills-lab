@@ -125,6 +125,15 @@ Produce:
 
 Separate established facts from inferences and unresolved questions. If the evidence still does not support a needed judgment, surface that gap instead of improvising.
 
+If the downstream action involves a semantic batch refactor, also produce a
+`SBRO Handoff Block` within the Context Pack (see
+[references/output-templates.md](references/output-templates.md)) and set
+`sbro_readiness` based on the current state of findings:
+
+- `ready_to_freeze` — all key rules are source-backed Facts and no Decision Blockers remain
+- `needs_verification` — one or more Inferences require source confirmation before rule-freezing can begin
+- `blocked` — one or more Decision Blockers must be resolved with the user before any execution
+
 ### 6. Freshness and handoff check
 
 Before finalizing:

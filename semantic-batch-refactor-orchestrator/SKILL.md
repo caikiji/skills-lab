@@ -59,11 +59,31 @@ Do not use when:
    - unresolved questions
 
 3. **Decide whether repository research must be formalized first**
-   If the current session context is not enough to freeze rules safely, run `context-research-orchestrator` before continuing. This is especially important when:
-   - the task crosses multiple modules
-   - shared definitions or ownership boundaries are still fuzzy
-   - later task packets will need source-backed context
-   - the likely rule sources are still being inferred rather than read directly
+
+   Use this table to decide:
+
+   | Situation | Action |
+   |-----------|--------|
+   | Task crosses ≥ 3 modules | Run CRO first |
+   | Shared files / types / event definitions not yet located | Run CRO first |
+   | Primary agent cannot write rules without reading source | Run CRO first |
+   | Task limited to 1–2 modules with clear boundaries | Inline exploration |
+   | Fresh Context Pack already exists | Consume directly — skip CRO |
+
+   **If a Context Pack exists:** check freshness before use. Compare `git_commit`
+   in the pack against the current HEAD. If significant commits have landed on
+   in-scope files since `captured_at`, re-run CRO on the affected areas. A pack
+   is safe to reuse when `sbro_readiness` is `ready_to_freeze` and no in-scope
+   files have changed since capture.
+
+   **After CRO completes:** check `sbro_readiness` before continuing:
+   - `ready_to_freeze` — proceed to step 4
+   - `needs_verification` — verify the flagged Inferences from source before writing the rules specification
+   - `blocked` — resolve Decision Blockers with the user; do not proceed to step 4
+
+   Fill in the Research Intake Template (see below) whenever a Context Pack
+   is being consumed, so the state of incoming research is explicit before
+   rule-freezing begins.
 
 4. **Write a rules specification**
    Turn the clarified requirements into an execution spec. This is not a summary. It must be detailed enough that multiple agents will make the same decision on the same input.
@@ -99,6 +119,12 @@ Do not use when:
    - update the shared rules specification
    - update task notes for later rounds
    - reissue the changed guidance before resuming implementation
+
+   If the correction is substantive (alters rule mapping, reveals a new shared
+   file, or changes scope boundaries), also write a correction note to
+   `docs/orchestration/research/YYYY-MM-DD-<topic>-corrections.md` using the
+   Context Pack block schema. Future CRO runs can treat this file as prior
+   research and avoid repeating the same investigation.
 
    **Re-approval rule:** If the rule change is minor (a local edge case, no effect on
    other packets or shared files), apply it inline without returning to step 10. If the

@@ -126,6 +126,13 @@ Update `plan.md`: mark output complete, set `current: done`.
 
 Report the output path to the user.
 
+If the research reveals patterns that suggest a codebase-wide semantic change
+(migration, schema update, call-pattern replacement spanning many files), note
+that `context-research-orchestrator` should be run before
+`semantic-batch-refactor-orchestrator`. The deepresearch output is optimised for
+human reading; it is not a substitute for the structured `Context Pack` that
+downstream agents require.
+
 To convert the Markdown output to PDF or DOCX with real rendered Mermaid diagrams,
 use the bundled conversion script:
 
