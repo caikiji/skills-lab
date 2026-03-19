@@ -110,7 +110,6 @@ docs/deepresearch/<repo-name>-<YYYY-MM-DD>/
 | Path | Contents |
 |------|----------|
 | `docs/orchestration/specs/` | Design specs — source of truth for skill architecture |
-| `docs/orchestration/research/` | Persisted CRO research reports and context packs |
 | `docs/deepresearch/` | deepresearch session state and output |
 
 ## Adding a New Skill

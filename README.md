@@ -9,7 +9,6 @@ This repository stores reusable local agent skills and their supporting document
 - `semantic-batch-refactor-orchestrator/`: the skill itself and its validation scenarios
 - `superpowers/`: git submodule dependency from `https://github.com/Cai-ki/superpowers`
 - `docs/orchestration/specs/`: design documents for skills
-- `docs/orchestration/research/`: persisted research reports and context packs
 
 ## Skill Index
 
@@ -76,10 +75,9 @@ Related docs:
 Recommended pattern:
 
 1. Write a design spec in `docs/orchestration/specs/`
-2. Persist reusable research artifacts in `docs/orchestration/research/` when the task warrants it
-3. Create a new top-level skill directory with `SKILL.md`
-4. Add any focused validation or reference files next to the skill
-5. Update this README with the new skill entry
+2. Create a new top-level skill directory with `SKILL.md`
+3. Add any focused validation or reference files next to the skill
+4. Update this README with the new skill entry
 
 ## Maintenance Notes
 
