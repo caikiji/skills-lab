@@ -101,8 +101,22 @@ Update `plan.md`: mark output complete, set `current: done`.
 
 ## Completion
 
-Report the output path to the user. Mention that the document can be converted
-to PDF or DOCX using the `pdf` or `docx` skills if needed.
+Report the output path to the user.
+
+To convert the Markdown output to PDF or DOCX with real rendered Mermaid diagrams,
+use the bundled conversion script:
+
+```bash
+python deepresearch/scripts/convert.py <output/report.md> [--format pdf|docx|both]
+```
+
+**Requirements:**
+- Node.js + `npm install -g @mermaid-js/mermaid-cli`
+- Python + `pip install python-docx reportlab`
+
+The script renders each Mermaid code block to a PNG via mmdc (the official
+Mermaid CLI), then embeds the images into the final PDF or DOCX.
+See `scripts/convert.py` for full usage and `--out-dir` option.
 
 ## Non-Goals
 
