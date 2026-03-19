@@ -1,12 +1,12 @@
 {
-  "name": "agent-skills-lab",
+  "name": "skills-lab",
   "description": "Orchestration skills for codebase research, semantic batch refactoring, and deep research reports — includes the superpowers general-purpose skill library",
   "owner": {
     "name": "Cai-ki"
   },
   "plugins": [
     {
-      "name": "agent-skills-lab",
+      "name": "skills-lab",
       "description": "Orchestration skills (CRO, SBRO, deepresearch) plus the full superpowers library (TDD, debugging, brainstorming, planning, parallel agents, git worktrees, and more)",
       "version": "1.0.0",
       "source": "./",
