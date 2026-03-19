@@ -1,0 +1,13 @@
+{
+  "name": "agent-skills-lab",
+  "description": "Orchestration skills for evidence-driven codebase research, semantic batch refactoring, and deep research reports. Includes the superpowers general-purpose skill library (TDD, debugging, brainstorming, plan writing, parallel agents, git worktrees, and more).",
+  "version": "1.0.0",
+  "author": {
+    "name": "Cai-ki",
+    "email": ""
+  },
+  "homepage": "https://github.com/Cai-ki/agent-skills-lab",
+  "repository": "https://github.com/Cai-ki/agent-skills-lab",
+  "license": "MIT",
+  "keywords": ["orchestration", "research", "refactoring", "deepresearch", "tdd", "debugging", "skills"]
+}
