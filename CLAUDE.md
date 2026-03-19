@@ -52,13 +52,38 @@ The four certainty labels `Fact` / `Inference` / `Open Question` / `Decision Blo
 
 | Skill | Output consumer | When to use |
 |-------|----------------|-------------|
-| `context-research-orchestrator` | Downstream agents | Before planning, rule-freezing, or orchestration — produces `Research Report` + `Context Pack` with provenance and citations |
+| `context-research-orchestrator` | Downstream agents | Before planning, rule-freezing, or orchestration — produces `Research Report` + `Context Pack` with `sbro_readiness` signal and `SBRO Handoff Block` |
 | `deepresearch` | Human user | When a user wants a readable layered report with Mermaid diagrams; accepts `depth: quick / standard / deep` |
-| `semantic-batch-refactor-orchestrator` | Downstream agents + user | Large semantic code changes; rules must be frozen before execution; optionally consumes CRO output as upstream research |
+| `semantic-batch-refactor-orchestrator` | Downstream agents + user | Large semantic code changes; rules must be frozen before execution; consumes CRO `Context Pack` when one exists |
 
-**CRO → SBRO**: `context-research-orchestrator` is the intended upstream precursor to `semantic-batch-refactor-orchestrator` when repository context is shallow.
+**Pipeline:**
 
-**deepresearch vs CRO**: Both research codebases but serve different consumers. Use `deepresearch` when the output is a document for a human to read; use `context-research-orchestrator` when the output feeds downstream agents.
+```
+deepresearch ──────────────────────────────────→ human reader
+                (if codebase-wide change found)
+                       suggests running CRO ──→ (user decides)
+
+context-research-orchestrator (CRO)
+  └── Context Pack
+        ├── sbro_readiness: ready_to_freeze | needs_verification | blocked
+        └── SBRO Handoff Block (facts / inferences / blockers / shared-file risks)
+              ▼
+semantic-batch-refactor-orchestrator (SBRO)
+  ├── step 3: checks sbro_readiness; gates execution on blocked/needs_verification
+  └── step 12: writes corrections.md in Context Pack schema → future CRO reads it
+```
+
+**CRO → SBRO trigger conditions:**
+
+| Situation | Action |
+|-----------|--------|
+| Task crosses ≥ 3 modules | Run CRO first |
+| Shared files / types / event definitions not yet located | Run CRO first |
+| Primary agent cannot write rules without reading source | Run CRO first |
+| Task limited to 1–2 modules with clear boundaries | Inline exploration in SBRO |
+| Fresh Context Pack already exists | Consume directly — skip CRO |
+
+**deepresearch vs CRO**: Both research codebases but serve different consumers. Use `deepresearch` when the output is a document for a human to read; use `context-research-orchestrator` when the output feeds downstream agents or SBRO.
 
 ## Skill Directory Structure
 
