@@ -7,8 +7,8 @@ This repository stores reusable local agent skills and their supporting document
 ### From GitHub (any machine)
 
 ```
-/plugin marketplace add https://github.com/Cai-ki/agent-skills-lab
-/plugin install agent-skills-lab@agent-skills-lab
+/plugin marketplace add https://github.com/Cai-ki/skills-lab
+/plugin install skills-lab@skills-lab
 ```
 
 ### From local path (already cloned)
@@ -19,7 +19,7 @@ git submodule update --init --recursive
 
 ```
 /plugin marketplace add path\to\skills-lab
-/plugin install agent-skills-lab@agent-skills-lab
+/plugin install skills-lab@skills-lab
 ```
 
 After installing, run `/plugin reload-plugins` or restart Claude Code.
