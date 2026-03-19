@@ -1,10 +1,6 @@
 ---
 name: deepresearch
-description: User-facing codebase research skill. Produces a single Markdown document
-  with embedded Mermaid diagrams, layered from shallow overview to deep module analysis.
-  Use when the user asks to deeply understand a codebase, generate a project research
-  report, or produce a visual + textual map of how a repository works.
-  Accepts a depth parameter: quick, standard, or deep.
+description: User-facing codebase research skill. Produces a layered Markdown report with Mermaid diagrams, from shallow project overview to deep module analysis. Use when the user asks to deeply understand a codebase, generate a research report, or map how a repository works. Accepts a depth parameter: quick, standard, or deep.
 ---
 
 # DeepResearch
