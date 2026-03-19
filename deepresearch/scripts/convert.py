@@ -3,19 +3,24 @@
 deepresearch/scripts/convert.py
 
 Convert a deepresearch Markdown output file to PDF and/or DOCX,
-rendering Mermaid code blocks as real images via mmdc.
+rendering Mermaid code blocks as crisp images via mmdc.
+
+  PDF  — Mermaid rendered as ultra-high-res PNG (3600px wide, ~648 DPI on A4)
+  DOCX — Mermaid rendered as high-res PNG (2400px wide)
+
+Both formats produce sharp diagrams at any practical zoom level.
 
 Usage:
-  py convert.py <input.md> [--format pdf|docx|both] [--out-dir <dir>]
+  python convert.py <input.md> [--format pdf|docx|both] [--out-dir <dir>]
 
 Requirements:
   npm: @mermaid-js/mermaid-cli   (npm install -g @mermaid-js/mermaid-cli)
   pip: python-docx reportlab
 
 Examples:
-  py convert.py output/2026-03-19-skills-research.md
-  py convert.py output/report.md --format pdf
-  py convert.py output/report.md --format both --out-dir exports/
+  python convert.py output/2026-03-19-skills-research.md
+  python convert.py output/report.md --format pdf
+  python convert.py output/report.md --format both --out-dir exports/
 """
 
 import argparse
@@ -47,33 +52,31 @@ def find_mmdc() -> str:
     if cmd:
         return cmd
     import os
-    candidates = [
+    for c in [
         Path(os.environ.get("APPDATA", "")) / "npm" / "mmdc.cmd",
         Path(os.environ.get("APPDATA", "")) / "npm" / "mmdc",
-    ]
-    for c in candidates:
+    ]:
         if c.exists():
             return str(c)
     raise FileNotFoundError(
-        "mmdc not found. Install it with: npm install -g @mermaid-js/mermaid-cli"
+        "mmdc not found. Install: npm install -g @mermaid-js/mermaid-cli"
     )
 
 
-def render_mermaid(code: str, idx: int, tmpdir: Path, mmdc: str) -> Path:
-    """Render one Mermaid block to PNG. Returns the PNG path."""
-    mmd = tmpdir / f"diagram_{idx:02d}.mmd"
-    png = tmpdir / f"diagram_{idx:02d}.png"
+def render_png(code: str, idx: int, tmpdir: Path, mmdc: str,
+               width: int, suffix: str) -> Path:
+    """Render a Mermaid block to PNG at the given pixel width."""
+    mmd = tmpdir / f"d{idx:02d}.mmd"
+    png = tmpdir / f"d{idx:02d}_{suffix}.png"
     mmd.write_text(code, encoding="utf-8")
     result = subprocess.run(
         [mmdc, "-i", str(mmd), "-o", str(png),
-         "-t", "default", "-b", "white", "--width", "900"],
+         "-t", "default", "-b", "white", "--width", str(width)],
         capture_output=True, text=True
     )
     if result.returncode != 0 or not png.exists():
-        raise RuntimeError(
-            f"mmdc failed for diagram {idx}:\n{result.stderr.strip()}"
-        )
-    print(f"  [mermaid] diagram_{idx:02d}.png ({png.stat().st_size:,} bytes)")
+        raise RuntimeError(f"mmdc failed for diagram {idx}:\n{result.stderr.strip()}")
+    print(f"  [{suffix}] d{idx:02d}.png  {width}px  ({png.stat().st_size:,} bytes)")
     return png
 
 
@@ -85,17 +88,19 @@ def strip_inline(s: str) -> str:
     return s
 
 
-def parse_blocks(src: str, tmpdir: Path, mmdc: str) -> list:
-    """Parse Markdown into typed blocks, rendering Mermaid blocks to PNG."""
+def parse_blocks(src: str, tmpdir: Path, mmdc: str,
+                 need_pdf: bool, need_docx: bool) -> list:
+    """
+    Parse Markdown into typed blocks.
+    Mermaid blocks → ("mermaid", pdf_png_or_None, docx_png_or_None)
+    """
     blocks = []
-    lines = src.splitlines()
-    i = 0
-    mermaid_idx = 0
+    lines  = src.splitlines()
+    i, idx = 0, 0
 
     while i < len(lines):
         line = lines[i]
 
-        # fenced code block
         if line.strip().startswith("```"):
             lang = line.strip()[3:].strip()
             code_lines = []
@@ -105,9 +110,10 @@ def parse_blocks(src: str, tmpdir: Path, mmdc: str) -> list:
                 i += 1
             code = "\n".join(code_lines)
             if lang == "mermaid":
-                mermaid_idx += 1
-                png = render_mermaid(code, mermaid_idx, tmpdir, mmdc)
-                blocks.append(("mermaid_img", png))
+                idx += 1
+                pdf_png  = render_png(code, idx, tmpdir, mmdc, 3600, "pdf")  if need_pdf  else None
+                docx_png = render_png(code, idx, tmpdir, mmdc, 2400, "docx") if need_docx else None
+                blocks.append(("mermaid", pdf_png, docx_png))
             else:
                 blocks.append(("code", lang, code))
 
@@ -121,7 +127,6 @@ def parse_blocks(src: str, tmpdir: Path, mmdc: str) -> list:
             blocks.append(("quote", line[2:].strip()))
         elif line.startswith("---"):
             blocks.append(("hr",))
-
         elif line.startswith("| "):
             tbl = []
             while i < len(lines) and lines[i].startswith("|"):
@@ -129,7 +134,6 @@ def parse_blocks(src: str, tmpdir: Path, mmdc: str) -> list:
                 i += 1
             blocks.append(("table", tbl))
             continue
-
         elif re.match(r"^[-*] ", line):
             blocks.append(("li", line[2:].strip()))
         elif line.strip() == "":
@@ -170,9 +174,9 @@ def build_docx(blocks: list, out_path: Path) -> None:
         run.font.size = Pt(8)
 
     def _inline(para, text):
-        for idx, part in enumerate(re.split(r"`([^`]+)`", text)):
+        for k, part in enumerate(re.split(r"`([^`]+)`", text)):
             run = para.add_run(part)
-            if idx % 2 == 1:
+            if k % 2 == 1:
                 run.font.name = "Courier New"
                 run.font.size = Pt(9.5)
 
@@ -189,9 +193,11 @@ def build_docx(blocks: list, out_path: Path) -> None:
             _inline(p, block[1])
         elif kind == "hr":
             doc.add_paragraph("─" * 60)
-        elif kind == "mermaid_img":
-            doc.add_picture(str(block[1]), width=Inches(5.5))
-            doc.add_paragraph()
+        elif kind == "mermaid":
+            png = block[2]  # DOCX PNG
+            if png:
+                doc.add_picture(str(png), width=Inches(5.5))
+                doc.add_paragraph()
         elif kind == "code":
             _code_para(block[2])
         elif kind == "table":
@@ -199,8 +205,8 @@ def build_docx(blocks: list, out_path: Path) -> None:
             if not rows:
                 continue
             parsed = [[c.strip() for c in r.strip("|").split("|")] for r in rows]
-            ncols = max(len(r) for r in parsed)
-            table = doc.add_table(rows=len(parsed), cols=ncols)
+            ncols  = max(len(r) for r in parsed)
+            table  = doc.add_table(rows=len(parsed), cols=ncols)
             table.style = "Table Grid"
             for ri, row in enumerate(parsed):
                 for ci, cell in enumerate(row):
@@ -279,13 +285,15 @@ def build_pdf(blocks: list, out_path: Path) -> None:
         elif kind == "hr":
             story.append(HRFlowable(width="100%", thickness=0.5,
                 color=colors.HexColor("#cccccc"), spaceAfter=6, spaceBefore=6))
-        elif kind == "mermaid_img":
-            img = Image(str(block[1]))
-            scale = MAX_W / img.imageWidth
-            img.drawWidth  = img.imageWidth  * scale
-            img.drawHeight = img.imageHeight * scale
-            story.append(img)
-            story.append(Spacer(1, 8))
+        elif kind == "mermaid":
+            png = block[1]  # high-res PDF PNG
+            if png:
+                img = Image(str(png))
+                scale = MAX_W / img.imageWidth
+                img.drawWidth  = img.imageWidth  * scale
+                img.drawHeight = img.imageHeight * scale
+                story.append(img)
+                story.append(Spacer(1, 8))
         elif kind == "code":
             story.append(Preformatted(block[2], C))
         elif kind == "table":
@@ -341,24 +349,31 @@ def main():
     out_dir = args.out_dir.resolve() if args.out_dir else src.parent
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    stem = src.stem
+    stem     = src.stem
     out_pdf  = out_dir / f"{stem}.pdf"
     out_docx = out_dir / f"{stem}.docx"
+
+    need_pdf  = args.format in ("pdf",  "both")
+    need_docx = args.format in ("docx", "both")
 
     mmdc   = find_mmdc()
     tmpdir = Path(tempfile.mkdtemp(prefix="deepresearch_"))
 
     try:
         print(f"Source : {src}")
-        print(f"Format : {args.format}")
+        print(f"Format : {args.format}  (PDF=3600px PNG, DOCX=2400px PNG)")
         print(f"Out dir: {out_dir}\n")
         print("Rendering Mermaid diagrams...")
-        blocks = parse_blocks(src.read_text(encoding="utf-8"), tmpdir, mmdc)
+
+        blocks = parse_blocks(
+            src.read_text(encoding="utf-8"), tmpdir, mmdc,
+            need_pdf=need_pdf, need_docx=need_docx,
+        )
         print(f"Parsed {len(blocks)} blocks\n")
 
-        if args.format in ("docx", "both"):
+        if need_docx:
             build_docx(blocks, out_docx)
-        if args.format in ("pdf", "both"):
+        if need_pdf:
             build_pdf(blocks, out_pdf)
 
     finally:
