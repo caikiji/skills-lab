@@ -2,6 +2,29 @@
 
 This repository stores reusable local agent skills and their supporting documents.
 
+## Installation
+
+### From GitHub (any machine)
+
+```
+/plugin marketplace add https://github.com/Cai-ki/agent-skills-lab
+/plugin install agent-skills-lab@agent-skills-lab
+```
+
+### From local path (already cloned)
+
+```bash
+git submodule update --init --recursive
+```
+
+```
+/plugin marketplace add D:\path\to\skills
+/plugin install agent-skills-lab@agent-skills-lab
+```
+
+After installing, run `/plugin reload-plugins` or restart Claude Code.
+All 17 skills load automatically — no separate superpowers installation needed.
+
 ## Repository Layout
 
 - `agents/`: shared child-agent role contracts used across multiple skills
@@ -134,7 +157,6 @@ orchestration skills — no separate installation needed.
 
 ## Maintenance Notes
 
-- Run `git submodule update --init --recursive` after cloning.
 - Keep the Skill Index table updated when adding or renaming skills.
 - Prefer one top-level directory per skill.
 - Store design documents under `docs/orchestration/specs/`.
