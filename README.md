@@ -1,4 +1,4 @@
-# Skills
+# Skills Lab
 
 This repository stores reusable local agent skills and their supporting documents.
 
@@ -18,7 +18,7 @@ git submodule update --init --recursive
 ```
 
 ```
-/plugin marketplace add D:\path\to\skills
+/plugin marketplace add path\to\skills-lab
 /plugin install agent-skills-lab@agent-skills-lab
 ```
 
