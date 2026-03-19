@@ -50,13 +50,40 @@ Use these templates to keep research output consistent and reusable.
 - related_dirty_files:
 - key_file_timestamps:
 - confidence_scope:
+- sbro_readiness: ready_to_freeze | needs_verification | blocked
 
 ## Global Theme Blocks
 - [Block title]
 
 ## Task-Specific Blocks
 - [Block title]
+
+## SBRO Handoff Block
+*(Include when downstream semantic batch execution is likely.)*
+
+### Facts safe to freeze as rules
+- ...
+
+### Inferences that must be verified before rule-freezing
+- ...
+
+### Open Questions — resolve before splitting work
+- ...
+
+### Decision Blockers — broad execution cannot begin until resolved
+- ...
+
+### Shared-file risks
+- ...
+
+### Candidate task boundaries
+- ...
 ```
+
+`sbro_readiness` values:
+- `ready_to_freeze` — all key rules are source-backed Facts; no Decision Blockers remain
+- `needs_verification` — one or more Inferences require source confirmation before rule-freezing
+- `blocked` — one or more Decision Blockers prevent safe execution
 
 ## Standard Block Schema
 
