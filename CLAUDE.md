@@ -15,7 +15,7 @@ git submodule update --init --recursive
 
 | Location | What it contains |
 |----------|-----------------|
-| `context-research-orchestrator/`, `semantic-batch-refactor-orchestrator/`, `deepresearch/` | Skills in this repo — for orchestration, research, and batch refactoring |
+| `skills/context-research-orchestrator/`, `skills/semantic-batch-refactor-orchestrator/`, `skills/deepresearch/` | Skills in this repo — for orchestration, research, and batch refactoring |
 | `superpowers/skills/` | Git submodule (https://github.com/obra/superpowers) — general-purpose skills: TDD, debugging, brainstorming, plan writing, parallel agents, git worktrees, etc. |
 
 Both skill sets are registered with Claude Code via the plugin manifests in `superpowers/.claude-plugin/`.
@@ -23,9 +23,9 @@ Both skill sets are registered with Claude Code via the plugin manifests in `sup
 ## Converting deepresearch Output to PDF/DOCX
 
 ```bash
-python deepresearch/scripts/convert.py <report.md>                        # both formats
-python deepresearch/scripts/convert.py <report.md> --format pdf
-python deepresearch/scripts/convert.py <report.md> --format both --out-dir exports/
+python skills/deepresearch/scripts/convert.py <report.md>                        # both formats
+python skills/deepresearch/scripts/convert.py <report.md> --format pdf
+python skills/deepresearch/scripts/convert.py <report.md> --format both --out-dir exports/
 ```
 
 One-time dependencies: `npm install -g @mermaid-js/mermaid-cli` and `pip install python-docx reportlab`.
@@ -94,7 +94,7 @@ Each skill follows this layout:
 ├── SKILL.md                  # entry point: workflow, phases, rules
 ├── agents/                   # skill-local role contract copies (for portability)
 ├── references/               # reference files loaded by SKILL.md as needed
-├── scripts/                  # supporting scripts (e.g., deepresearch/scripts/convert.py)
+├── scripts/                  # supporting scripts (e.g., skills/deepresearch/scripts/convert.py)
 └── pressure-scenarios.md     # adversarial validation scenarios (where present)
 ```
 
@@ -140,5 +140,5 @@ docs/deepresearch/<repo-name>-<YYYY-MM-DD>/
 ## Adding a New Skill
 
 1. Write a design spec → `docs/orchestration/specs/YYYY-MM-DD-<name>-design.md`
-2. Create `<skill>/SKILL.md` and supporting files
+2. Create `skills/<skill>/SKILL.md` and supporting files
 3. Update the `README.md` skill index table

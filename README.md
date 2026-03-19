@@ -28,9 +28,9 @@ All 17 skills load automatically — no separate superpowers installation needed
 ## Repository Layout
 
 - `agents/`: shared child-agent role contracts used across multiple skills
-- `context-research-orchestrator/`: the skill itself and its reusable reference files
-- `semantic-batch-refactor-orchestrator/`: the skill itself and its validation scenarios
-- `deepresearch/`: the skill itself and its references, agents, and scripts
+- `skills/context-research-orchestrator/`: the skill itself and its reusable reference files
+- `skills/semantic-batch-refactor-orchestrator/`: the skill itself and its validation scenarios
+- `skills/deepresearch/`: the skill itself and its references, agents, and scripts
 - `superpowers/`: git submodule — general-purpose skills library
 - `docs/orchestration/specs/`: design documents for skills
 
@@ -89,7 +89,7 @@ semantic-batch-refactor-orchestrator (SBRO)
 Use `deepresearch` when the output is a document for a human to read.
 Use `context-research-orchestrator` when the output feeds downstream agents or SBRO.
 
-## Orchestration Skills (`agents/`, `context-research-orchestrator/`, `deepresearch/`, `semantic-batch-refactor-orchestrator/`)
+## Orchestration Skills (`agents/`, `skills/context-research-orchestrator/`, `skills/deepresearch/`, `skills/semantic-batch-refactor-orchestrator/`)
 
 ### `context-research-orchestrator`
 
@@ -98,10 +98,10 @@ for human understanding and a `Context Pack` for downstream agents. Includes a
 `sbro_readiness` field and `SBRO Handoff Block` when semantic batch execution is
 likely downstream.
 
-- `context-research-orchestrator/SKILL.md`
-- `context-research-orchestrator/references/output-templates.md`
-- `context-research-orchestrator/references/delegation-guidance.md`
-- `context-research-orchestrator/pressure-scenarios.md`
+- `skills/context-research-orchestrator/SKILL.md`
+- `skills/context-research-orchestrator/references/output-templates.md`
+- `skills/context-research-orchestrator/references/delegation-guidance.md`
+- `skills/context-research-orchestrator/pressure-scenarios.md`
 
 ### `deepresearch`
 
@@ -111,11 +111,11 @@ codebases can be researched across context resets. Accepts `depth: quick | stand
 
 Not a substitute for CRO when structured agent-consumable output is needed.
 
-- `deepresearch/SKILL.md`
-- `deepresearch/agents/exploration-agent.md`
-- `deepresearch/references/subagent-scaling.md`
-- `deepresearch/references/plan-template.md`
-- `deepresearch/references/output-document-template.md`
+- `skills/deepresearch/SKILL.md`
+- `skills/deepresearch/agents/exploration-agent.md`
+- `skills/deepresearch/references/subagent-scaling.md`
+- `skills/deepresearch/references/plan-template.md`
+- `skills/deepresearch/references/output-document-template.md`
 
 ### `semantic-batch-refactor-orchestrator`
 
@@ -124,8 +124,8 @@ Specification-first orchestration for large semantic code changes. Consumes a CR
 writes `corrections.md` after execution so future CRO runs can treat corrections as
 prior research.
 
-- `semantic-batch-refactor-orchestrator/SKILL.md`
-- `semantic-batch-refactor-orchestrator/pressure-scenarios.md`
+- `skills/semantic-batch-refactor-orchestrator/SKILL.md`
+- `skills/semantic-batch-refactor-orchestrator/pressure-scenarios.md`
 
 ## Superpowers Skills (`superpowers/skills/`)
 
