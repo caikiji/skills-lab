@@ -110,13 +110,11 @@ docs/deepresearch/<repo-name>-<YYYY-MM-DD>/
 | Path | Contents |
 |------|----------|
 | `docs/orchestration/specs/` | Design specs — source of truth for skill architecture |
-| `docs/orchestration/plans/` | Step-by-step implementation plans |
 | `docs/orchestration/research/` | Persisted CRO research reports and context packs |
 | `docs/deepresearch/` | deepresearch session state and output |
 
 ## Adding a New Skill
 
 1. Write a design spec → `docs/orchestration/specs/YYYY-MM-DD-<name>-design.md`
-2. Write an implementation plan → `docs/orchestration/plans/YYYY-MM-DD-<name>.md`
-3. Create `<skill>/SKILL.md` and supporting files
-4. Update the `README.md` skill index table
+2. Create `<skill>/SKILL.md` and supporting files
+3. Update the `README.md` skill index table
