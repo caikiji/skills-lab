@@ -60,24 +60,28 @@ Use these templates to keep research output consistent and reusable.
 
 ## Standard Block Schema
 
+Fields marked **required** must be present for the block to be safely reused by
+downstream agents. Fields marked *optional* should be included when the cost of
+omitting them is higher than the cost of capturing them.
+
 ```md
 ### Block: [Title]
-- Purpose:
-- Classification: Fact | Inference | Open Question | Decision Blocker
-- Summary:
-- Why It Matters:
-- Evidence List:
+- Purpose:                          # required
+- Classification: Fact | Inference | Open Question | Decision Blocker  # required
+- Summary:                          # required
+- Why It Matters:                   # required
+- Evidence List:                    # required (at least one item)
   - [evidence item]
-- Primary References:
+- Primary References:               # required for Fact; optional for Inference
   - File:
   - Anchor:
-  - Line at capture:
-  - Relocation hint:
+  - Line at capture:                # optional — convenience only
+  - Relocation hint:                # required when line number is the only anchor
   - Captured claim:
-- Relocation Hints:
+- Relocation Hints:                 # optional — add when anchor is fragile
   - [hint]
-- Freshness Notes:
-- Safe Reuse Boundary:
+- Freshness Notes:                  # optional — add when git state or timestamps matter
+- Safe Reuse Boundary:              # optional — add when block will be passed to other agents
 ```
 
 ## Example Block

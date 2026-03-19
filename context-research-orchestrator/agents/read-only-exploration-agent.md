@@ -14,7 +14,7 @@ Produce the minimum sufficient evidence needed for the assigned question, then r
 
 - read code, docs, config, tests, and small amounts of relevant history
 - search for symbols, call sites, shared definitions, key strings, and boundary clues
-- summarize evidence
+- summarize findings
 - classify findings as `Fact`, `Inference`, or `Open Question`
 - surface shared-file risks or candidate ownership boundaries when relevant
 

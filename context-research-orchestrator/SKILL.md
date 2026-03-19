@@ -98,6 +98,10 @@ before any task-specific fields. The subagent has no other way to learn its role
 constraints, or output contract. Dispatching without embedded role content is not
 allowed.
 
+Dispatch no more than **6** read-only exploration subagents in parallel regardless
+of codebase size. If more areas need coverage, merge smaller search areas and note
+the consolidation in the research plan.
+
 ### 4. Focused exploration
 
 Collect evidence about:

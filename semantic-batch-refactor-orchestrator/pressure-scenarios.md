@@ -232,6 +232,28 @@ The research says there may be two conflicting event schemas in different packag
 - schema conflict is delegated as a task-local guess
 - no update to the frozen rule summary before execution
 
+## Scenario 11: Agent Role Content Not Embedded in Dispatch
+
+**Pressure:** The primary agent correctly identifies exploration or implementation subagents to dispatch, but omits the role file content from the prompt, expecting the subagent to know its constraints implicitly.
+
+**Prompt:**
+
+```text
+The rules are frozen. Fan out the billing migration to three implementation agents — one per service.
+```
+
+**Expected behavior with skill:**
+
+- before constructing each dispatch packet, agent reads the applicable role file (`agents/read-only-exploration-agent.md` or `agents/implementation-agent.md`) in full
+- the complete role file content appears verbatim at the top of each subagent prompt, before any task-specific fields
+- this applies to exploration subagents, implementation subagents, and conformance review subagents
+
+**Failure signs:**
+
+- subagents receive only task-specific packets with no role preamble
+- role contract is summarized or paraphrased rather than embedded verbatim
+- agent cites the role file path in the packet but does not paste the file content
+
 ## Evaluation Checklist
 
 The skill is behaving correctly if the agent consistently:

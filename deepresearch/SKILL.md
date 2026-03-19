@@ -52,10 +52,20 @@ Create `state/chunks/` directory.
 ## Phase 3: Parallel Research
 
 Dispatch subagents in parallel using the `dispatching-parallel-agents` skill.
+Note: the dispatch protocol in that skill does not cover agent role embedding —
+follow the mandatory embedding requirement above regardless of which dispatch
+method is used.
 
 If the `dispatching-parallel-agents` skill is not available, dispatch subagents
 sequentially instead. Mark each chunk complete in `plan.md` as it finishes before
 dispatching the next.
+
+**Hung or empty chunk handling:** After dispatching, check each chunk file as it
+completes. If a chunk file is missing, empty, or contains no structured findings
+after the subagent returns, treat it as failed and re-dispatch once. If it fails
+a second time, write a placeholder noting the shard as unresolved, record the
+failure in `plan.md` under `Notes`, and proceed — do not block synthesis on a
+persistently failing shard.
 
 **Mandatory before any dispatch:** Read `agents/exploration-agent.md` in full.
 Paste its complete content verbatim at the top of every subagent prompt, before

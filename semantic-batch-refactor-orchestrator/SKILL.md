@@ -38,6 +38,8 @@ Do not use when:
 - Broad execution requires an explicit user approval checkpoint.
 - Parallel exploration may begin early; parallel modification may not.
 - If `context-research-orchestrator` reports a `Decision Blocker`, broad execution must not begin until it is resolved.
+- When dispatching any subagent, read the applicable agent role file in full and paste its complete content verbatim at the top of the subagent prompt, before any task-specific fields.
+- Total parallel subagents must not exceed 6 at any time, across both exploration and implementation rounds.
 
 ## Workflow
 

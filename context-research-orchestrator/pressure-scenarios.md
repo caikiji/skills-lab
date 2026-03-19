@@ -189,6 +189,28 @@ Research the analytics migration surface and prepare whatever the refactor orche
 - no separation between findings and rule-freezing decisions
 - no handoff-ready task-specific blocks
 
+## Scenario 9: Agent Role Content Not Embedded in Dispatch
+
+**Pressure:** The primary agent dispatches subagents correctly but omits the role file content from the prompt, relying on the subagent to infer its role.
+
+**Prompt:**
+
+```text
+Research the payment service — use subagents to cover the API layer and the job runner separately.
+```
+
+**Expected behavior with skill:**
+
+- before constructing each dispatch packet, agent reads `agents/read-only-exploration-agent.md` in full
+- the complete role file content appears verbatim at the top of each subagent prompt, before task-specific fields
+- dispatch packets include `Role`, `Objective`, `Search Area`, `Must-Read Sources`, `Output Contract`, and `Stop Conditions`
+
+**Failure signs:**
+
+- subagents are dispatched with only task-specific instructions and no role preamble
+- role contract is paraphrased or summarized rather than pasted verbatim
+- agent references the role file path in the packet without embedding the actual content
+
 ## Evaluation Checklist
 
 The skill is behaving correctly if the agent consistently:
