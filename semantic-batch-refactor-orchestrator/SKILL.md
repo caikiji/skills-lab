@@ -98,6 +98,13 @@ Do not use when:
    - update task notes for later rounds
    - reissue the changed guidance before resuming implementation
 
+   **Re-approval rule:** If the rule change is minor (a local edge case, no effect on
+   other packets or shared files), apply it inline without returning to step 10. If the
+   rule change is substantial — it alters the core mapping logic, changes scope
+   boundaries, affects shared files, or would change what any future packets do — stop
+   broad execution, present a revised Execution Checkpoint to the user, and wait for
+   approval before resuming. When in doubt, treat the change as substantial.
+
 ## Clarification Checklist
 
 The primary agent must gather all of the following:
@@ -233,6 +240,13 @@ Use **single-round** execution only when:
 - sample calibration did not expose major ambiguity
 - files can be partitioned cleanly
 - no unresolved `Decision Blocker` remains in the latest research output
+
+**How single-round relates to the Hard Rules:** Single-round execution does not
+eliminate exploration — it compresses it. The primary agent performs all necessary
+exploration inline (steps 5–6) before partitioning. Parallel file modification still
+cannot begin until ownership is frozen and the execution plan is approved. The only
+difference from two-round execution is that exploration is not dispatched to parallel
+subagents; it stays with the primary agent in the same session.
 
 Use **two-round** execution when:
 
