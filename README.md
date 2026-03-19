@@ -17,6 +17,7 @@ This repository stores reusable local agent skills and their supporting document
 | Skill | Purpose | Status | Key Files |
 | --- | --- | --- | --- |
 | `context-research-orchestrator` | Evidence-driven codebase research and context packaging for complex tasks, with optional read-only exploration subagents and reusable source-bound outputs | Active | `context-research-orchestrator/SKILL.md`, `context-research-orchestrator/references/output-templates.md`, `context-research-orchestrator/references/delegation-guidance.md`, `context-research-orchestrator/pressure-scenarios.md` |
+| `deepresearch` | User-facing codebase research skill that produces a layered Markdown report with embedded Mermaid diagrams, from shallow project overview to deep module analysis, using parallel subagents and persistent multi-round state | Active | `deepresearch/SKILL.md`, `deepresearch/agents/exploration-agent.md`, `deepresearch/references/subagent-scaling.md`, `deepresearch/references/plan-template.md`, `deepresearch/references/output-document-template.md` |
 | `semantic-batch-refactor-orchestrator` | Specification-first orchestration for large semantic batch refactors with safe multi-subagent execution, source-bound task context, feedback-driven rule updates, and formal handoff from `context-research-orchestrator` when repository understanding is still shallow | Active | `semantic-batch-refactor-orchestrator/SKILL.md`, `semantic-batch-refactor-orchestrator/pressure-scenarios.md` |
 
 ## Current Skills
@@ -38,6 +39,27 @@ Related docs:
 
 - Design spec: `docs/orchestration/specs/2026-03-18-context-research-orchestrator-design.md`
 - Implementation plan: `docs/orchestration/plans/2026-03-18-context-research-orchestrator.md`
+
+### `deepresearch`
+
+User-facing codebase research skill. Produces a single Markdown document with
+embedded Mermaid diagrams, layered from shallow project overview to deep module
+analysis. Uses parallel subagents and persistent multi-round state so large
+codebases can be researched safely across context resets.
+
+**Key files:**
+- `deepresearch/SKILL.md`
+- `deepresearch/agents/exploration-agent.md`
+- `deepresearch/references/subagent-scaling.md`
+- `deepresearch/references/plan-template.md`
+- `deepresearch/references/output-document-template.md`
+- `docs/orchestration/specs/2026-03-19-deepresearch-skill-design.md`
+- `docs/orchestration/plans/2026-03-19-deepresearch-skill.md`
+
+**Depth modes:** `quick` | `standard` | `deep`
+
+**Design spec:** `docs/orchestration/specs/2026-03-19-deepresearch-skill-design.md`
+**Implementation plan:** `docs/orchestration/plans/2026-03-19-deepresearch-skill.md`
 
 ### `semantic-batch-refactor-orchestrator`
 
