@@ -20,3 +20,7 @@ temp/
 
 # Local test artifacts
 output/
+
+# Allow deepresearch research output
+!docs/deepresearch/**/output/
+!docs/deepresearch/**/output/**
