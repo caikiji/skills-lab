@@ -67,10 +67,11 @@ a second time, write a placeholder noting the shard as unresolved, record the
 failure in `plan.md` under `Notes`, and proceed — do not block synthesis on a
 persistently failing shard.
 
-**Mandatory before any dispatch:** Read `agents/exploration-agent.md` in full.
-Paste its complete content verbatim at the top of every subagent prompt, before
-any task-specific fields. Dispatching without the embedded role content is not
-allowed — the subagent will not know its constraints or output format otherwise.
+**Mandatory before any dispatch:** Read the skill-local role file
+`skills/deepresearch/agents/exploration-agent.md` in full. Paste its complete
+content verbatim at the top of every subagent prompt, before any task-specific
+fields. Dispatching without the embedded role content is not allowed — the
+subagent will not know its constraints or output format otherwise.
 
 For each shard, construct a dispatch packet with all required fields (see
 [agents/exploration-agent.md](agents/exploration-agent.md)):
@@ -106,12 +107,15 @@ synthesis per batch, then merge into `state/synthesis.md`.
 
 When in doubt, prefer batching over a single pass.
 
-Update `plan.md`: mark synthesis complete, set `current: generating`.
-
 **Context limit rule:** If synthesizing all chunks would exceed your context
 window, write whatever partial synthesis you have completed to `synthesis.md`,
-note the stopping point in `plan.md` under `Notes`, and stop. The next round
-will resume from this point.
+note the stopping point and completed batch range in `plan.md` under
+`Synthesis`/`Notes`, keep `current: synthesis`, and stop. The next round will
+resume from this point.
+
+Only after all required chunk batches have been merged into the final
+`state/synthesis.md`, update `plan.md`: mark synthesis complete and set
+`current: generating`.
 
 ## Phase 5: Document Generation
 
@@ -137,7 +141,7 @@ To convert the Markdown output to PDF or DOCX with real rendered Mermaid diagram
 use the bundled conversion script:
 
 ```bash
-python deepresearch/scripts/convert.py <output/report.md> [--format pdf|docx|both]
+python skills/deepresearch/scripts/convert.py <output/report.md> [--format pdf|docx|both]
 ```
 
 **Requirements:**

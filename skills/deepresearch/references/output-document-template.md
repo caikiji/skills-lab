@@ -1,6 +1,6 @@
 # Output Document Template
 
-The final document is written to `output/YYYY-MM-DD-<repo>-research.md` inside the state directory.
+The final document is written to `output/YYYY-MM-DD-<repo>-research.md` inside the session directory root, alongside `state/`.
 
 ## Mode Coverage
 

@@ -92,11 +92,13 @@ Choose one:
 
 Read [references/delegation-guidance.md](references/delegation-guidance.md) before dispatching any exploration subagent.
 
-**Mandatory before any subagent dispatch:** Read `agents/read-only-exploration-agent.md`
-in full. Paste its complete content verbatim at the top of every subagent prompt,
-before any task-specific fields. The subagent has no other way to learn its role,
-constraints, or output contract. Dispatching without embedded role content is not
-allowed.
+**Mandatory before any subagent dispatch:** Read the skill-local role file
+`skills/context-research-orchestrator/agents/read-only-exploration-agent.md`
+in full. If that file is unavailable in the current installation, fall back to
+`agents/read-only-exploration-agent.md`. Paste the complete role content verbatim
+at the top of every subagent prompt, before any task-specific fields. The
+subagent has no other way to learn its role, constraints, or output contract.
+Dispatching without embedded role content is not allowed.
 
 Dispatch no more than **6** read-only exploration subagents in parallel regardless
 of codebase size. If more areas need coverage, merge smaller search areas and note
