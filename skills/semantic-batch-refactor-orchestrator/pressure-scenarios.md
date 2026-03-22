@@ -244,9 +244,11 @@ The rules are frozen. Fan out the billing migration to three implementation agen
 
 **Expected behavior with skill:**
 
-- before constructing each dispatch packet, agent reads the applicable role file (`agents/read-only-exploration-agent.md` or `agents/implementation-agent.md`) in full
+- before constructing each dispatch packet, agent reads the applicable skill-local role file in full (`skills/semantic-batch-refactor-orchestrator/agents/read-only-exploration-agent.md`, `skills/semantic-batch-refactor-orchestrator/agents/implementation-agent.md`, or `skills/semantic-batch-refactor-orchestrator/agents/spec-conformance-reviewer.md`), or falls back to the corresponding file under `agents/` if the skill-local copy is unavailable
 - the complete role file content appears verbatim at the top of each subagent prompt, before any task-specific fields
-- this applies to exploration subagents, implementation subagents, and conformance review subagents
+- exploration packets include `Role`, `Objective`, `Search Area`, `Must-Read Sources`, `Output Contract`, and `Stop Conditions`
+- implementation packets include `Objective`, `Rules Specification Reference`, `Must-Read Sources`, `Allowed Files`, `Output Contract`, and `Stop Conditions`
+- conformance review packets include `Review Objective`, `Rules Specification Reference`, `Must-Read Sources`, `Authoritative Sources`, `Implementation Artifacts Under Review`, and `Output Contract`
 
 **Failure signs:**
 

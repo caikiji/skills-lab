@@ -26,13 +26,15 @@ current: light-probe | dispatching | researching | synthesis | generating | done
 ...
 
 ## Synthesis
-- [ ] synthesis.md
+- [ ] batches 01-03 merged into synthesis.md
+- [ ] batches 04-06 merged into synthesis.md
+- [ ] final synthesis.md complete
 
 ## Output
 - [ ] output/YYYY-MM-DD-<repo>-research.md
 
 ## Notes
-<Record stop reason if context limit was reached, or any anomalies.>
+<Record stop reason if context limit was reached, batch ranges already merged, or any anomalies.>
 ```
 
 ## Resume Logic
@@ -44,8 +46,8 @@ When the main agent starts (or restarts), read `plan.md` first:
 | — | No | Run Light Probe → write `plan.md` |
 | `light-probe` | Yes, probe incomplete | Re-run Light Probe from scratch → overwrite `plan.md` |
 | `dispatching` or `researching` | Yes, chunks incomplete | Re-dispatch missing chunk subagents |
-| `synthesis` | Yes, all chunks done | Read chunks in batches → write `synthesis.md` |
-| `generating` | Yes, synthesis done | Read `synthesis.md` → write `output/YYYY-MM-DD-<repo>-research.md` |
+| `synthesis` | Yes, all chunks done | Resume the next incomplete synthesis batch or finish the final merge into `synthesis.md` |
+| `generating` | Yes, synthesis done | Read complete `synthesis.md` → write `output/YYYY-MM-DD-<repo>-research.md` |
 | `done` | Yes | Report that research is already complete |
 
 ## Batch Synthesis Rule

@@ -89,7 +89,7 @@ Do not use when:
    Turn the clarified requirements into an execution spec. This is not a summary. It must be detailed enough that multiple agents will make the same decision on the same input.
 
 5. **Choose an exploration strategy**
-   The primary agent may explore critical files directly. If a `Context Pack` already exists, use it to identify likely rule sources, contention surfaces, and candidate search areas first. If the search surface is still too large, dispatch read-only exploration subagents to gather patterns, candidate files, and likely contention points. **Mandatory before any exploration dispatch:** read `agents/read-only-exploration-agent.md` in full and paste its complete content verbatim at the top of each exploration subagent prompt, before any task-specific fields — the subagent will otherwise not know its role, constraints, or output format.
+   The primary agent may explore critical files directly. If a `Context Pack` already exists, use it to identify likely rule sources, contention surfaces, and candidate search areas first. If the search surface is still too large, dispatch read-only exploration subagents to gather patterns, candidate files, and likely contention points. **Mandatory before any exploration dispatch:** read the skill-local role file `skills/semantic-batch-refactor-orchestrator/agents/read-only-exploration-agent.md` in full and paste its complete content verbatim at the top of each exploration subagent prompt, before any task-specific fields. If that file is unavailable in the current installation, fall back to `agents/read-only-exploration-agent.md`. The subagent will otherwise not know its role, constraints, or output format.
 
 6. **Run trial calibration**
    First reason through representative examples. Then make a small real sample edit set that covers multiple common patterns. Use the results to expose missing rules, hidden exceptions, and contested files.
@@ -104,7 +104,7 @@ Do not use when:
    Split by explicit file ownership first. Directory or module boundaries are acceptable only when they resolve cleanly into non-overlapping file sets.
 
 9. **Bind source-backed context into each task packet**
-   Every task packet must include the exact documents or code files the subagent must read before acting. If a `Context Pack` exists, extract only the task-relevant blocks and pair them with must-read source paths. Summaries may help orient the work, but they are not the authority. **Mandatory before any implementation dispatch:** read `agents/implementation-agent.md` in full and paste its complete content verbatim at the top of each implementation subagent prompt, before any task-specific fields — the subagent will otherwise not know its authority hierarchy, decision boundaries, or escalation rules.
+   Every task packet must include the exact documents or code files the subagent must read before acting. If a `Context Pack` exists, extract only the task-relevant blocks and pair them with must-read source paths. Summaries may help orient the work, but they are not the authority. **Mandatory before any implementation dispatch:** read the skill-local role file `skills/semantic-batch-refactor-orchestrator/agents/implementation-agent.md` in full and paste its complete content verbatim at the top of each implementation subagent prompt, before any task-specific fields. If that file is unavailable in the current installation, fall back to `agents/implementation-agent.md`. The subagent will otherwise not know its authority hierarchy, decision boundaries, or escalation rules.
 
 10. **Ask the user to approve the plan**
    Present the frozen rule summary, execution mode, primary-agent responsibilities, subagent responsibilities, and known risks. Do not start broad implementation before approval.
@@ -256,7 +256,7 @@ Required response:
 
 Never fix one result silently and continue with stale task packets.
 
-When the primary agent wants a focused standards check after implementation, read `agents/spec-conformance-reviewer.md` in full and paste its complete content verbatim at the top of each conformance review subagent prompt, before any task-specific fields.
+When the primary agent wants a focused standards check after implementation, read the skill-local role file `skills/semantic-batch-refactor-orchestrator/agents/spec-conformance-reviewer.md` in full and paste its complete content verbatim at the top of each conformance review subagent prompt, before any task-specific fields. If that file is unavailable in the current installation, fall back to `agents/spec-conformance-reviewer.md`.
 
 ## Execution Mode Selection
 
@@ -356,13 +356,25 @@ Default shared files for the primary agent:
 
 ```md
 ## Exploration Task
+- Role: read-only-exploration-agent
 - Objective:
-- Documents/code files that must be read before searching:
-- Search area:
+- Must-Read Sources:
+  - [path]
+- Search Area:
 - Questions to answer:
 - Patterns to classify:
 - Shared-file types to identify:
-- Output required:
+- Output Contract:
+  - summary of findings
+  - source references with anchors
+  - open questions
+  - suspected contention surfaces
+- Stop Conditions:
+  - stop if the must-read sources are missing or insufficient
+  - stop if critical evidence lies outside the assigned search area
+  - stop if the packet cannot resolve conflicting source material
+- Helpful reference sources:
+  - [path]
 - Findings that require source citation:
 - Constraints: read-only, no edits, no rule invention
 ```

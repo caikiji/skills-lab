@@ -201,7 +201,7 @@ Research the payment service — use subagents to cover the API layer and the jo
 
 **Expected behavior with skill:**
 
-- before constructing each dispatch packet, agent reads `agents/read-only-exploration-agent.md` in full
+- before constructing each dispatch packet, agent reads `skills/context-research-orchestrator/agents/read-only-exploration-agent.md` in full, or falls back to `agents/read-only-exploration-agent.md` if the skill-local copy is unavailable
 - the complete role file content appears verbatim at the top of each subagent prompt, before task-specific fields
 - dispatch packets include `Role`, `Objective`, `Search Area`, `Must-Read Sources`, `Output Contract`, and `Stop Conditions`
 

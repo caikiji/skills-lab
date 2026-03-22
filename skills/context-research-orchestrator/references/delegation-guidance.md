@@ -26,18 +26,23 @@ Use multi-round exploration when:
 
 ```md
 ## Exploration Task
+- Role: read-only-exploration-agent
 - Objective:
-- Search area:
+- Search Area:
 - Questions to answer:
-- Must-read sources:
+- Must-Read Sources:
   - [path]
 - Helpful reference sources:
   - [path]
-- Required output:
+- Output Contract:
   - summary of findings
   - source references with anchors
   - open questions
   - suspected contention surfaces
+- Stop Conditions:
+  - stop if must-read sources are missing or insufficient
+  - stop if critical evidence lies outside the assigned search area
+  - stop if source conflicts cannot be resolved from the provided packet
 - Constraints:
   - read-only
   - no edits
