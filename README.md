@@ -23,7 +23,7 @@ git submodule update --init --recursive
 ```
 
 After installing, run `/plugin reload-plugins` or restart Claude Code.
-All 17 skills load automatically — no separate superpowers installation needed.
+All 18 skills load automatically - no separate superpowers installation needed.
 
 ## Repository Layout
 
@@ -31,7 +31,8 @@ All 17 skills load automatically — no separate superpowers installation needed
 - `skills/context-research-orchestrator/`: the skill itself and its reusable reference files
 - `skills/semantic-batch-refactor-orchestrator/`: the skill itself and its validation scenarios
 - `skills/deepresearch/`: the skill itself and its references, agents, and scripts
-- `superpowers/`: git submodule — general-purpose skills library
+- `skills/using-orchestration-skills/`: the entry guide for choosing among the orchestration skills
+- `superpowers/`: git submodule - general-purpose skills library
 - `docs/orchestration/specs/`: design documents for skills
 
 ## Skill Index
@@ -41,7 +42,8 @@ All 17 skills load automatically — no separate superpowers installation needed
 | `context-research-orchestrator` | Evidence-driven codebase research; produces `Research Report` + `Context Pack` with `sbro_readiness` signal for downstream agents | Active |
 | `deepresearch` | User-facing codebase research; produces a layered Markdown report with Mermaid diagrams | Active |
 | `semantic-batch-refactor-orchestrator` | Specification-first orchestration for large semantic batch refactors; consumes CRO Context Pack | Active |
-| `brainstorming` | Before any creative work — explores intent, proposes approaches, gets design approval | Active |
+| `using-orchestration-skills` | Selects the right orchestration skill and sequence for human-facing research, downstream-agent context packaging, and semantic batch refactors | Active |
+| `brainstorming` | Before any creative work - explores intent, proposes approaches, gets design approval | Active |
 | `writing-plans` | Turns a spec into a precise, step-by-step implementation plan | Active |
 | `writing-skills` | Creates and validates skill documents using TDD methodology | Active |
 | `subagent-driven-development` | Executes a plan in the current session with per-task subagents and two-stage review | Active |
@@ -54,42 +56,54 @@ All 17 skills load automatically — no separate superpowers installation needed
 | `requesting-code-review` | Dispatches a reviewer subagent with precise git SHA range | Active |
 | `receiving-code-review` | Technically evaluates review feedback before implementing | Active |
 | `finishing-a-development-branch` | Verifies tests, presents merge/PR/keep/discard options, cleans up worktree | Active |
-| `using-superpowers` | Session startup — establishes how to find and invoke skills | Active |
+| `using-superpowers` | Session startup - establishes how to find and invoke skills | Active |
 
 ## Skill Relationships
 
 The three orchestration skills connect at defined handoff points.
 
 ```
-deepresearch ──────────────────────────────────→ human reader
+deepresearch ----------------------------------> human reader
                 (if codebase-wide change found)
-                       suggests running CRO ──→ (user decides)
+                       suggests running CRO --> (user decides)
 
 context-research-orchestrator (CRO)
-  └── Context Pack
-        ├── sbro_readiness: ready_to_freeze | needs_verification | blocked
-        └── SBRO Handoff Block (facts / inferences / blockers / shared-file risks)
-              ▼
+  + Context Pack
+        + sbro_readiness: ready_to_freeze | needs_verification | blocked
+        + SBRO Handoff Block (facts / inferences / blockers / shared-file risks)
+              v
 semantic-batch-refactor-orchestrator (SBRO)
-  ├── step 3: checks sbro_readiness; gates execution on blocked/needs_verification
-  └── step 12: writes corrections.md in Context Pack schema → future CRO reads it
+  + step 3: checks sbro_readiness; gates execution on blocked/needs_verification
+  + step 12: writes corrections.md in Context Pack schema -> future CRO reads it
 ```
 
 **When to run CRO before SBRO:**
 
 | Situation | Action |
 |-----------|--------|
-| Task crosses ≥ 3 modules | Run CRO first |
+| Task crosses >= 3 modules | Run CRO first |
 | Shared files / types / event definitions not yet located | Run CRO first |
 | Primary agent cannot write rules without reading source | Run CRO first |
-| Task limited to 1–2 modules with clear boundaries | Inline exploration in SBRO |
-| Fresh Context Pack already exists | Consume directly — skip CRO |
+| Task limited to 1-2 modules with clear boundaries | Inline exploration in SBRO |
+| Fresh Context Pack already exists | Consume directly - skip CRO |
 
 **deepresearch vs CRO:** Both research codebases but serve different consumers.
 Use `deepresearch` when the output is a document for a human to read.
 Use `context-research-orchestrator` when the output feeds downstream agents or SBRO.
+Use `using-orchestration-skills` when the agent first needs to make that selection and sequence the handoff correctly.
 
 ## Orchestration Skills (`agents/`, `skills/context-research-orchestrator/`, `skills/deepresearch/`, `skills/semantic-batch-refactor-orchestrator/`)
+
+### `using-orchestration-skills`
+
+Entry guide for the orchestration layer in this repository. Helps the agent decide:
+
+- when a user-facing report calls for `deepresearch`
+- when reusable, source-backed context calls for `context-research-orchestrator`
+- when a large semantic code change calls for `semantic-batch-refactor-orchestrator`
+- when the right path is `CRO -> SBRO`
+
+- `skills/using-orchestration-skills/SKILL.md`
 
 ### `context-research-orchestrator`
 
@@ -130,28 +144,28 @@ prior research.
 ## Superpowers Skills (`superpowers/skills/`)
 
 General-purpose development workflow skills. Load automatically alongside the
-orchestration skills — no separate installation needed.
+orchestration skills - no separate installation needed.
 
 | Skill | When to use |
 |-------|-------------|
-| `using-superpowers` | Session startup — establishes how to find and invoke skills |
+| `using-superpowers` | Session startup - establishes how to find and invoke skills |
 | `brainstorming` | Before any creative work: features, components, behavior changes |
 | `writing-plans` | When you have a spec and need a step-by-step implementation plan |
 | `writing-skills` | When creating or editing skill documents (applies TDD to documentation) |
 | `subagent-driven-development` | Executing a plan in the current session with per-task subagents and two-stage review |
-| `executing-plans` | Fallback when subagents are unavailable — inline sequential execution |
+| `executing-plans` | Fallback when subagents are unavailable - inline sequential execution |
 | `dispatching-parallel-agents` | When 2+ independent tasks can be worked on concurrently |
 | `using-git-worktrees` | Before feature work that needs an isolated workspace |
-| `test-driven-development` | Before writing any implementation code — write the failing test first |
-| `systematic-debugging` | When encountering any bug or unexpected behavior — find root cause before fixing |
-| `verification-before-completion` | Before claiming work is done — run the verification command and read the output |
-| `requesting-code-review` | After completing a task or feature — dispatch a reviewer subagent |
-| `receiving-code-review` | When acting on review feedback — verify before implementing |
-| `finishing-a-development-branch` | When implementation is complete — verify tests, choose merge/PR/keep/discard |
+| `test-driven-development` | Before writing any implementation code - write the failing test first |
+| `systematic-debugging` | When encountering any bug or unexpected behavior - find root cause before fixing |
+| `verification-before-completion` | Before claiming work is done - run the verification command and read the output |
+| `requesting-code-review` | After completing a task or feature - dispatch a reviewer subagent |
+| `receiving-code-review` | When acting on review feedback - verify before implementing |
+| `finishing-a-development-branch` | When implementation is complete - verify tests, choose merge/PR/keep/discard |
 
 ## Adding New Skills
 
-1. Write a design spec → `docs/orchestration/specs/YYYY-MM-DD-<name>-design.md`
+1. Write a design spec -> `docs/orchestration/specs/YYYY-MM-DD-<name>-design.md`
 2. Create `<skill>/SKILL.md` and supporting files
 3. Update this README skill index table
 
