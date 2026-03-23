@@ -184,5 +184,8 @@ orchestration skills - no separate installation needed.
 ## Maintenance Notes
 
 - Keep the Skill Index table updated when adding or renaming skills.
+- Update the plugin version on every commit.
+- For small commits, bump the patch version: `a.b.(c+1)`.
+- For larger non-patch changes, bump the minor version and reset patch: `a.(b+1).0`.
 - Prefer one top-level directory per skill.
 - When editing canonical agent files under `agents/`, sync the same change to local copies in skill-specific `agents/` directories.
