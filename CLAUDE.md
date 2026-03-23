@@ -136,12 +136,10 @@ docs/deepresearch/<repo-name>-<YYYY-MM-DD>/
 
 | Path | Contents |
 |------|----------|
-| `docs/orchestration/specs/` | Design specs - source of truth for skill architecture |
 | `docs/deepresearch/` | deepresearch session state and output |
 
 ## Adding a New Skill
 
-1. Write a design spec -> `docs/orchestration/specs/YYYY-MM-DD-<name>-design.md`
-2. Create `skills/<skill>/SKILL.md` and supporting files - one top-level directory per skill
-3. Update the `README.md` skill index table
-4. If the skill dispatches subagents, copy relevant canonical `agents/` contracts into `skills/<skill>/agents/`
+1. Create `skills/<skill>/SKILL.md` and supporting files - one top-level directory per skill
+2. Update the `README.md` skill index table
+3. If the skill dispatches subagents, copy relevant canonical `agents/` contracts into `skills/<skill>/agents/`

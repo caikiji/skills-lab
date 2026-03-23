@@ -1,9 +1,9 @@
 ---
-name: using-orchestration-skills
+name: using-easywork
 description: Use when a task may require repository research, reusable context packaging for downstream agents, or semantic batch refactor coordination, and the agent must choose the right skills-lab orchestration skill and sequence.
 ---
 
-# Using Orchestration Skills
+# Using Easywork
 
 Choose among the orchestration skills in this repository by identifying the output consumer first, then the execution risk.
 
