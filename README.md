@@ -1,5 +1,7 @@
 # Skills Lab
 
+[中文说明](./README.zh-CN.md)
+
 This repository stores reusable local agent skills and their supporting documents.
 
 ## Installation
