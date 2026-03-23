@@ -8,7 +8,7 @@ This repository stores reusable local agent skills and their supporting document
 
 ```
 /plugin marketplace add https://github.com/Cai-ki/skills-lab
-/plugin install orchestration-skills@skills-lab
+/plugin install easywork@skills-lab
 ```
 
 ### From local path (already cloned)
@@ -19,7 +19,7 @@ git submodule update --init --recursive
 
 ```
 /plugin marketplace add path\to\skills-lab
-/plugin install orchestration-skills@skills-lab
+/plugin install easywork@skills-lab
 ```
 
 After installing, run `/plugin reload-plugins` or restart Claude Code.
@@ -31,9 +31,8 @@ All 18 skills load automatically - no separate superpowers installation needed.
 - `skills/context-pack/`: the skill itself and its reusable reference files
 - `skills/batch-refactor/`: the skill itself and its validation scenarios
 - `skills/deepresearch/`: the skill itself and its references, agents, and scripts
-- `skills/using-orchestration-skills/`: the entry guide for choosing among the orchestration skills
+- `skills/using-easywork/`: the entry guide for choosing among the orchestration skills
 - `superpowers/`: git submodule - general-purpose skills library
-- `docs/orchestration/specs/`: design documents for skills
 
 ## Skill Index
 
@@ -42,7 +41,7 @@ All 18 skills load automatically - no separate superpowers installation needed.
 | `context-pack` | Evidence-driven codebase research; produces `Research Report` + `Context Pack` with `sbro_readiness` signal for downstream agents | Active |
 | `deepresearch` | User-facing codebase research; produces a layered Markdown report with Mermaid diagrams | Active |
 | `batch-refactor` | Specification-first orchestration for large semantic batch refactors; consumes a `Context Pack` when one exists | Active |
-| `using-orchestration-skills` | Selects the right orchestration skill and sequence for human-facing research, downstream-agent context packaging, and semantic batch refactors | Active |
+| `using-easywork` | Selects the right orchestration skill and sequence for human-facing research, downstream-agent context packaging, and semantic batch refactors | Active |
 | `brainstorming` | Before any creative work - explores intent, proposes approaches, gets design approval | Active |
 | `writing-plans` | Turns a spec into a precise, step-by-step implementation plan | Active |
 | `writing-skills` | Creates and validates skill documents using TDD methodology | Active |
@@ -90,11 +89,11 @@ batch-refactor
 **deepresearch vs context-pack:** Both research codebases but serve different consumers.
 Use `deepresearch` when the output is a document for a human to read.
 Use `context-pack` when the output feeds downstream agents or `batch-refactor`.
-Use `using-orchestration-skills` when the agent first needs to make that selection and sequence the handoff correctly.
+Use `using-easywork` when the agent first needs to make that selection and sequence the handoff correctly.
 
 ## Orchestration Skills (`agents/`, `skills/context-pack/`, `skills/deepresearch/`, `skills/batch-refactor/`)
 
-### `using-orchestration-skills`
+### `using-easywork`
 
 Entry guide for the orchestration layer in this repository. Helps the agent decide:
 
@@ -103,7 +102,7 @@ Entry guide for the orchestration layer in this repository. Helps the agent deci
 - when a large semantic code change calls for `batch-refactor`
 - when the right path is `context-pack -> batch-refactor`
 
-- `skills/using-orchestration-skills/SKILL.md`
+- `skills/using-easywork/SKILL.md`
 
 ### `context-pack`
 
@@ -165,13 +164,11 @@ orchestration skills - no separate installation needed.
 
 ## Adding New Skills
 
-1. Write a design spec -> `docs/orchestration/specs/YYYY-MM-DD-<name>-design.md`
-2. Create `<skill>/SKILL.md` and supporting files
-3. Update this README skill index table
+1. Create `<skill>/SKILL.md` and supporting files
+2. Update this README skill index table
 
 ## Maintenance Notes
 
 - Keep the Skill Index table updated when adding or renaming skills.
 - Prefer one top-level directory per skill.
-- Store design documents under `docs/orchestration/specs/`.
 - When editing canonical agent files under `agents/`, sync the same change to local copies in skill-specific `agents/` directories.
