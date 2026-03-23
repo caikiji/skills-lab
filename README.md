@@ -43,7 +43,7 @@ All 19 skills load automatically - no separate superpowers installation needed.
 | `deepresearch` | User-facing codebase research; produces a layered Markdown report with Mermaid diagrams | Active |
 | `batch-refactor` | Specification-first orchestration for large semantic batch refactors; consumes a `Context Pack` when one exists | Active |
 | `log-query` | Answers natural-language questions over large local log files with staged text filtering, evidence-backed statistics, and optional post-filter semantic narrowing | Active |
-| `using-easywork` | Selects the right orchestration skill and sequence for human-facing research, downstream-agent context packaging, and semantic batch refactors | Active |
+| `using-easywork` | Selects the right core skill and sequence for large-log analysis, human-facing research, downstream-agent context packaging, and semantic batch refactors | Active |
 | `brainstorming` | Before any creative work - explores intent, proposes approaches, gets design approval | Active |
 | `writing-plans` | Turns a spec into a precise, step-by-step implementation plan | Active |
 | `writing-skills` | Creates and validates skill documents using TDD methodology | Active |
@@ -91,14 +91,15 @@ batch-refactor
 **deepresearch vs context-pack:** Both research codebases but serve different consumers.
 Use `deepresearch` when the output is a document for a human to read.
 Use `context-pack` when the output feeds downstream agents or `batch-refactor`.
-Use `using-easywork` when the agent first needs to make that selection and sequence the handoff correctly.
+Use `using-easywork` when the agent first needs to choose among `log-query`, `deepresearch`, `context-pack`, and `batch-refactor`, then sequence the handoff correctly.
 
 ## Orchestration And Analysis Skills (`agents/`, `skills/context-pack/`, `skills/deepresearch/`, `skills/batch-refactor/`, `skills/log-query/`)
 
 ### `using-easywork`
 
-Entry guide for the orchestration layer in this repository. Helps the agent decide:
+Entry guide for the core skills layer in this repository. Helps the agent decide:
 
+- when a large local log question calls for `log-query`
 - when a user-facing report calls for `deepresearch`
 - when reusable, source-backed context calls for `context-pack`
 - when a large semantic code change calls for `batch-refactor`
