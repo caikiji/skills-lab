@@ -1,6 +1,6 @@
 # Read-Only Exploration Agent
 
-<!-- Consumed by: context-research-orchestrator, semantic-batch-refactor-orchestrator.
+<!-- Consumed by: context-pack, batch-refactor.
      Local copies exist in each skill's agents/ directory for portability.
      When editing this file, sync the same change to both local copies. -->
 

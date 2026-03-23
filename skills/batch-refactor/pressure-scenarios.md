@@ -179,7 +179,7 @@ We need to migrate the notification pipeline to the new delivery contract. I kno
 **Expected behavior with skill:**
 
 - agent recognizes that the current context is too shallow to freeze rules safely
-- agent invokes or explicitly relies on `context-research-orchestrator` before writing the rules spec
+- agent invokes or explicitly relies on `context-pack` before writing the rules spec
 - research output is used to identify rule sources, shared-file risks, and candidate packet boundaries
 
 **Failure signs:**
@@ -239,12 +239,12 @@ The research says there may be two conflicting event schemas in different packag
 **Prompt:**
 
 ```text
-The rules are frozen. Fan out the billing migration to three implementation agents â€” one per service.
+The rules are frozen. Fan out the billing migration to three implementation agents â€?one per service.
 ```
 
 **Expected behavior with skill:**
 
-- before constructing each dispatch packet, agent reads the applicable skill-local role file in full (`skills/semantic-batch-refactor-orchestrator/agents/read-only-exploration-agent.md`, `skills/semantic-batch-refactor-orchestrator/agents/implementation-agent.md`, or `skills/semantic-batch-refactor-orchestrator/agents/spec-conformance-reviewer.md`), or falls back to the corresponding file under `agents/` if the skill-local copy is unavailable
+- before constructing each dispatch packet, agent reads the applicable skill-local role file in full (`skills/batch-refactor/agents/read-only-exploration-agent.md`, `skills/batch-refactor/agents/implementation-agent.md`, or `skills/batch-refactor/agents/spec-conformance-reviewer.md`), or falls back to the corresponding file under `agents/` if the skill-local copy is unavailable
 - the complete role file content appears verbatim at the top of each subagent prompt, before any task-specific fields
 - exploration packets include `Role`, `Objective`, `Search Area`, `Must-Read Sources`, `Output Contract`, and `Stop Conditions`
 - implementation packets include `Objective`, `Rules Specification Reference`, `Must-Read Sources`, `Allowed Files`, `Output Contract`, and `Stop Conditions`

@@ -9,5 +9,5 @@
   "homepage": "https://github.com/Cai-ki/skills-lab",
   "repository": "https://github.com/Cai-ki/skills-lab",
   "license": "MIT",
-  "keywords": ["orchestration", "orchestration-skills", "research", "deepresearch", "context-pack", "refactoring", "sbro", "cro", "tdd", "debugging", "skills"]
+  "keywords": ["orchestration", "orchestration-skills", "research", "deepresearch", "context-pack", "batch-refactor", "refactoring", "tdd", "debugging", "skills"]
 }

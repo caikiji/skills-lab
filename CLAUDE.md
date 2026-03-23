@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Repo Is
 
-A collection of reusable Claude Code skills for orchestrating complex agentic workflows. All skill content is Markdown — there is no application code, build system, or test suite.
+A collection of reusable Claude Code skills for orchestrating complex agentic workflows. All skill content is Markdown - there is no application code, build system, or test suite.
 
 After cloning:
 ```bash
@@ -15,8 +15,8 @@ git submodule update --init --recursive
 
 | Location | What it contains |
 |----------|-----------------|
-| `skills/context-research-orchestrator/`, `skills/semantic-batch-refactor-orchestrator/`, `skills/deepresearch/` | Skills in this repo — for orchestration, research, and batch refactoring |
-| `superpowers/skills/` | Git submodule (https://github.com/obra/superpowers) — general-purpose skills: TDD, debugging, brainstorming, plan writing, parallel agents, git worktrees, etc. |
+| `skills/context-pack/`, `skills/batch-refactor/`, `skills/deepresearch/` | Skills in this repo - for orchestration, research, and batch refactoring |
+| `superpowers/skills/` | Git submodule (https://github.com/obra/superpowers) - general-purpose skills: TDD, debugging, brainstorming, plan writing, parallel agents, git worktrees, etc. |
 
 Both skill sets are registered with Claude Code via the plugin manifests in `superpowers/.claude-plugin/`.
 
@@ -42,9 +42,9 @@ Role Contract  (agents/*.md or <skill>/agents/*.md)
 ```
 
 **Shared role contracts** live in `agents/` and are referenced (or locally copied for portability) by each skill:
-- `read-only-exploration-agent.md` — gathers source-bound findings, never edits files, classifies claims as `Fact` / `Inference` / `Open Question` / `Decision Blocker`
-- `implementation-agent.md` — executes within a frozen rule set, escalates scope conflicts
-- `spec-conformance-reviewer.md` — compares delivered work against a spec, returns `Conformant` / `Partially Conformant` / `Non-Conformant`
+- `read-only-exploration-agent.md` - gathers source-bound findings, never edits files, classifies claims as `Fact` / `Inference` / `Open Question` / `Decision Blocker`
+- `implementation-agent.md` - executes within a frozen rule set, escalates scope conflicts
+- `spec-conformance-reviewer.md` - compares delivered work against a spec, returns `Conformant` / `Partially Conformant` / `Non-Conformant`
 
 The four certainty labels `Fact` / `Inference` / `Open Question` / `Decision Blocker` are used consistently across all skills and all agent roles. Never flatten an `Inference` or `Open Question` into a `Fact`.
 
@@ -52,38 +52,38 @@ The four certainty labels `Fact` / `Inference` / `Open Question` / `Decision Blo
 
 | Skill | Output consumer | When to use |
 |-------|----------------|-------------|
-| `context-research-orchestrator` | Downstream agents | Before planning, rule-freezing, or orchestration — produces `Research Report` + `Context Pack` with `sbro_readiness` signal and `SBRO Handoff Block` |
+| `context-pack` | Downstream agents | Before planning, rule-freezing, or orchestration - produces `Research Report` + `Context Pack` with `sbro_readiness` signal and `SBRO Handoff Block` |
 | `deepresearch` | Human user | When a user wants a readable layered report with Mermaid diagrams; accepts `depth: quick / standard / deep` |
-| `semantic-batch-refactor-orchestrator` | Downstream agents + user | Large semantic code changes; rules must be frozen before execution; consumes CRO `Context Pack` when one exists |
+| `batch-refactor` | Downstream agents + user | Large semantic code changes; rules must be frozen before execution; consumes a `Context Pack` when one exists |
 
 **Pipeline:**
 
 ```
-deepresearch ──────────────────────────────────→ human reader
+deepresearch ----------------------------------> human reader
                 (if codebase-wide change found)
-                       suggests running CRO ──→ (user decides)
+                       suggests running context-pack --> (user decides)
 
-context-research-orchestrator (CRO)
-  └── Context Pack
-        ├── sbro_readiness: ready_to_freeze | needs_verification | blocked
-        └── SBRO Handoff Block (facts / inferences / blockers / shared-file risks)
-              ▼
-semantic-batch-refactor-orchestrator (SBRO)
-  ├── step 3: checks sbro_readiness; gates execution on blocked/needs_verification
-  └── step 12: writes corrections.md in Context Pack schema → future CRO reads it
+context-pack
+  + Context Pack
+        + sbro_readiness: ready_to_freeze | needs_verification | blocked
+        + SBRO Handoff Block (facts / inferences / blockers / shared-file risks)
+              v
+batch-refactor
+  + step 3: checks sbro_readiness; gates execution on blocked/needs_verification
+  + step 12: writes corrections.md in Context Pack schema -> future context-pack runs can read it
 ```
 
-**CRO → SBRO trigger conditions:**
+**context-pack -> batch-refactor trigger conditions:**
 
 | Situation | Action |
 |-----------|--------|
-| Task crosses ≥ 3 modules | Run CRO first |
-| Shared files / types / event definitions not yet located | Run CRO first |
-| Primary agent cannot write rules without reading source | Run CRO first |
-| Task limited to 1–2 modules with clear boundaries | Inline exploration in SBRO |
-| Fresh Context Pack already exists | Consume directly — skip CRO |
+| Task crosses >= 3 modules | Run `context-pack` first |
+| Shared files / types / event definitions not yet located | Run `context-pack` first |
+| Primary agent cannot write rules without reading source | Run `context-pack` first |
+| Task limited to 1-2 modules with clear boundaries | Inline exploration in `batch-refactor` |
+| Fresh Context Pack already exists | Consume directly - skip `context-pack` |
 
-**deepresearch vs CRO**: Both research codebases but serve different consumers. Use `deepresearch` when the output is a document for a human to read; use `context-research-orchestrator` when the output feeds downstream agents or SBRO.
+**deepresearch vs context-pack**: Both research codebases but serve different consumers. Use `deepresearch` when the output is a document for a human to read; use `context-pack` when the output feeds downstream agents or `batch-refactor`.
 
 ## Skill Directory Structure
 
@@ -91,11 +91,11 @@ Each skill follows this layout:
 
 ```
 <skill>/
-├── SKILL.md                  # entry point: workflow, phases, rules
-├── agents/                   # skill-local role contract copies (for portability)
-├── references/               # reference files loaded by SKILL.md as needed
-├── scripts/                  # supporting scripts (e.g., skills/deepresearch/scripts/convert.py)
-└── pressure-scenarios.md     # adversarial validation scenarios (where present)
+|- SKILL.md                  # entry point: workflow, phases, rules
+|- agents/                   # skill-local role contract copies (for portability)
+|- references/               # reference files loaded by SKILL.md as needed
+|- scripts/                  # supporting scripts (e.g., skills/deepresearch/scripts/convert.py)
+'- pressure-scenarios.md     # adversarial validation scenarios (where present)
 ```
 
 ### SKILL.md front-matter
@@ -109,7 +109,7 @@ description: One-sentence description used by Claude to decide when to invoke th
 ---
 ```
 
-The `description` field is the trigger signal — write it to match the situations where the skill should fire, not just what the skill does.
+The `description` field is the trigger signal - write it to match the situations where the skill should fire, not just what the skill does.
 
 ### Agent portability pattern
 
@@ -122,26 +122,26 @@ Shared role contracts in `agents/` are the canonical source. Each skill that dis
 When `deepresearch` runs, it creates a resumable session under:
 ```
 docs/deepresearch/<repo-name>-<YYYY-MM-DD>/
-├── state/
-│   ├── plan.md        # phase tracker and resume anchor
-│   ├── chunks/        # one file per subagent shard
-│   └── synthesis.md   # merged intermediate summary
-└── output/
-    └── YYYY-MM-DD-<repo>-research.md   # final deliverable
+|- state/
+|  |- plan.md        # phase tracker and resume anchor
+|  |- chunks/        # one file per subagent shard
+|  '- synthesis.md   # merged intermediate summary
+'- output/
+   '- YYYY-MM-DD-<repo>-research.md   # final deliverable
 ```
 
-`plan.md` drives multi-round resumption — always read it first before doing any new research work.
+`plan.md` drives multi-round resumption - always read it first before doing any new research work.
 
 ## Documentation Layout
 
 | Path | Contents |
 |------|----------|
-| `docs/orchestration/specs/` | Design specs — source of truth for skill architecture |
+| `docs/orchestration/specs/` | Design specs - source of truth for skill architecture |
 | `docs/deepresearch/` | deepresearch session state and output |
 
 ## Adding a New Skill
 
-1. Write a design spec → `docs/orchestration/specs/YYYY-MM-DD-<name>-design.md`
-2. Create `skills/<skill>/SKILL.md` and supporting files — one top-level directory per skill
+1. Write a design spec -> `docs/orchestration/specs/YYYY-MM-DD-<name>-design.md`
+2. Create `skills/<skill>/SKILL.md` and supporting files - one top-level directory per skill
 3. Update the `README.md` skill index table
 4. If the skill dispatches subagents, copy relevant canonical `agents/` contracts into `skills/<skill>/agents/`

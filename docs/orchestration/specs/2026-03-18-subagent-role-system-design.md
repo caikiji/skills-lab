@@ -24,8 +24,8 @@ Together, these layers define who the child agent is, what it should do in this 
 
 The first version of the system serves both:
 
-- `context-research-orchestrator`
-- `semantic-batch-refactor-orchestrator`
+- `context-pack`
+- `batch-refactor`
 
 But it should prioritize the research chain first, because read-only exploration work has the clearest boundaries and the highest immediate leverage.
 
@@ -136,8 +136,8 @@ Put skill-specific role variants under the skill directory when they are tightly
 
 Expected future examples:
 
-- `semantic-batch-refactor-orchestrator/agents/ownership-split-reviewer.md`
-- `semantic-batch-refactor-orchestrator/agents/task-packet-assembler.md`
+- `batch-refactor/agents/ownership-split-reviewer.md`
+- `batch-refactor/agents/task-packet-assembler.md`
 
 ## 7. Role Files vs Skills
 
@@ -475,7 +475,7 @@ The primary agent should use a standard packet for this role.
 
 ### 13.1 Context Research Orchestrator
 
-`context-research-orchestrator` should be the first consumer of `read-only-exploration-agent`.
+`context-pack` should be the first consumer of `read-only-exploration-agent`.
 
 It uses this role to:
 
@@ -485,7 +485,7 @@ It uses this role to:
 
 ### 13.2 Semantic Batch Refactor Orchestrator
 
-`semantic-batch-refactor-orchestrator` should use `read-only-exploration-agent` during exploration rounds or when upstream repository research is still incomplete.
+`batch-refactor` should use `read-only-exploration-agent` during exploration rounds or when upstream repository research is still incomplete.
 
 It uses that role to:
 
