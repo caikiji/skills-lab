@@ -23,7 +23,7 @@ git submodule update --init --recursive
 ```
 
 After installing, run `/plugin reload-plugins` or restart Claude Code.
-All 18 skills load automatically - no separate superpowers installation needed.
+All 19 skills load automatically - no separate superpowers installation needed.
 
 ## Repository Layout
 
@@ -31,6 +31,7 @@ All 18 skills load automatically - no separate superpowers installation needed.
 - `skills/context-pack/`: the skill itself and its reusable reference files
 - `skills/batch-refactor/`: the skill itself and its validation scenarios
 - `skills/deepresearch/`: the skill itself and its references, agents, and scripts
+- `skills/log-query/`: natural-language log analysis over large local log sets using staged text filtering
 - `skills/using-easywork/`: the entry guide for choosing among the orchestration skills
 - `superpowers/`: git submodule - general-purpose skills library
 
@@ -41,6 +42,7 @@ All 18 skills load automatically - no separate superpowers installation needed.
 | `context-pack` | Evidence-driven codebase research; produces `Research Report` + `Context Pack` with `sbro_readiness` signal for downstream agents | Active |
 | `deepresearch` | User-facing codebase research; produces a layered Markdown report with Mermaid diagrams | Active |
 | `batch-refactor` | Specification-first orchestration for large semantic batch refactors; consumes a `Context Pack` when one exists | Active |
+| `log-query` | Answers natural-language questions over large local log files with staged text filtering, evidence-backed statistics, and optional post-filter semantic narrowing | Active |
 | `using-easywork` | Selects the right orchestration skill and sequence for human-facing research, downstream-agent context packaging, and semantic batch refactors | Active |
 | `brainstorming` | Before any creative work - explores intent, proposes approaches, gets design approval | Active |
 | `writing-plans` | Turns a spec into a precise, step-by-step implementation plan | Active |
@@ -91,7 +93,7 @@ Use `deepresearch` when the output is a document for a human to read.
 Use `context-pack` when the output feeds downstream agents or `batch-refactor`.
 Use `using-easywork` when the agent first needs to make that selection and sequence the handoff correctly.
 
-## Orchestration Skills (`agents/`, `skills/context-pack/`, `skills/deepresearch/`, `skills/batch-refactor/`)
+## Orchestration And Analysis Skills (`agents/`, `skills/context-pack/`, `skills/deepresearch/`, `skills/batch-refactor/`, `skills/log-query/`)
 
 ### `using-easywork`
 
@@ -139,6 +141,17 @@ prior research.
 
 - `skills/batch-refactor/SKILL.md`
 - `skills/batch-refactor/pressure-scenarios.md`
+
+### `log-query`
+
+Natural-language log analysis for large local log sets. The skill is workflow-only:
+it teaches the agent to sample first, translate the question into explicit include
+and exclude filters, prefer platform-native text tools such as `rg`, `grep`, or
+PowerShell-compatible search, and only use semantic narrowing after the candidate
+set is small enough to inspect safely.
+
+- `skills/log-query/SKILL.md`
+- `skills/log-query/pressure-scenarios.md`
 
 ## Superpowers Skills (`superpowers/skills/`)
 

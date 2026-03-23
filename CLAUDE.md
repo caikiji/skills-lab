@@ -15,7 +15,7 @@ git submodule update --init --recursive
 
 | Location | What it contains |
 |----------|-----------------|
-| `skills/context-pack/`, `skills/batch-refactor/`, `skills/deepresearch/` | Skills in this repo - for orchestration, research, and batch refactoring |
+| `skills/context-pack/`, `skills/batch-refactor/`, `skills/deepresearch/`, `skills/log-query/` | Skills in this repo - for orchestration, research, batch refactoring, and large-log analysis |
 | `superpowers/skills/` | Git submodule (https://github.com/obra/superpowers) - general-purpose skills: TDD, debugging, brainstorming, plan writing, parallel agents, git worktrees, etc. |
 
 Both skill sets are registered with Claude Code via the plugin manifests in `superpowers/.claude-plugin/`.
@@ -55,6 +55,7 @@ The four certainty labels `Fact` / `Inference` / `Open Question` / `Decision Blo
 | `context-pack` | Downstream agents | Before planning, rule-freezing, or orchestration - produces `Research Report` + `Context Pack` with `sbro_readiness` signal and `SBRO Handoff Block` |
 | `deepresearch` | Human user | When a user wants a readable layered report with Mermaid diagrams; accepts `depth: quick / standard / deep` |
 | `batch-refactor` | Downstream agents + user | Large semantic code changes; rules must be frozen before execution; consumes a `Context Pack` when one exists |
+| `log-query` | Human user | When a user asks a natural-language question about large local log files or directories and staged text filtering is needed before summarizing |
 
 **Pipeline:**
 
