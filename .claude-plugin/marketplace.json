@@ -6,8 +6,8 @@
   },
   "plugins": [
     {
-      "name": "skills-lab",
-      "description": "Orchestration skills (CRO, SBRO, deepresearch) plus the full superpowers library (TDD, debugging, brainstorming, planning, parallel agents, git worktrees, and more)",
+      "name": "orchestration-skills",
+      "description": "Orchestration skills for CRO, SBRO, deepresearch, and orchestration routing, plus the full superpowers library for TDD, debugging, brainstorming, planning, parallel agents, git worktrees, and more",
       "version": "1.0.0",
       "source": "./",
       "author": {
