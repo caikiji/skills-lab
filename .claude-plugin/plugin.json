@@ -1,7 +1,7 @@
 {
   "name": "easywork",
   "description": "Orchestration skills for evidence-driven codebase research, deep research reports, and semantic batch refactoring. Includes the superpowers general-purpose skill library for TDD, debugging, brainstorming, plan writing, parallel agents, git worktrees, and more.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": {
     "name": "Cai-ki",
     "email": ""
