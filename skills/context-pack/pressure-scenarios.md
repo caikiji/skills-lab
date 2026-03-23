@@ -196,12 +196,12 @@ Research the analytics migration surface and prepare whatever the refactor orche
 **Prompt:**
 
 ```text
-Research the payment service â€” use subagents to cover the API layer and the job runner separately.
+Research the payment service â€?use subagents to cover the API layer and the job runner separately.
 ```
 
 **Expected behavior with skill:**
 
-- before constructing each dispatch packet, agent reads `skills/context-research-orchestrator/agents/read-only-exploration-agent.md` in full, or falls back to `agents/read-only-exploration-agent.md` if the skill-local copy is unavailable
+- before constructing each dispatch packet, agent reads `skills/context-pack/agents/read-only-exploration-agent.md` in full, or falls back to `agents/read-only-exploration-agent.md` if the skill-local copy is unavailable
 - the complete role file content appears verbatim at the top of each subagent prompt, before task-specific fields
 - dispatch packets include `Role`, `Objective`, `Search Area`, `Must-Read Sources`, `Output Contract`, and `Stop Conditions`
 

@@ -7,7 +7,7 @@ description: User-facing codebase research skill. Produces a layered Markdown re
 
 Produce a layered codebase research document for the user. The output is designed
 to be read directly — not to package context for downstream agents. For agent-context
-packaging, use `context-research-orchestrator` instead.
+packaging, use `context-pack` instead.
 
 ## Phase 0: Intake
 
@@ -132,8 +132,8 @@ Report the output path to the user.
 
 If the research reveals patterns that suggest a codebase-wide semantic change
 (migration, schema update, call-pattern replacement spanning many files), note
-that `context-research-orchestrator` should be run before
-`semantic-batch-refactor-orchestrator`. The deepresearch output is optimised for
+that `context-pack` should be run before
+`batch-refactor`. The deepresearch output is optimised for
 human reading; it is not a substitute for the structured `Context Pack` that
 downstream agents require.
 
@@ -156,5 +156,5 @@ See `scripts/convert.py` for full usage and `--out-dir` option.
 
 Do not:
 - modify any project files during research
-- use this skill when the output is for downstream agents (use `context-research-orchestrator`)
+- use this skill when the output is for downstream agents (use `context-pack`)
 - attempt to complete Phase 3–5 in one context window for large/deep runs — let the state system do its job

@@ -67,10 +67,10 @@ Use these templates to keep research output consistent and reusable.
 ### Inferences that must be verified before rule-freezing
 - ...
 
-### Open Questions â€” resolve before splitting work
+### Open Questions â€?resolve before splitting work
 - ...
 
-### Decision Blockers â€” broad execution cannot begin until resolved
+### Decision Blockers â€?broad execution cannot begin until resolved
 - ...
 
 ### Shared-file risks
@@ -81,9 +81,9 @@ Use these templates to keep research output consistent and reusable.
 ```
 
 `sbro_readiness` values:
-- `ready_to_freeze` â€” all key rules are source-backed Facts; no Decision Blockers remain
-- `needs_verification` â€” one or more Inferences require source confirmation before rule-freezing
-- `blocked` â€” one or more Decision Blockers prevent safe execution
+- `ready_to_freeze` â€?all key rules are source-backed Facts; no Decision Blockers remain
+- `needs_verification` â€?one or more Inferences require source confirmation before rule-freezing
+- `blocked` â€?one or more Decision Blockers prevent safe execution
 
 ## Standard Block Schema
 
@@ -102,13 +102,13 @@ omitting them is higher than the cost of capturing them.
 - Primary References:               # required for Fact; optional for Inference
   - File:
   - Anchor:
-  - Line at capture:                # optional â€” convenience only
+  - Line at capture:                # optional â€?convenience only
   - Relocation hint:                # required when line number is the only anchor
   - Captured claim:
-- Relocation Hints:                 # optional â€” add when anchor is fragile
+- Relocation Hints:                 # optional â€?add when anchor is fragile
   - [hint]
-- Freshness Notes:                  # optional â€” add when git state or timestamps matter
-- Safe Reuse Boundary:              # optional â€” add when block will be passed to other agents
+- Freshness Notes:                  # optional â€?add when git state or timestamps matter
+- Safe Reuse Boundary:              # optional â€?add when block will be passed to other agents
 ```
 
 ## Example Block
@@ -122,7 +122,7 @@ omitting them is higher than the cost of capturing them.
 - Evidence List:
   - Orchestration guidance keeps shared definition files with the primary agent unless ownership is isolated.
 - Primary References:
-  - File: semantic-batch-refactor-orchestrator/SKILL.md
+  - File: batch-refactor/SKILL.md
   - Anchor: "Shared definition files should stay with the primary agent"
   - Line at capture: 1
   - Relocation hint: search for "shared definition files" or "ownership is explicitly isolated"

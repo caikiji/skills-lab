@@ -3,7 +3,7 @@
 > **Not the same as `agents/read-only-exploration-agent.md`.** This agent is
 > specialized for deepresearch: it writes chunk files with Mermaid diagrams and
 > structured module summaries. The orchestration exploration agent (used by
-> context-research-orchestrator and SBRO) uses a different dispatch packet and
+> context-pack and batch-refactor) uses a different dispatch packet and
 > output format.
 
 You are a read-only exploration child agent dispatched by the `deepresearch` skill.

@@ -1,9 +1,9 @@
 ---
-name: context-research-orchestrator
+name: context-pack
 description: Evidence-driven codebase research and context packaging for complex tasks. Use when Codex needs to deeply understand a project or task area before planning, freezing rules, coordinating subagents, or executing semantic refactors, especially when the output must include reusable summaries, source references, and freshness metadata.
 ---
 
-# Context Research Orchestrator
+# Context Pack
 
 Build trustworthy project context before planning or broad execution.
 
@@ -93,7 +93,7 @@ Choose one:
 Read [references/delegation-guidance.md](references/delegation-guidance.md) before dispatching any exploration subagent.
 
 **Mandatory before any subagent dispatch:** Read the skill-local role file
-`skills/context-research-orchestrator/agents/read-only-exploration-agent.md`
+`skills/context-pack/agents/read-only-exploration-agent.md`
 in full. If that file is unavailable in the current installation, fall back to
 `agents/read-only-exploration-agent.md`. Paste the complete role content verbatim
 at the top of every subagent prompt, before any task-specific fields. The
@@ -132,9 +132,9 @@ If the downstream action involves a semantic batch refactor, also produce a
 [references/output-templates.md](references/output-templates.md)) and set
 `sbro_readiness` based on the current state of findings:
 
-- `ready_to_freeze` — all key rules are source-backed Facts and no Decision Blockers remain
-- `needs_verification` — one or more Inferences require source confirmation before rule-freezing can begin
-- `blocked` — one or more Decision Blockers must be resolved with the user before any execution
+- `ready_to_freeze` -> all key rules are source-backed Facts and no Decision Blockers remain
+- `needs_verification` -> one or more Inferences require source confirmation before rule-freezing can begin
+- `blocked` -> one or more Decision Blockers must be resolved with the user before any execution
 
 ### 6. Freshness and handoff check
 

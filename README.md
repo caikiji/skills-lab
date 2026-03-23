@@ -28,8 +28,8 @@ All 18 skills load automatically - no separate superpowers installation needed.
 ## Repository Layout
 
 - `agents/`: shared child-agent role contracts used across multiple skills
-- `skills/context-research-orchestrator/`: the skill itself and its reusable reference files
-- `skills/semantic-batch-refactor-orchestrator/`: the skill itself and its validation scenarios
+- `skills/context-pack/`: the skill itself and its reusable reference files
+- `skills/batch-refactor/`: the skill itself and its validation scenarios
 - `skills/deepresearch/`: the skill itself and its references, agents, and scripts
 - `skills/using-orchestration-skills/`: the entry guide for choosing among the orchestration skills
 - `superpowers/`: git submodule - general-purpose skills library
@@ -39,9 +39,9 @@ All 18 skills load automatically - no separate superpowers installation needed.
 
 | Skill | Purpose | Status |
 | --- | --- | --- |
-| `context-research-orchestrator` | Evidence-driven codebase research; produces `Research Report` + `Context Pack` with `sbro_readiness` signal for downstream agents | Active |
+| `context-pack` | Evidence-driven codebase research; produces `Research Report` + `Context Pack` with `sbro_readiness` signal for downstream agents | Active |
 | `deepresearch` | User-facing codebase research; produces a layered Markdown report with Mermaid diagrams | Active |
-| `semantic-batch-refactor-orchestrator` | Specification-first orchestration for large semantic batch refactors; consumes CRO Context Pack | Active |
+| `batch-refactor` | Specification-first orchestration for large semantic batch refactors; consumes a `Context Pack` when one exists | Active |
 | `using-orchestration-skills` | Selects the right orchestration skill and sequence for human-facing research, downstream-agent context packaging, and semantic batch refactors | Active |
 | `brainstorming` | Before any creative work - explores intent, proposes approaches, gets design approval | Active |
 | `writing-plans` | Turns a spec into a precise, step-by-step implementation plan | Active |
@@ -65,57 +65,57 @@ The three orchestration skills connect at defined handoff points.
 ```
 deepresearch ----------------------------------> human reader
                 (if codebase-wide change found)
-                       suggests running CRO --> (user decides)
+                       suggests running context-pack --> (user decides)
 
-context-research-orchestrator (CRO)
+context-pack
   + Context Pack
         + sbro_readiness: ready_to_freeze | needs_verification | blocked
         + SBRO Handoff Block (facts / inferences / blockers / shared-file risks)
               v
-semantic-batch-refactor-orchestrator (SBRO)
+batch-refactor
   + step 3: checks sbro_readiness; gates execution on blocked/needs_verification
-  + step 12: writes corrections.md in Context Pack schema -> future CRO reads it
+  + step 12: writes corrections.md in Context Pack schema -> future context-pack runs can read it
 ```
 
-**When to run CRO before SBRO:**
+**When to run context-pack before batch-refactor:**
 
 | Situation | Action |
 |-----------|--------|
-| Task crosses >= 3 modules | Run CRO first |
-| Shared files / types / event definitions not yet located | Run CRO first |
-| Primary agent cannot write rules without reading source | Run CRO first |
-| Task limited to 1-2 modules with clear boundaries | Inline exploration in SBRO |
-| Fresh Context Pack already exists | Consume directly - skip CRO |
+| Task crosses >= 3 modules | Run `context-pack` first |
+| Shared files / types / event definitions not yet located | Run `context-pack` first |
+| Primary agent cannot write rules without reading source | Run `context-pack` first |
+| Task limited to 1-2 modules with clear boundaries | Inline exploration in `batch-refactor` |
+| Fresh Context Pack already exists | Consume directly - skip `context-pack` |
 
-**deepresearch vs CRO:** Both research codebases but serve different consumers.
+**deepresearch vs context-pack:** Both research codebases but serve different consumers.
 Use `deepresearch` when the output is a document for a human to read.
-Use `context-research-orchestrator` when the output feeds downstream agents or SBRO.
+Use `context-pack` when the output feeds downstream agents or `batch-refactor`.
 Use `using-orchestration-skills` when the agent first needs to make that selection and sequence the handoff correctly.
 
-## Orchestration Skills (`agents/`, `skills/context-research-orchestrator/`, `skills/deepresearch/`, `skills/semantic-batch-refactor-orchestrator/`)
+## Orchestration Skills (`agents/`, `skills/context-pack/`, `skills/deepresearch/`, `skills/batch-refactor/`)
 
 ### `using-orchestration-skills`
 
 Entry guide for the orchestration layer in this repository. Helps the agent decide:
 
 - when a user-facing report calls for `deepresearch`
-- when reusable, source-backed context calls for `context-research-orchestrator`
-- when a large semantic code change calls for `semantic-batch-refactor-orchestrator`
-- when the right path is `CRO -> SBRO`
+- when reusable, source-backed context calls for `context-pack`
+- when a large semantic code change calls for `batch-refactor`
+- when the right path is `context-pack -> batch-refactor`
 
 - `skills/using-orchestration-skills/SKILL.md`
 
-### `context-research-orchestrator`
+### `context-pack`
 
 Evidence-driven codebase research and context packaging. Produces a `Research Report`
 for human understanding and a `Context Pack` for downstream agents. Includes a
 `sbro_readiness` field and `SBRO Handoff Block` when semantic batch execution is
 likely downstream.
 
-- `skills/context-research-orchestrator/SKILL.md`
-- `skills/context-research-orchestrator/references/output-templates.md`
-- `skills/context-research-orchestrator/references/delegation-guidance.md`
-- `skills/context-research-orchestrator/pressure-scenarios.md`
+- `skills/context-pack/SKILL.md`
+- `skills/context-pack/references/output-templates.md`
+- `skills/context-pack/references/delegation-guidance.md`
+- `skills/context-pack/pressure-scenarios.md`
 
 ### `deepresearch`
 
@@ -123,7 +123,7 @@ User-facing codebase research. Produces a layered Markdown document with embedde
 Mermaid diagrams. Uses parallel subagents and persistent multi-round state so large
 codebases can be researched across context resets. Accepts `depth: quick | standard | deep`.
 
-Not a substitute for CRO when structured agent-consumable output is needed.
+Not a substitute for `context-pack` when structured agent-consumable output is needed.
 
 - `skills/deepresearch/SKILL.md`
 - `skills/deepresearch/agents/exploration-agent.md`
@@ -131,15 +131,15 @@ Not a substitute for CRO when structured agent-consumable output is needed.
 - `skills/deepresearch/references/plan-template.md`
 - `skills/deepresearch/references/output-document-template.md`
 
-### `semantic-batch-refactor-orchestrator`
+### `batch-refactor`
 
-Specification-first orchestration for large semantic code changes. Consumes a CRO
+Specification-first orchestration for large semantic code changes. Consumes a
 `Context Pack` when one exists, checks `sbro_readiness` before rule-freezing, and
-writes `corrections.md` after execution so future CRO runs can treat corrections as
+writes `corrections.md` after execution so future `context-pack` runs can treat corrections as
 prior research.
 
-- `skills/semantic-batch-refactor-orchestrator/SKILL.md`
-- `skills/semantic-batch-refactor-orchestrator/pressure-scenarios.md`
+- `skills/batch-refactor/SKILL.md`
+- `skills/batch-refactor/pressure-scenarios.md`
 
 ## Superpowers Skills (`superpowers/skills/`)
 

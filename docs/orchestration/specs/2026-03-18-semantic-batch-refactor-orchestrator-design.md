@@ -38,7 +38,7 @@ It does not target:
 
 The skill is a specification-first orchestration skill with lightweight execution guidance.
 
-When repository understanding is still too shallow to freeze rules safely, the orchestrator should rely on `context-research-orchestrator` as a formal upstream research layer. That skill produces a `Research Report` and `Context Pack` that help the orchestrator identify real rule sources, ownership risks, and task-local context boundaries before broad execution.
+When repository understanding is still too shallow to freeze rules safely, the orchestrator should rely on `context-pack` as a formal upstream research layer. That skill produces a `Research Report` and `Context Pack` that help the orchestrator identify real rule sources, ownership risks, and task-local context boundaries before broad execution.
 
 It is responsible for:
 
@@ -81,7 +81,7 @@ It is not responsible for binding execution to one specific subagent platform.
    - open questions
 
 3. **Formal research decision**
-   Decide whether the current understanding is strong enough to freeze rules directly. If not, run `context-research-orchestrator` first and treat its `Research Report` and `Context Pack` as formal orchestration inputs.
+   Decide whether the current understanding is strong enough to freeze rules directly. If not, run `context-pack` first and treat its `Research Report` and `Context Pack` as formal orchestration inputs.
 
 4. **Rule specification**
    Convert the clarified requirements into an execution-ready spec instead of a conversational summary.
@@ -136,7 +136,7 @@ The skill should force the primary agent to gather eight categories of informati
 
 If the agent cannot answer what the new rule is, what exceptions exist, or how correctness will be judged, it must not proceed to task splitting.
 
-If `context-research-orchestrator` has already been used, the orchestrator must review its outputs for:
+If `context-pack` has already been used, the orchestrator must review its outputs for:
 
 - `Fact` items that are safe candidates for rule-freezing
 - `Inference` items that still need direct verification
@@ -299,7 +299,7 @@ Before broad execution, the primary agent must present:
 If the process discovers:
 
 - unresolved core semantics -> return to clarification
-- stale or insufficient upstream research -> refresh the sources or rerun `context-research-orchestrator`
+- stale or insufficient upstream research -> refresh the sources or rerun `context-pack`
 - unclear ownership boundaries -> switch to two rounds or redesign split
 - too many contested central files -> primary agent consolidates them first
 - inconsistent subagent outputs -> pause, update the spec, and resume only after reconvergence

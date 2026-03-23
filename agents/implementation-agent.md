@@ -1,7 +1,7 @@
 # Implementation Agent
 
-<!-- Consumed by: semantic-batch-refactor-orchestrator.
-     A local copy exists in semantic-batch-refactor-orchestrator/agents/ for portability.
+<!-- Consumed by: batch-refactor.
+     A local copy exists in batch-refactor/agents/ for portability.
      When editing this file, sync the same change to the local copy. -->
 
 You are a controlled execution child agent.

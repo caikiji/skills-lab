@@ -1,15 +1,15 @@
 ---
-name: semantic-batch-refactor-orchestrator
+name: batch-refactor
 description: Use when a codebase-wide semantic change is large enough for parallel work but needs strict requirement clarification, conflict-aware task partitioning, and controlled subagent execution
 ---
 
-# Semantic Batch Refactor Orchestrator
+# Batch Refactor
 
 ## Overview
 
 Use this skill for large semantic code changes where each edit may be simple, but the overall task is risky because the rules are unclear, the search surface is wide, and parallel agents could diverge or collide. The primary agent must freeze the rules before broad implementation begins.
 
-When repository understanding is still too shallow to freeze rules safely, use `context-research-orchestrator` first to produce a `Research Report` and `Context Pack`. Treat those artifacts as input to orchestration, not as a replacement for rule-freezing.
+When repository understanding is still too shallow to freeze rules safely, use `context-pack` first to produce a `Research Report` and `Context Pack`. Treat those artifacts as input to orchestration, not as a replacement for rule-freezing.
 
 ## When to Use
 
@@ -37,7 +37,7 @@ Do not use when:
 - Shared definition files should stay with the primary agent unless ownership is explicitly isolated.
 - Broad execution requires an explicit user approval checkpoint.
 - Parallel exploration may begin early; parallel modification may not.
-- If `context-research-orchestrator` reports a `Decision Blocker`, broad execution must not begin until it is resolved.
+- If `context-pack` reports a `Decision Blocker`, broad execution must not begin until it is resolved.
 - When dispatching any subagent, read the applicable agent role file in full and paste its complete content verbatim at the top of the subagent prompt, before any task-specific fields.
 - Total parallel subagents must not exceed 6 at any time, across both exploration and implementation rounds.
 
@@ -64,22 +64,22 @@ Do not use when:
 
    | Situation | Action |
    |-----------|--------|
-   | Task crosses ≥ 3 modules | Run CRO first |
-   | Shared files / types / event definitions not yet located | Run CRO first |
-   | Primary agent cannot write rules without reading source | Run CRO first |
-   | Task limited to 1–2 modules with clear boundaries | Inline exploration |
-   | Fresh Context Pack already exists | Consume directly — skip CRO |
+   | Task crosses >= 3 modules | Run `context-pack` first |
+   | Shared files / types / event definitions not yet located | Run `context-pack` first |
+   | Primary agent cannot write rules without reading source | Run `context-pack` first |
+   | Task limited to 1-2 modules with clear boundaries | Inline exploration |
+   | Fresh Context Pack already exists | Consume directly - skip `context-pack` |
 
    **If a Context Pack exists:** check freshness before use. Compare `git_commit`
    in the pack against the current HEAD. If significant commits have landed on
-   in-scope files since `captured_at`, re-run CRO on the affected areas. A pack
+   in-scope files since `captured_at`, re-run `context-pack` on the affected areas. A pack
    is safe to reuse when `sbro_readiness` is `ready_to_freeze` and no in-scope
    files have changed since capture.
 
-   **After CRO completes:** check `sbro_readiness` before continuing:
-   - `ready_to_freeze` — proceed to step 4
-   - `needs_verification` — verify the flagged Inferences from source before writing the rules specification
-   - `blocked` — resolve Decision Blockers with the user; do not proceed to step 4
+   **After `context-pack` completes:** check `sbro_readiness` before continuing:
+   - `ready_to_freeze` -> proceed to step 4
+   - `needs_verification` -> verify the flagged Inferences from source before writing the rules specification
+   - `blocked` -> resolve Decision Blockers with the user; do not proceed to step 4
 
    Fill in the Research Intake Template (see below) whenever a Context Pack
    is being consumed, so the state of incoming research is explicit before
@@ -89,7 +89,7 @@ Do not use when:
    Turn the clarified requirements into an execution spec. This is not a summary. It must be detailed enough that multiple agents will make the same decision on the same input.
 
 5. **Choose an exploration strategy**
-   The primary agent may explore critical files directly. If a `Context Pack` already exists, use it to identify likely rule sources, contention surfaces, and candidate search areas first. If the search surface is still too large, dispatch read-only exploration subagents to gather patterns, candidate files, and likely contention points. **Mandatory before any exploration dispatch:** read the skill-local role file `skills/semantic-batch-refactor-orchestrator/agents/read-only-exploration-agent.md` in full and paste its complete content verbatim at the top of each exploration subagent prompt, before any task-specific fields. If that file is unavailable in the current installation, fall back to `agents/read-only-exploration-agent.md`. The subagent will otherwise not know its role, constraints, or output format.
+   The primary agent may explore critical files directly. If a `Context Pack` already exists, use it to identify likely rule sources, contention surfaces, and candidate search areas first. If the search surface is still too large, dispatch read-only exploration subagents to gather patterns, candidate files, and likely contention points. **Mandatory before any exploration dispatch:** read the skill-local role file `skills/batch-refactor/agents/read-only-exploration-agent.md` in full and paste its complete content verbatim at the top of each exploration subagent prompt, before any task-specific fields. If that file is unavailable in the current installation, fall back to `agents/read-only-exploration-agent.md`. The subagent will otherwise not know its role, constraints, or output format.
 
 6. **Run trial calibration**
    First reason through representative examples. Then make a small real sample edit set that covers multiple common patterns. Use the results to expose missing rules, hidden exceptions, and contested files.
@@ -104,7 +104,7 @@ Do not use when:
    Split by explicit file ownership first. Directory or module boundaries are acceptable only when they resolve cleanly into non-overlapping file sets.
 
 9. **Bind source-backed context into each task packet**
-   Every task packet must include the exact documents or code files the subagent must read before acting. If a `Context Pack` exists, extract only the task-relevant blocks and pair them with must-read source paths. Summaries may help orient the work, but they are not the authority. **Mandatory before any implementation dispatch:** read the skill-local role file `skills/semantic-batch-refactor-orchestrator/agents/implementation-agent.md` in full and paste its complete content verbatim at the top of each implementation subagent prompt, before any task-specific fields. If that file is unavailable in the current installation, fall back to `agents/implementation-agent.md`. The subagent will otherwise not know its authority hierarchy, decision boundaries, or escalation rules.
+   Every task packet must include the exact documents or code files the subagent must read before acting. If a `Context Pack` exists, extract only the task-relevant blocks and pair them with must-read source paths. Summaries may help orient the work, but they are not the authority. **Mandatory before any implementation dispatch:** read the skill-local role file `skills/batch-refactor/agents/implementation-agent.md` in full and paste its complete content verbatim at the top of each implementation subagent prompt, before any task-specific fields. If that file is unavailable in the current installation, fall back to `agents/implementation-agent.md`. The subagent will otherwise not know its authority hierarchy, decision boundaries, or escalation rules.
 
 10. **Ask the user to approve the plan**
    Present the frozen rule summary, execution mode, primary-agent responsibilities, subagent responsibilities, and known risks. Do not start broad implementation before approval.
@@ -123,13 +123,13 @@ Do not use when:
    If the correction is substantive (alters rule mapping, reveals a new shared
    file, or changes scope boundaries), also write a correction note to
    `docs/orchestration/research/YYYY-MM-DD-<topic>-corrections.md` using the
-   Context Pack block schema. Future CRO runs can treat this file as prior
+   Context Pack block schema. Future context-pack runs can treat this file as prior
    research and avoid repeating the same investigation.
 
    **Re-approval rule:** If the rule change is minor (a local edge case, no effect on
    other packets or shared files), apply it inline without returning to step 10. If the
-   rule change is substantial — it alters the core mapping logic, changes scope
-   boundaries, affects shared files, or would change what any future packets do — stop
+   rule change is substantial - it alters the core mapping logic, changes scope
+   boundaries, affects shared files, or would change what any future packets do - stop
    broad execution, present a revised Execution Checkpoint to the user, and wait for
    approval before resuming. When in doubt, treat the change as substantial.
 
@@ -161,7 +161,7 @@ The primary agent must gather all of the following:
 8. **Open questions**
    List unresolved items explicitly. If any unresolved item affects the core mapping logic, stop before splitting.
 
-If `context-research-orchestrator` has already been run, review its outputs for:
+If `context-pack` has already been run, review its outputs for:
 
 - `Fact` findings that can support rule freezing
 - `Inference` findings that still need verification
@@ -221,7 +221,7 @@ If calibration exposes a core misunderstanding, return to clarification before p
 
 Summaries are only orientation aids. Any rule that affects implementation must be backed by explicit, readable sources inside the task packet.
 
-If `context-research-orchestrator` has produced a `Context Pack`, treat it as a context index, not as the authority itself. The pack helps choose what to pass, but must-read sources still carry final authority.
+If `context-pack` has produced a `Context Pack`, treat it as a context index, not as the authority itself. The pack helps choose what to pass, but must-read sources still carry final authority.
 
 Each task packet should separate:
 
@@ -256,7 +256,7 @@ Required response:
 
 Never fix one result silently and continue with stale task packets.
 
-When the primary agent wants a focused standards check after implementation, read the skill-local role file `skills/semantic-batch-refactor-orchestrator/agents/spec-conformance-reviewer.md` in full and paste its complete content verbatim at the top of each conformance review subagent prompt, before any task-specific fields. If that file is unavailable in the current installation, fall back to `agents/spec-conformance-reviewer.md`.
+When the primary agent wants a focused standards check after implementation, read the skill-local role file `skills/batch-refactor/agents/spec-conformance-reviewer.md` in full and paste its complete content verbatim at the top of each conformance review subagent prompt, before any task-specific fields. If that file is unavailable in the current installation, fall back to `agents/spec-conformance-reviewer.md`.
 
 ## Execution Mode Selection
 
@@ -270,8 +270,8 @@ Use **single-round** execution only when:
 - no unresolved `Decision Blocker` remains in the latest research output
 
 **How single-round relates to the Hard Rules:** Single-round execution does not
-eliminate exploration — it compresses it. The primary agent performs all necessary
-exploration inline (steps 5–6) before partitioning. Parallel file modification still
+eliminate exploration - it compresses it. The primary agent performs all necessary
+exploration inline (steps 5-6) before partitioning. Parallel file modification still
 cannot begin until ownership is frozen and the execution plan is approved. The only
 difference from two-round execution is that exploration is not dispatched to parallel
 subagents; it stays with the primary agent in the same session.
@@ -321,7 +321,7 @@ Default shared files for the primary agent:
 
 ```md
 ## Research Intake
-- Was `context-research-orchestrator` run?:
+- Was `context-pack` run?:
 - Research artifact locations:
 - Facts safe to rely on:
 - Inferences that still need verification:
@@ -438,7 +438,7 @@ Default shared files for the primary agent:
 ## Failure Recovery
 
 - If the core semantics are unresolved, return to clarification.
-- If a research artifact is stale, refresh the affected sources or rerun `context-research-orchestrator` before broad execution.
+- If a research artifact is stale, refresh the affected sources or rerun `context-pack` before broad execution.
 - If ownership boundaries are unsafe, redesign the split or switch to two rounds.
 - If shared files dominate the work, have the primary agent consolidate them first.
 - If implementation outputs diverge, pause the rollout, update the rules spec, and resume only after reconvergence.

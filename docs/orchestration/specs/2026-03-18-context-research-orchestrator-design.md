@@ -10,7 +10,7 @@
 
 ## 1. Summary
 
-`context-research-orchestrator` is a general-purpose research skill for building trustworthy project context before planning, rule-freezing, semantic batch refactors, or multi-subagent execution.
+`context-pack` is a general-purpose research skill for building trustworthy project context before planning, rule-freezing, semantic batch refactors, or multi-subagent execution.
 
 Its job is not to read as much of the repository as possible. Its job is to gather the minimum sufficient evidence needed to produce reusable context that is:
 
@@ -24,7 +24,7 @@ The skill must support two operating modes:
 - **Targeted research:** Default mode. Research only the areas needed for the current task.
 - **Deep research:** Escalated mode for large, unclear, risky, or user-requested repository investigation.
 
-The skill is designed as a standalone capability, but it explicitly supports downstream consumers such as `semantic-batch-refactor-orchestrator`.
+The skill is designed as a standalone capability, but it explicitly supports downstream consumers such as `batch-refactor`.
 
 ## 2. Non-Goals
 
@@ -355,7 +355,7 @@ Downstream agents should:
 
 ## 12. Integration with Semantic Batch Refactor Orchestration
 
-This skill is a natural precursor to `semantic-batch-refactor-orchestrator`.
+This skill is a natural precursor to `batch-refactor`.
 
 Recommended integration points:
 
@@ -398,7 +398,7 @@ When persisting artifacts, save:
 - Summary: Task packets are expected to stay source-bound rather than passing only paraphrased summaries.
 - Why It Matters: Any downstream subagent packet that drops source references risks divergence from the orchestration rules.
 - Primary References:
-  - File: semantic-batch-refactor-orchestrator/SKILL.md
+  - File: batch-refactor/SKILL.md
   - Anchor: "Task Packet Inputs"
   - Line at capture: 1
   - Relocation hint: search for "task packets" and "source-bound"
