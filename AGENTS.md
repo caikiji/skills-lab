@@ -41,3 +41,11 @@ description: 一句话描述，用于 Claude 判断何时调用此技能。
 1. 创建 `skills/<skill>/SKILL.md` 及支撑文件——每个技能一个顶级目录
 2. 更新 `README.md` 中的技能索引表
 3. 更新 `skills/using-easywork/SKILL.md` 中的路由表
+
+## 版本管理
+
+- 版本号定义在 `.claude-plugin/plugin.json` 和 `.claude-plugin/marketplace.json` 中，两处必须保持一致。
+- **每次提交必须修改版本号**：
+  - 小改动（bug 修复、文档修正）：递增 patch 版本 `a.b.(c+1)`
+  - 较大改动（新增功能、架构调整）：递增 minor 版本并重置 patch `a.(b+1).0`
+  - 重大变更（不兼容的改动）：递增 major 版本并重置 minor 和 patch `(a+1).0.0`
