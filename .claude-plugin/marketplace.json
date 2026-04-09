@@ -8,7 +8,7 @@
     {
       "name": "easywork",
       "description": "bug 巡查和技能路由，用于系统性代码审查和智能体工作流编排",
-      "version": "2.0.4",
+      "version": "2.0.5",
       "source": "./",
       "author": {
         "name": "caikiji"
