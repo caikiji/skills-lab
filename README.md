@@ -1,6 +1,6 @@
 # Skills Lab
 
-可复用的 Claude Code 技能集合，用于编排智能体工作流。
+可复用的 Claude Code 技能和规则集合，用于编排智能体工作流。
 
 ## 安装
 
@@ -14,7 +14,7 @@
 ### 从本地路径安装
 
 ```
-/plugin marketplace add path\to\skills-lab
+/plugin marketplace add path/to/skills-lab
 /plugin install easywork@skills-lab
 ```
 
@@ -24,8 +24,13 @@
 
 ```
 skills/
-├── sweeping-bugs/      # 仓库级 bug 巡查
-└── routing-easywork/   # 技能路由入口
+├── sweeping-bugs/SKILL.md       # 仓库级 bug 巡查
+└── routing-easywork/SKILL.md    # 技能路由入口
+rules/
+├── subagent-rules.md            # 子智能体规则
+├── output-style.md              # 输出规范
+├── work-style.md                # 工作规范
+└── skill-authoring.md           # 技能编写规范
 ```
 
 ## 技能索引
@@ -35,20 +40,14 @@ skills/
 | `sweeping-bugs` | 对仓库执行系统性 bug 巡查，发现已确认缺陷、高置信度风险和测试覆盖缺口 | 可用 |
 | `routing-easywork` | 帮助智能体根据任务类型选择正确的技能和执行顺序 | 可用 |
 
-## 技能详情
+## 规则索引
 
-### `sweeping-bugs`
-
-对整个仓库执行系统性的 bug 巡查。通过并行代码审查发现已确认的缺陷和高置信度风险。
-
-- 查找功能性 bug、行为回归、契约不匹配、缺失验证、错误处理、不安全假设
-- 将代码划分为独立区域并行扫描
-- 按严重程度分级（Critical > High > Medium > Low）
-- 区分已确认问题与假设性风险
-
-### `routing-easywork`
-
-技能路由入口。帮助智能体根据任务类型选择正确的技能，避免内联处理本应由专门技能完成的工作。
+| 规则 | 内容 |
+|------|------|
+| `subagent-rules` | 子智能体使用时机、模型选择（默认 haiku）、中断恢复 |
+| `output-style` | 输出客观务实、需求复述、工作摘要、诚实原则 |
+| `work-style` | 临时文件清理、避免过度工程化、代码声明基于事实、实现质量、操作可逆性、持续性与自主性 |
+| `skill-authoring` | 技能编写规范：简洁、描述第三人称、自由度匹配、渐进式披露、命名约定 |
 
 ## 添加新技能
 
