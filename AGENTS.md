@@ -1,7 +1,5 @@
 # AGENTS.md
 
-This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
-
 ## What This Repo Is
 
 A collection of reusable Codex skills for orchestrating complex agentic workflows. All skill content is Markdown - there is no application code, build system, or test suite.

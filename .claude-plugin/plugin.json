@@ -3,11 +3,22 @@
   "description": "Orchestration skills for evidence-driven codebase research, deep research reports, and semantic batch refactoring. Includes the superpowers general-purpose skill library for TDD, debugging, brainstorming, plan writing, parallel agents, git worktrees, and more.",
   "version": "1.0.4",
   "author": {
-    "name": "Cai-ki",
-    "email": ""
+    "name": "caikiji",
+    "email": "2875028086@qq.com"
   },
   "homepage": "https://github.com/Cai-ki/skills-lab",
   "repository": "https://github.com/Cai-ki/skills-lab",
   "license": "MIT",
-  "keywords": ["easywork", "orchestration", "research", "deepresearch", "context-pack", "batch-refactor", "refactoring", "tdd", "debugging", "skills"]
+  "keywords": [
+    "easywork",
+    "orchestration",
+    "research",
+    "deepresearch",
+    "context-pack",
+    "batch-refactor",
+    "refactoring",
+    "tdd",
+    "debugging",
+    "skills"
+  ]
 }
