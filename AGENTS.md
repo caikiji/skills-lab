@@ -8,8 +8,8 @@
 
 | 技能 | 输出对象 | 使用场景 |
 |------|---------|---------|
-| `bug-sweep` | 用户 | 对仓库执行系统性 bug 巡查，发现已确认缺陷、高置信度风险和测试覆盖缺口 |
-| `using-easywork` | 智能体自身 | 帮助智能体选择正确的技能和执行顺序 |
+| `sweeping-bugs` | 用户 | 对仓库执行系统性 bug 巡查，发现已确认缺陷、高置信度风险和测试覆盖缺口 |
+| `routing-easywork` | 智能体自身 | 帮助智能体根据任务类型选择正确的技能和执行顺序 |
 
 ## 技能目录结构
 
@@ -40,7 +40,7 @@ description: 一句话描述，用于 Claude 判断何时调用此技能。
 
 1. 创建 `skills/<skill>/SKILL.md` 及支撑文件——每个技能一个顶级目录
 2. 更新 `README.md` 中的技能索引表
-3. 更新 `skills/using-easywork/SKILL.md` 中的路由表
+3. 更新 `skills/routing-easywork/SKILL.md` 中的路由表
 
 ## 版本管理
 

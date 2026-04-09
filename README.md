@@ -24,20 +24,20 @@
 
 ```
 skills/
-├── bug-sweep/          # 仓库级 bug 巡查
-└── using-easywork/     # 技能路由入口
+├── sweeping-bugs/      # 仓库级 bug 巡查
+└── routing-easywork/   # 技能路由入口
 ```
 
 ## 技能索引
 
 | 技能 | 用途 | 状态 |
 |------|------|------|
-| `bug-sweep` | 对仓库执行系统性 bug 巡查，发现已确认缺陷、高置信度风险和测试覆盖缺口 | 可用 |
-| `using-easywork` | 帮助智能体选择正确的技能和执行顺序 | 可用 |
+| `sweeping-bugs` | 对仓库执行系统性 bug 巡查，发现已确认缺陷、高置信度风险和测试覆盖缺口 | 可用 |
+| `routing-easywork` | 帮助智能体根据任务类型选择正确的技能和执行顺序 | 可用 |
 
 ## 技能详情
 
-### `bug-sweep`
+### `sweeping-bugs`
 
 对整个仓库执行系统性的 bug 巡查。通过并行代码审查发现已确认的缺陷和高置信度风险。
 
@@ -46,7 +46,7 @@ skills/
 - 按严重程度分级（Critical > High > Medium > Low）
 - 区分已确认问题与假设性风险
 
-### `using-easywork`
+### `routing-easywork`
 
 技能路由入口。帮助智能体根据任务类型选择正确的技能，避免内联处理本应由专门技能完成的工作。
 
@@ -54,4 +54,4 @@ skills/
 
 1. 创建 `skills/<skill>/SKILL.md` 及支撑文件
 2. 更新本 README 的技能索引表
-3. 更新 `skills/using-easywork/SKILL.md` 中的路由表
+3. 更新 `skills/routing-easywork/SKILL.md` 中的路由表
