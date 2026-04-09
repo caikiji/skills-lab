@@ -1,7 +1,7 @@
 {
   "name": "easywork",
-  "description": "Orchestration skills for evidence-driven codebase research, deep research reports, and semantic batch refactoring. Includes the superpowers general-purpose skill library for TDD, debugging, brainstorming, plan writing, parallel agents, git worktrees, and more.",
-  "version": "1.0.4",
+  "description": "可复用的 Claude Code 技能集合，用于 bug 巡查、技能路由和智能体工作流编排",
+  "version": "2.0.0",
   "author": {
     "name": "caikiji",
     "email": "2875028086@qq.com"
@@ -11,14 +11,8 @@
   "license": "MIT",
   "keywords": [
     "easywork",
+    "bug-sweep",
     "orchestration",
-    "research",
-    "deepresearch",
-    "context-pack",
-    "batch-refactor",
-    "refactoring",
-    "tdd",
-    "debugging",
     "skills"
   ]
 }
