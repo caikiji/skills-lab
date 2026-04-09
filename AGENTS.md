@@ -2,7 +2,7 @@
 
 ## 仓库简介
 
-可复用的 Claude Code 技能集合，用于编排智能体工作流。所有技能内容均为 Markdown，无应用代码、构建系统或测试套件。
+可复用的 Claude Code 技能和规则集合，用于编排智能体工作流。技能内容为 Markdown，无应用代码、构建系统或测试套件。
 
 ## 技能列表
 
@@ -11,19 +11,29 @@
 | `sweeping-bugs` | 用户 | 对仓库执行系统性 bug 巡查，发现已确认缺陷、高置信度风险和测试覆盖缺口 |
 | `routing-easywork` | 智能体自身 | 帮助智能体根据任务类型选择正确的技能和执行顺序 |
 
-## 技能目录结构
+## 规则列表
 
-每个技能遵循以下布局：
+| 规则文件 | 内容 |
+|---------|------|
+| `rules/subagent-rules.md` | 子智能体使用时机、模型选择、中断恢复 |
+| `rules/output-style.md` | 输出规范、需求复述、工作摘要、诚实原则 |
+| `rules/work-style.md` | 临时文件清理、避免过度工程化、代码声明基于事实、实现质量、操作可逆性、持续性与自主性 |
+| `rules/skill-authoring.md` | 技能编写规范：简洁、描述第三人称、自由度、渐进式披露、命名约定、反模式 |
+
+## 仓库结构
 
 ```
-skills/<skill>/
-├── SKILL.md        # 入口：工作流、阶段、规则
-├── agents/         # 技能本地角色契约（可移植性）
-├── references/     # 参考文件
-└── scripts/        # 辅助脚本
+skills/
+├── sweeping-bugs/SKILL.md       # 仓库级 bug 巡查
+└── routing-easywork/SKILL.md    # 技能路由入口
+rules/
+├── subagent-rules.md            # 子智能体规则
+├── output-style.md              # 输出规范
+├── work-style.md                # 工作规范
+└── skill-authoring.md           # 技能编写规范
 ```
 
-### SKILL.md 前置元数据
+## SKILL.md 前置元数据
 
 每个 `SKILL.md` 以 YAML 前置元数据开头，控制发现和触发：
 
@@ -34,7 +44,7 @@ description: 一句话描述，用于 Claude 判断何时调用此技能。
 ---
 ```
 
-`description` 字段是触发信号——应描述技能应在何时触发，而非技能做了什么。
+`description` 字段是触发信号——应描述技能应在何时触发，而非技能做了什么。详见 `rules/skill-authoring.md`。
 
 ## 添加新技能
 
