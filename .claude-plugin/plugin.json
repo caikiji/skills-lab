@@ -1,7 +1,7 @@
 {
   "name": "easywork",
   "description": "可复用的 Claude Code 技能集合，用于 bug 巡查、技能路由和智能体工作流编排",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "author": {
     "name": "caikiji",
     "email": "2875028086@qq.com"
