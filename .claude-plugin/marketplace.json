@@ -2,7 +2,7 @@
   "name": "skills-lab",
   "description": "Orchestration skills for codebase research, semantic batch refactoring, and deep research reports - includes the superpowers general-purpose skill library",
   "owner": {
-    "name": "Cai-ki"
+    "name": "caikiji"
   },
   "plugins": [
     {
@@ -11,7 +11,7 @@
       "version": "1.0.4",
       "source": "./",
       "author": {
-        "name": "Cai-ki"
+        "name": "caikiji"
       }
     }
   ]
