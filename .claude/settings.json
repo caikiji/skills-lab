@@ -1,15 +1,16 @@
 {
-    "permissions": {
-        "allow": [
-            "Bash(pandoc:*)",
-            "Bash(python:*)",
-            "Bash(py:*)",
-            "Bash(pip install:*)",
-            "Bash(mmdc:*)",
-            "Bash(npx:*)",
-            "Bash(npm install:*)",
-            "Bash(where mmdc:*)",
-            "Bash(git:*)"
-        ]
-    }
+  "permissions": {
+    "allow": [
+      "Bash(pandoc:*)",
+      "Bash(python:*)",
+      "Bash(py:*)",
+      "Bash(pip install:*)",
+      "Bash(mmdc:*)",
+      "Bash(npx:*)",
+      "Bash(npm install:*)",
+      "Bash(where mmdc:*)",
+      "Bash(git:*)",
+      "Bash(gh repo:*)"
+    ]
+  }
 }
