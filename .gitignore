@@ -23,5 +23,4 @@ output/
 
 # Claude Code local settings (machine-specific)
 .claude/settings.local.json
-!docs/deepresearch/**/output/
-!docs/deepresearch/**/output/**
+.claude/rules
