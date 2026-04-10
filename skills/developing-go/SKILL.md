@@ -1,6 +1,6 @@
 ---
 name: developing-go
-description: 在 Go 项目中开发、调试、重构或审查代码时使用——指导 gopls MCP/LSP、go doc、repomix 工具组合的高效使用，减少对 Grep/全量 Read 的依赖。
+description: 涉及 Go 代码分析时使用——包括理解代码、调试、bug 定位、重构、代码审查、依赖分析、安全审计等，指导 gopls MCP/LSP、go doc、repomix 工具组合的高效使用，减少对 Grep/全量 Read 的依赖。
 ---
 
 # Developing Go
