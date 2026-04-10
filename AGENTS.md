@@ -9,6 +9,7 @@
 | 技能 | 输出对象 | 使用场景 |
 |------|---------|---------|
 | `sweeping-bugs` | 用户 | 对仓库执行系统性 bug 巡查，发现已确认缺陷、高置信度风险和测试覆盖缺口 |
+| `developing-go` | 智能体自身 | 在 Go 项目中开发、调试、重构或审查代码时，指导 gopls/repomix 工具组合的高效使用 |
 | `routing-easywork` | 智能体自身 | 帮助智能体根据任务类型选择正确的技能和执行顺序 |
 
 ## 规则列表
@@ -25,6 +26,7 @@
 ```
 skills/
 ├── sweeping-bugs/SKILL.md       # 仓库级 bug 巡查
+├── developing-go/SKILL.md       # Go 项目工具使用指南
 └── routing-easywork/SKILL.md    # 技能路由入口
 rules/
 ├── subagent-rules.md            # 子智能体规则
