@@ -39,7 +39,7 @@ rules/
 | 技能 | 用途 | 状态 |
 |------|------|------|
 | `sweeping-bugs` | 对仓库执行系统性 bug 巡查，发现已确认缺陷、高置信度风险和测试覆盖缺口 | 可用 |
-| `developing-go` | 在 Go 项目中指导 gopls MCP/LSP、go doc、repomix 工具组合的高效使用 | 可用 |
+| `developing-go` | 在 Go 代码分析时指导 gopls MCP/LSP、go doc、repomix 工具组合的高效使用——包括理解代码、调试、bug 定位、重构、代码审查、依赖分析、安全审计等 | 可用 |
 | `routing-easywork` | 帮助智能体根据任务类型选择正确的技能和执行顺序 | 可用 |
 
 ## 规则索引

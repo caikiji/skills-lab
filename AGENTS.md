@@ -9,7 +9,7 @@
 | 技能 | 输出对象 | 使用场景 |
 |------|---------|---------|
 | `sweeping-bugs` | 用户 | 对仓库执行系统性 bug 巡查，发现已确认缺陷、高置信度风险和测试覆盖缺口 |
-| `developing-go` | 智能体自身 | 在 Go 项目中开发、调试、重构或审查代码时，指导 gopls MCP/LSP、go doc、repomix 工具组合的高效使用，减少对 Grep/全量 Read 的依赖 |
+| `developing-go` | 智能体自身 | 涉及 Go 代码分析时使用——包括理解代码、调试、bug 定位、重构、代码审查、依赖分析、安全审计等，指导 gopls MCP/LSP、go doc、repomix 工具组合的高效使用 |
 | `routing-easywork` | 智能体自身 | 帮助智能体根据任务类型选择正确的技能和执行顺序 |
 
 ## 规则列表
