@@ -22,7 +22,7 @@
 | `goToDefinition` | 跳转定义 | grep 做不到 | |
 | `findReferences` | 全局引用查找 | **完全替换** | 核心类型名返回海量结果，优先用 go_symbol_references |
 | `goToImplementation` | 接口实现查找 | grep 做不到 | 隐式实现只有它能发现 |
-| `incomingCalls` | 谁调用了此函数 | **完全替换**（按调用者分组） | 需先 prepareCallHierarchy 定位 |
+| `incomingCalls` | 谁调用了此函数 | **完全替换**（按调用者分组，含间接调用） | 需先 prepareCallHierarchy 定位 |
 | `outgoingCalls` | 此函数调用了谁 | **完全替换**（一次性看全依赖链） | 需先 prepareCallHierarchy 定位 |
 
 ## Grep 不可替代的场景
