@@ -20,14 +20,14 @@ description: 在 Go 项目中开发、调试、重构或审查代码时使用—
 ├─ 找入口/函数
 │   └─ documentSymbol 扫描文件 > go_search/grep 猜名字
 ├─ 找谁调了某函数
-│   └─ incomingCalls（需先 prepareCallHierarchy）> go_symbol_references > Grep（有噪声）
+│   └─ incomingCalls（需先 prepareCallHierarchy）> go_symbol_references（精确但只有直接引用）> Grep（含注释/字符串/同名词，有噪声）
 ├─ 找某函数调了谁
-│   └─ outgoingCalls > Read 函数体 + 逐个追踪（定位失败时）
+│   └─ outgoingCalls（一次性看全依赖链）> Read 函数体 + 逐个追踪（定位失败时）
 ├─ 找接口实现
 │   └─ goToImplementation（唯一可靠，references 找不到隐式实现）
 ├─ 查看私有方法
-│   └─ go_search + Read（go doc 对私有方法无效）
-├─ 追踪单个符号引用
+│   └─ go_search + Read（go doc 即使 -all -src 也对私有方法无效）
+├─ 追踪单个常量/符号引用
 │   └─ go_symbol_references（精确无噪声）
 ├─ 扫描命名模式
 │   └─ Grep 前缀/正则（gopls 不支持模式搜索）
@@ -36,21 +36,21 @@ description: 在 Go 项目中开发、调试、重构或审查代码时使用—
 ├─ 检查代码模式（go func/TODO）
 │   └─ Grep
 ├─ 定位最近修改
-│   └─ git blame -L / git log -p / git log -S
+│   └─ git blame -L <行范围> file.go（精确定位到行）/ git log -p file.go（查看变更历史）/ git log -S "keyword" --oneline（搜索引入某关键词的提交）
 ├─ 快速编译验证
 │   └─ go_diagnostics > go build ./module > make target
 ├─ 安全重命名
-│   └─ go_rename_symbol（"Type.Method" 格式）> Edit replace_all
+│   └─ go_rename_symbol（"Type.Method" 格式，只返回 diff 不自动应用）> Edit replace_all（可能误改同名符号）
 ├─ 修改后验证
-│   └─ go_diagnostics（必调）
+│   └─ go_diagnostics（必调，编译+lint 即时反馈，还可能发现预存 lint 问题）
 ├─ 安全审计
-│   └─ go_vulncheck
+│   └─ go_vulncheck（检出依赖漏洞，需人工判断实际影响）
 ├─ 跨服务通信追踪
 │   └─ 每侧 go_symbol_references + go_search，用协议 ID 串联
 ├─ 理解文件结构
 │   └─ documentSymbol > Read 全文
 ├─ 理解包 API
-│   └─ 小包：go_package_api；大包：go_search
+│   └─ 小包/子包：go_package_api > go doc <pkg>（大业务包输出 1MB+，改用 go_search）
 ├─ 理解文件依赖
 │   └─ 小包：go_file_context；大包（>50 文件）：Grep + Read
 ├─ 理解函数上下文
@@ -107,6 +107,7 @@ description: 在 Go 项目中开发、调试、重构或审查代码时使用—
 
 1. `goToDefinition` → 追踪定义
 2. `outgoingCalls` → 下游调用链（失败时：Read 函数体 + 逐个 goToDefinition）
+   - outgoingCalls 失败条件：gopls 未索引文件、函数是接口方法无具体实现、函数体过于复杂
 3. `hover` → 类型信息
 4. `go_symbol_references` → 所有调用点（优先关注当前业务模块）
 
