@@ -1,11 +1,19 @@
 ---
 name: developing-go
-description: 涉及 Go 代码分析时使用——包括理解代码、调试、bug 定位、重构、代码审查、依赖分析、安全审计等，指导 gopls MCP/LSP、go doc、repomix 工具组合的高效使用，减少对 Grep/全量 Read 的依赖。
+description: 涉及 Go 代码分析时**必须使用**——包括理解代码、调试、bug 定位、重构、代码审查、依赖分析、安全审计等，强制使用 gopls MCP/LSP、go doc、repomix，禁止 Grep/全量 Read。
 ---
 
 # Developing Go
 
-在 Go 项目中高效使用 gopls MCP/LSP、go doc、repomix 工具组合，减少对 Grep/全量 Read 的依赖。
+在 Go 项目中高效使用 gopls MCP/LSP、go doc、repomix 工具组合，**必须禁止**使用 Grep/全量 Read 除非无替代方案。
+
+## 强制约束
+
+**Grep 和全量 Read 禁止使用**，除非同时满足：
+- 该操作 gopls 工具完全无法实现
+- 且无法通过 `documentSymbol` + 局部 Read 替代
+
+违反此约束视为技能使用错误。
 
 ## 会话初始化
 
