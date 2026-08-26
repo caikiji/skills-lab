@@ -2,6 +2,19 @@
 
 可复用的 AI 技能和规则集合，用于编排智能体工作流。从 GitHub 源码仓库随所有修改保持同步，支持安装到多个 agent harness（pi、Claude Code、Codex）。
 
+## 配置
+
+本仓库使用 [git-fetch-file](https://github.com/andrewmcwattersandco/git-fetch-file) 从其他仓库同步单个文件（见 `.git-remote-files`）。首次配置：
+
+```bash
+cd .temp
+git clone https://github.com/andrewmcwattersandco/git-fetch-file.git
+cd ./git-fetch-file
+go build -o ../../bin/git-fetch-file.exe
+cd ../../
+git config --global alias.fetch-file '!bin/git-fetch-file.exe'
+```
+
 ## 技能列表
 
 | 技能 | 使用场景 |
