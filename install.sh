@@ -15,11 +15,13 @@
 # 环境变量:
 #   SKILLS_LAB_REPO / SKILLS_LAB_BRANCH   覆盖仓库地址与分支
 #   PI_SKILLS_DIR / CLAUDE_SKILLS_DIR / CODEX_SKILLS_DIR   覆盖对应安装目录
+#   SKILLS_BACKUP_KEEP   每个目录保留最近几份备份,默认 5,0 不限制
 
 set -eu
 
 REPO_URL="${SKILLS_LAB_REPO:-https://github.com/caikiji/skills-lab.git}"
 BRANCH="${SKILLS_LAB_BRANCH:-main}"
+KEEP="${SKILLS_BACKUP_KEEP:-5}"
 
 # harness 名称 -> 默认安装目录
 target_of() {
@@ -36,6 +38,18 @@ list_harnesses() {
     echo "  pi      -> ~/.pi/agent/skills"
     echo "  claude  -> ~/.claude/skills"
     echo "  codex   -> ~/.codex/skills"
+}
+
+# 轮转:只保留最近 KEEP 份备份目录,删除最旧的
+prune_backups() {
+    [ "$KEEP" -le 0 ] && return 0
+    total=$(ls -1 "$1" 2>/dev/null | wc -l)
+    too_many=$((total - KEEP))
+    [ "$too_many" -le 0 ] && return 0
+    ls -1 "$1" | sort | head -n "$too_many" | while read -r d; do
+        rm -rf "$1/$d"
+        echo "    已清理旧备份 $1/$d"
+    done
 }
 
 usage() {
@@ -67,19 +81,23 @@ for arg in "$@"; do
         continue
     }
     mkdir -p "$target"
+    stamp=$(date +%Y%m%d%H%M%S)
+    backup_dir="$target.backup"
     count=0
+    backup_count=0
     for skill_dir in "$tmp_dir/repo"/skills/*/; do
         [ -f "$skill_dir/SKILL.md" ] || continue
         name=$(basename "$skill_dir")
         if [ -e "$target/$name" ]; then
-            stamp=$(date +%Y%m%d%H%M%S)
-            mkdir -p "$target.backup/$stamp"
-            mv "$target/$name" "$target.backup/$stamp/$name"
-            echo "    已备份旧技能 $name -> $target.backup/$stamp/$name"
+            mkdir -p "$backup_dir/$stamp"
+            mv "$target/$name" "$backup_dir/$stamp/$name"
+            backup_count=$((backup_count + 1))
         fi
         cp -R "$skill_dir" "$target/"
         count=$((count + 1))
     done
+    [ "$backup_count" -gt 0 ] && echo "    已备份 $backup_count 个旧技能 -> $backup_dir/$stamp/"
+    prune_backups "$backup_dir"
     echo "==> $arg:安装 $count 个技能 -> $target"
     installed=$((installed + 1))
 done
