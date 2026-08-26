@@ -1,6 +1,6 @@
 ---
 name: agents-md
-description: 为仓库生成或精简根级 AGENTS.md（AI agent 的项目指令文件）。用户要求写 agent 说明文件、让 AI 遵守项目规范、或现有 AGENTS.md 太长太啰嗦时执行。只装长期有效内容；只处理仓库根的单文件。
+description: 创建或修改 AGENTS.md 前必须读取并遵守本 skill。按 4 章骨架生成或精简仓库根级 AGENTS.md，只装长期有效的内容；只处理仓库根的单文件。
 ---
 
 # AGENTS.md Skill
