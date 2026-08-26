@@ -1,27 +1,32 @@
-# AGENTS.md
+# skills-lab
 
-可复用的 AI 技能与配置集合：技能/配置由 [git-fetch-file](https://github.com/andrewmcwattersandco/git-fetch-file) 从外部仓库同步（溯源见
-`.git-remote-files`），经 `install.sh` 安装到本机（pi / Claude Code / Codex）。
+可复用的 AI 技能与配置集合：技能/配置经 [git-fetch-file](https://github.com/andrewmcwattersandco/git-fetch-file) 从外部源仓库同步（溯源见 `.git-remote-files`），由 `install.sh` 安装到本机（pi / Claude Code / Codex）。
+
+## 约定
+
+- 新增技能须创建 `skills/<name>/SKILL.md`（含 name/description），并更新 README 技能表
+- `install.sh` / `deploy.yaml` 改动需本地测试（configs 部署用临时目录验证）
+- 提交信息用中文
+
+## 边界
+
+- `skills/`、`configs/`：由 `git fetch-file pull` 从外部源覆盖，改动会丢失；变更请走外部源仓库（`.git-remote-files` 记录来源）
+- `bin/`、`.temp/`：本地构建产物（go 构建、git clone 缓存），不入库
+- `install.sh` / `deploy.yaml`：改动未本地实测前不提交（`configs` 部署会覆盖本机配置）
 
 ## 常用命令
 
 ```sh
-# 一键安装(技能 + 按 deploy.yaml 部署配置)
-curl -fsSL https://raw.githubusercontent.com/caikiji/skills-lab/main/install.sh | sh -s -- pi configs
-
-# 同步外部仓库内容到本仓库
-cd .temp
-git clone https://github.com/andrewmcwattersandco/git-fetch-file.git
-cd ./git-fetch-file
-go build -o ../../bin/git-fetch-file.exe
-cd ../../
-git config --global alias.fetch-file '!bin/git-fetch-file.exe'
+# 同步外部源内容到本仓库（首次配置见 README）
 git fetch-file pull
 ```
 
-## 约定
+```sh
+# 一键安装到本机（pi + configs 部署）
+curl -fsSL https://raw.githubusercontent.com/caikiji/skills-lab/main/install.sh | sh -s -- pi configs
+```
 
-- 修改 `skills/`、`configs/` 内容会被 `git fetch-file pull` 覆盖，变更请走外部源仓库
-- 新增技能须创建 `skills/<name>/SKILL.md`（含 name/description），并更新 README 技能表
-- `install.sh` / `deploy.yaml` 改动需本地测试（configs 部署用临时目录验证）
-- 提交信息用中文；编码约定见 `templates/AGENTS.md`
+## 深文档
+
+- `README.md`：技能列表、安装参数、configs 部署格式
+- `templates/AGENTS.md`：编码约定（提交/注释语言、代码风格、冲突处理）
