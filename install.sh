@@ -2,16 +2,16 @@
 # skills-lab 技能一键安装脚本
 #
 # 用法:
-#   curl -fsSL https://raw.githubusercontent.com/Cai-ki/skills-lab/main/install.sh | sh
+#   curl -fsSL https://raw.githubusercontent.com/caikiji/skills-lab/main/install.sh | sh
 #
 # 自定义(环境变量覆盖):
-#   SKILLS_LAB_REPO=<git地址>   要安装的仓库,默认 https://github.com/Cai-ki/skills-lab.git
+#   SKILLS_LAB_REPO=<git地址>   要安装的仓库,默认 https://github.com/caikiji/skills-lab.git
 #   SKILLS_LAB_BRANCH=<分支>    仓库分支,默认 main
 #   PI_SKILLS_DIR=<目录>        安装目标,默认 ~/.pi/agent/skills
 
 set -eu
 
-REPO_URL="${SKILLS_LAB_REPO:-https://github.com/Cai-ki/skills-lab.git}"
+REPO_URL="${SKILLS_LAB_REPO:-https://github.com/caikiji/skills-lab.git}"
 BRANCH="${SKILLS_LAB_BRANCH:-main}"
 TARGET="${PI_SKILLS_DIR:-$HOME/.pi/agent/skills}"
 BACKUP="${PI_SKILLS_BACKUP:-$TARGET.backup}"
