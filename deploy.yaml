@@ -1,0 +1,16 @@
+# configs 部署配置 —— 由 install.sh 的 configs 参数解析
+#
+# 字段:
+#   src  必填:configs/ 下的相对路径(文件或目录)
+#   dest 必填:部署目标,支持 ~ 和 $HOME / $XDG_CONFIG_HOME 等环境变量
+#   mode 可选:copy(默认,复制并备份);link 暂不支持
+#
+# 部署语义:目标已存在时先备份到 <dest>.backup/<时间戳>/,再复制;
+#           每个目标保留最近 SKILLS_BACKUP_KEEP(默认 5)份备份,自动轮转。
+deployments:
+  - src: rpiv-web-tools
+    dest: ~/.config/rpiv-web-tools
+    mode: copy
+  - src: extensions/pi-rtk-optimizer
+    dest: ~/.pi/agent/extensions/pi-rtk-optimizer
+    mode: copy
