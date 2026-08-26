@@ -42,13 +42,31 @@ curl -fsSL https://raw.githubusercontent.com/caikiji/skills-lab/main/install.sh 
 | `pi` | `~/.pi/agent/skills` | pi（默认支持，传参生效） |
 | `claude` | `~/.claude/skills` | Claude Code |
 | `codex` | `~/.codex/skills` | OpenAI Codex |
+| `configs` | 按 `deploy.yaml` | 部署 `configs/` 内容到机器目录 |
 | `--list` | - | 列出支持的 harness 及目录 |
-
-可同时安装多个：
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/caikiji/skills-lab/main/install.sh | sh -s -- pi claude
+curl -fsSL https://raw.githubusercontent.com/caikiji/skills-lab/main/install.sh | sh -s -- pi configs
 ```
+
+## configs 部署
+
+`deploy.yaml`（仓库根）定义 `configs/` 里每个条目要搬到哪里：
+
+```yaml
+# configs/rpiv-web-tools 目录 -> ~/.config/rpiv-web-tools
+deployments:
+  - src: rpiv-web-tools
+    dest: ~/.config/rpiv-web-tools
+    mode: copy      # copy 默认;link 暂不支持
+```
+
+- `src`：`configs/` 下的相对路径（文件或目录）
+- `dest`：目标路径，支持 `~` 和 `$HOME` / `$XDG_CONFIG_HOME` 等变量
+- `mode`：`copy` 复制并备份（默认）；`link` 暂不支持
+- 部署依赖 python3 + PyYAML（脚本自动探测 `python3` / `python` / `py -3`）
+- 目标已存在时先备份到 `<目标>.backup/<时间戳>/`，轮转策略同技能安装
 
 ## 行为说明
 
