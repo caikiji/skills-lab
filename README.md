@@ -19,6 +19,7 @@ git config --global alias.fetch-file '!bin/git-fetch-file.exe'
 
 | 技能 | 使用场景 |
 |------|---------|
+| `agents-md` | 生成/诊断仓库根级 AGENTS.md |
 | `html-card` | 生成网页卡片/可视化 HTML |
 | `mcp-builder` | MCP server 开发（Python/Node） |
 | `skill-creator` | 创建新技能 |
