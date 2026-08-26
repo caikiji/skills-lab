@@ -35,6 +35,7 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 | 技能 | 使用场景 |
 |------|---------|
 | `agents-md` | 生成/诊断仓库根级 AGENTS.md |
+| `commit-style` | 按 Conventional Commits 规范生成/校验提交信息 |
 | `html-card` | 生成网页卡片/可视化 HTML |
 | `mcp-builder` | MCP server 开发（Python/Node） |
 | `readme-md` | 生成/精简仓库根级 README.md |
