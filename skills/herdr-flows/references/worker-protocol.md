@@ -23,6 +23,27 @@
 | worker 卡死 | 先 esc 中断生成，再决定打回还是终止 |
 | 接力复用 | 同一 pi 会话上下文延续，第二份简报可以很短；要全新上下文才另起面板 |
 
+## Windows 专属：spawn pi ENOENT
+
+`spawn("pi")` 在 Windows 报 ENOENT——npm shim 是 bash 脚本，无 `pi.exe`。直启 node：
+
+```js
+spawn(process.execPath, [
+  "C:/Users/<user>/AppData/Roaming/npm/node_modules/@earendil-works/pi-coding-agent/dist/bundle/cli.js",
+  "--mode", "rpc",
+])
+```
+
+## 注入命令键盘语义对照
+
+| 命令 | 回车 | 用途 |
+|------|------|------|
+| `pane run <id> "<text>"` | 自动 | 逐条喂语句/派简报（主通道）|
+| `pane send-text <id> "<text>"` | 否 | 拼接半行，之后自己 `send-keys enter` |
+| `pane send-keys <id> <key>` | - | 只接受键名（enter/esc/ctrl+c/方向键），传文本报 `invalid_key` |
+
+相邻两次注入会拼进同一行（`echo A` + `echo B` → `echo Aecho B`），节奏靠主控显式 sleep 或 enter 控制。
+
 ## 并发写入规则
 
 1. **默认分片**：每个 worker 只写自己的报告文件，主控汇总。
