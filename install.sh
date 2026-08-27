@@ -190,6 +190,19 @@ for arg in "$@"; do
         fi
         cp -R "$skill_dir" "$target/"
         count=$((count + 1))
+        # claude harness 额外部署技能内嵌 agents/ 到 ~/.claude/agents/(仅带 name frontmatter 的合法 subagent)
+        if [ "$arg" = "claude" ] && [ -d "$skill_dir/agents" ]; then
+            agents_dir="$HOME/.claude/agents"
+            mkdir -p "$agents_dir"
+            for agent_file in "$skill_dir/agents"/*.md; do
+                { head -5 "$agent_file" | grep -q '^name:'; } || {
+                    echo "    跳过非 subagent 文档:$(basename "$agent_file")"
+                    continue
+                }
+                cp "$agent_file" "$agents_dir/$(basename "$agent_file")"
+                echo "    部署 subagent:$(basename "$agent_file") -> $agents_dir"
+            done
+        fi
     done
     [ "$backup_count" -gt 0 ] && echo "    已备份 $backup_count 个旧技能 -> $backup_dir/$stamp/"
     prune_backups "$backup_dir"
