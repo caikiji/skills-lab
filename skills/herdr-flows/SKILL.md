@@ -11,7 +11,7 @@ description: 在 Herdr 中做多智能体与长任务工作流前必须读取并
 
 - 主 pane 固定左半，用户主要关注主 pane，一切新增从右半开始；禁止把主 pane 拆窄，禁止重复同向向右拆（<100 列不可读）。
 - 新建后立即 rename 语义名；串行任务共用一个 pane 排队；堆积过多拆到独立 tab，关注留前台、次要放背后，拆后刷新引用。
-- 操作前后跑 pane list 对照自建登记；收尾必须回到「只有主 pane 和用户既有 pane」，有残留必清。
+- 操作前后跑 `herdr api snapshot` 对照自建登记（一次拿全 workspace/tab/pane/agent/宽度，不必逐个 list）；收尾必须回到「只有主 pane 和用户既有 pane」，有残留必清。
 - 关闭前核对 label 与登记一致；用户面板只读；误关如实报告并给恢复命令。
 
 ## 调用子 agent
