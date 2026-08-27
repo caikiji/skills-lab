@@ -47,6 +47,16 @@ claude 可用零钩子识别：远程 `claude.toml` 已有完整屏幕规则（O
 
 Git Bash 会把以 `/` 开头的参数改写成本地路径（如 `/exit` 变成 `C:/Program Files/Git/exit`），`pane run`、`send-text`、`send-keys` 全部中招。凡参数以 `/` 开头，命令前缀加 `MSYS_NO_PATHCONV=1`；改写后的参数发给 agent 会被当成消息消耗一轮对话，报错则是 `invalid_key`/语法错。
 
+## 审批链纪律
+
+工具权限审批是**逐条出现**的：批准某条命令的白名单只覆盖该命令（`node *` 只免 node，不含 `echo`/`bash` 等），同任务的后续命令会再弹新审批。处理流程：
+
+1. `pane read --source visible` 读清当前审批是哪条命令、光标停在哪个选项。
+2. 用户授权自动批准时，用 `agent send-keys <name> enter` 确认（`down`/`enter` 组合键可能只移动不确认，enter 单独发并重读屏验证）。
+3. 每次批准后重新 `pane read`：新审批就继续处理，直到 agent 回到 working。
+4. 不可用 esc 当“收尾”键：esc 会取消当前审批（等价拒绝），且会把输入框残留 `/` 置于斜杠菜单态，后续注入前先 ctrl+u 清空。
+5. 验收以报告文件为准：`wait-output` 命中只是信号（回显可假阳性），命中与未命中都 `cat` 报告文件二次验证；文件缺失时读 claude 调试日志 `~/.claude/debug/<session-id>.txt` 的 `tool permission denied`/`stop_reason` 定位。
+
 ## 并发写入规则
 
 1. **默认分片**：每个 worker 只写自己的报告文件，主控汇总。
