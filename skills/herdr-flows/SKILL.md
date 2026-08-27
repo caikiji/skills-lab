@@ -5,56 +5,56 @@ description: 在 Herdr 中做多智能体与长任务工作流前必须读取并
 
 # Herdr Flows
 
-herdr skill 教命令细节，本 skill 定义工作流与纪律。要求 HERDR_ENV=1。
+命令语法见 herdr skill；本文件只约定选择与边界。要求 HERDR_ENV=1。
 
-## 调 subagent（agent start）
+## 布局
 
-1. **准备 pane**：`herdr pane split --current --direction down --cwd "$PWD" --no-focus`，从 `.result.pane.pane_id` 取 ID；面板须停在交互 shell 提示符、无前台命令。
-2. **启动**：`herdr agent start worker-01 --kind claude --pane <pane-id> --timeout 30000 -- --agent herdr-child --permission-mode auto`
-  `--agent herdr-child` 加载 [agents/herdr-child.md](../herdr-chat/agents/herdr-child.md) subagent 定义（身份/安全红线/协议全文），禁止裸启动；`--permission-mode auto` 必须显式传（frontmatter 的 permissionMode 实测不生效，省略会回到 manual 模式逐条审批）。
-  返回成功 = 识别且 ready；启动失败先 `herdr integration status`，未装集成则 `herdr integration install claude`，仍不 ready 走 [references/agent-lifecycle.md](references/agent-lifecycle.md) 的 pane 注入降级。
-3. **派活**：`herdr agent prompt worker-01 "<任务>。完整结论写入 .temp/reports/worker-01.md，回复只需该路径。"`；简报含动态值（主控 pane id、agent 名），模板见 [references/chat-briefing.md](references/chat-briefing.md)；**不用 `--wait`**——等待交给工具状态机，一旦工具卡死就永远等；派活后进入轮询验收（见下）。
-4. **验收（轮询，不依赖工具状态机）**：先看主 pane 反向消息，再看报告文件，都是短间隔真实检查；循环模板与超限处置见 [references/polling.md](references/polling.md)。
-5. **收尾**：`agent get` 确认回到 idle/done（不阻塞），仍在 working/blocked 先 esc/ctrl+c 处理，禁止带阻塞子 agent 关闭或复用面板；`agent list` 确认无残留；退出 agent 归还面板（注入 `/exit`，前缀 `MSYS_NO_PATHCONV=1`）。
+- 主 pane 固定左半，用户主要关注主 pane，一切新增从右半开始；禁止把主 pane 拆窄，禁止重复同向向右拆（<100 列不可读）。
+- 新建后立即 rename 语义名；串行任务共用一个 pane 排队；堆积过多拆到独立 tab，关注留前台、次要放背后，拆后刷新引用。
+- 操作前后跑 pane list 对照自建登记；收尾必须回到「只有主 pane 和用户既有 pane」，有残留必清。
+- 关闭前核对 label 与登记一致；用户面板只读；误关如实报告并给恢复命令。
 
-**双向通信**：子 agent 可反向给主 pane 发消息（`herdr pane run <主控pane-id> "[名字] 内容"`），派活简报必须告知主控 pane id（从 `herdr pane current --current` 取），协议全文见 [herdr-chat](../herdr-chat/SKILL.md)。
+## 调用子 agent
 
-打回重做 / 卡死中断 / 接力复用 / 并发写入见 [references/agent-lifecycle.md](references/agent-lifecycle.md)。
+- 启动必须带 `--agent herdr-child`（身份/安全红线/协议全文由 [agents/herdr-child.md](../herdr-chat/agents/herdr-child.md) 提供），禁止裸启动。
+- 必须显式传 `--permission-mode auto`：subagent frontmatter 里的 permissionMode 不生效，省略会回到逐条审批（每条命令弹窗）。
+- 启动失败依次排查：integration status → install claude → pane 注入降级（[references/agent-lifecycle.md](references/agent-lifecycle.md)）。
+- 派活简报只含任务 + 动态值（主控 pane id、agent 名），模板见 [references/chat-briefing.md](references/chat-briefing.md)；结论要求写报告文件；验收用轮询（[references/polling.md](references/polling.md)）——先看反向消息再 cat 报告文件，不使用 `--wait`。
+- 收尾顺序：确认子 agent 回 idle/done 不阻塞 → agent list 无残留 → 主控注入退出 → 关面板。
+- 子 agent 无法退出自己：完成时发消息告知「可以关闭我」，退出/关面板都是主控职责。
 
-## 布局纪律
+## 双向通信
 
-- **主 pane 固定左半**：`herdr pane split --current --direction right --ratio 0.5 --cwd "$PWD" --no-focus`；用户主要关注主 pane，一切新增从右半开始，禁止把主 pane 挤窄（<100 列不可读）。
-- **右半从上往下堆叠**：对右侧 pane 用 `--direction down` 依次下拆（带 `--no-focus`）；禁止重复同向向右拆。
-- **每个 pane 必命名**：新建后立即 `pane rename <id> 语义名`；串行任务共用一个 pane 排队，不另开 tab。
-- **时刻 list**：每次操作前后跑 `herdr pane list`（自建 pane 登记清单对照），发现非预期 pane 立即查明：不认识的确认归属后再动；收尾时 list 必须回到「只有主 pane 和用户既有 pane」，有残留必清。
-- **堆积过多拆出**：`pane move <id> --new-tab --label <label>` 拆到独立 tab；用户关注的留前台，次要的放背后，move 后从 JSON 刷新引用。
-- **关闭必验证**：`pane get <id>` 核对 label/pane_id 与自建登记一致后才 `pane close`；用户面板只读，误关如实报告并给恢复命令。
-- 其它常用：`pane run`（命令+回车原子发）、`pane read --source recent-unwrapped`（日志/现场）、`pane wait-output --match`（必带 `--timeout`）、`pane zoom --toggle`（临时放大）。
+- 子 agent 可给主 pane 注入 `[名字] 消息`；简报必须告知它主控 pane id。
+- 协议全文见 [herdr-chat](../herdr-chat/SKILL.md)；打回/卡死/接力/并发写入见 [references/agent-lifecycle.md](references/agent-lifecycle.md)。
 
-## 长命令进面板（当后台任务）
+## 边界
 
-耗时命令、服务、REPL 放其它 pane，主 pane 只做乐观检查 + timeout：
+- 轮询匹配不加行首锚（输出带前导空格/前缀）；哨兵字面量不得出现在简报（回显会假阳性）。
+- 匹配到完成标志 ≠ 完成，必须文件二次验证。
+- auto 模式仍拦截高危命令，出现审批是预期安全行为，读屏后按 blocked 处理，不绕过。
+- 组合命令（如 `mkdir && node`）不受单命令白名单覆盖，会弹审批。
+- 审批框的 enter 可能被吞，确认后必须重读屏。
+- 参数以 `/` 开头会被改写成 Windows 路径，注入命令加 `MSYS_NO_PATHCONV=1` 前缀。
 
-- 面板是交互式后台：`pane read` 看实时输出、`pane run` 随时追加输入、`send-keys ctrl+c` 可中断、close 即清理。
-- 同步点用 `pane wait-output <id> --match "触发文本" --timeout <ms>`，命中即返回快照。
-- 服务启动判定用行为探针：`curl -fsS -o /dev/null http://localhost:<port>/`，横幅只作兜底。
+## 长命令进面板
 
-长驻服务 / worktree 多分支 / 状态看板 / REPL 驱动速查见 [references/scenarios.md](references/scenarios.md)。
+- 耗时/需持续输入的命令放其它 pane，主 pane 不干等。
+- 服务启动判定用行为探针（curl 探端口/接口），横幅只作兜底。
+- 停止服务后探针反向验证（连接失败 = 端口已释放）再关面板，最后 list 确认无残留。
 
-## 操作纪律
+长驻服务 / 状态看板 / REPL 驱动速查见 [references/scenarios.md](references/scenarios.md)。
 
-1. **醒来必查**：每个等待周期结束时，先 read 现场 / `agent get` / 看结果文件，确认状态后才决定下一轮等待或处理；禁止醒后无检查直接再睡。
-2. **等不到就撤**：`--wait`/`wait-output` 可能永远等不到目标状态；一律用短轮询（sleep 3 一轮 + 真实检查），循环 6-8 轮约 25s 无进展即停，改用 `agent get` + read 现场定位，不无限续等。
-3. **timeout 是闹钟不是时长**：`--timeout` 设 15~60s（默认 30s），超时即先看现场再决定续等或上报；禁止设 600s/900s 黑盒等待。
-4. 轮询节奏先短后长：1s → 5s → 30s，每轮必须真实检查一次。
-5. working 超长（>60s 无进展）先读屏，暴露问题优先于等待结果。
-6. 耗时或需持续输入的命令放其它 pane；主 pane 保持轻快，绝不干等。
-7. 忙时不发指令：agent 生成期注入可能被吞；多轮意图合并成一条简报。
-8. 白名单：写操作（send/run/close/resize）前核对 pane_id 在自建登记清单；用户面板只读；误操作用户面板如实报告并给恢复命令。
+## 等待纪律
+
+1. 每个等待周期结束先检查现场（read / agent get / 看结果文件），确认状态后才决定下一轮等待或处理；禁止醒后无检查直接再睡。
+2. 短轮询 6-8 轮（约 25s）无进展即停，改用现场检查定位，不无限续等。
+3. `--timeout` 设 15~60s（默认 30s），超时先看现场再决定续等或上报；禁止长时黑盒等待。
+4. 轮询节奏先短后长（1s → 5s → 30s），每轮真实检查。
+5. working 超长（>60s 无进展）先读屏；子 agent 生成期不注入（可能被吞），多轮意图合并成一条简报。
+6. 写操作前核对 pane_id 在自建登记清单。
 
 ## 常见坑
 
-- JSON 错误在 stderr 且 exit 1；exit 2 是语法错，先修命令形状。
-- `pane move` 后旧 pane ID 只在原调用方上下文有效，全局刷新为新 ID。
-- 免审批会话（permissionMode: auto）仍会拦截高危命令；若出现审批属预期安全行为，读屏后按 blocked 流程处理，不要试图绕过。
+- JSON 错误在 stderr 且 exit 1，exit 2 是语法错；pane move 后旧 ID 失效。
 - 本 skill 未覆盖的问题走 skill-feedback 流程沉淀，不在本文件内私自扩写。
