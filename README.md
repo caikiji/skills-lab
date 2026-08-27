@@ -43,6 +43,7 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 | `jupyter-attach` | 长驻 Jupyter 会话管理（tmux 式 attach，跨调用持久状态） |
 | `mcp-builder` | MCP server 开发（Python/Node） |
 | `readme-md` | 生成/精简仓库根级 README.md |
+| `skill-feedback` | 沉淀技能使用中的踩坑与已验证替代方案为反思报告（落盘项目 .temp） |
 | `skill-creator` | 创建/优化技能 |
 | `xlsx` | Excel 文档处理 |
 | `zhihu-search` | 知乎内容搜索 |
