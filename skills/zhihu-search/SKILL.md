@@ -1,45 +1,37 @@
 ---
 name: zhihu-search
-disable-model-invocation: true
-description: 搜索知乎站内内容。
+version: 2.0.0
+description: 搜索知乎站内内容，获取标题、摘要、作者和内容链接等信息
+homepage: https://developer.zhihu.com/console/docs?key=zhihu_search
+metadata: {"openclaw":{"emoji":"🔍","requires":{"bins":["python3"]}}}
 ---
 
 # Zhihu Search Skill
 
-## 概述
-调用知乎开放平台 `GET /api/v1/content/zhihu_search` 检索站内内容，返回精简 JSON 结构。
-完整 API 文档：https://developer.zhihu.com/docs
+通过 `GET /api/v1/content/zhihu_search` 检索知乎内容。
 
 ## 认证
-环境变量 `ZHIHU_ACCESS_SECRET` 必填。可选配置：
-- `ZHIHU_OPENAPI_BASE_URL`（默认：`https://developer.zhihu.com`）
-- `ZHIHU_ZHIHU_SEARCH_URL`（完整 endpoint 覆盖，优先于 `ZHIHU_OPENAPI_BASE_URL` + 默认 path）
 
-## 快速开始
+设置 `ZHIHU_ACCESS_SECRET`。可选设置：
+
+- `ZHIHU_OPENAPI_BASE_URL`：默认 `https://developer.zhihu.com`
+- `ZHIHU_ZHIHU_SEARCH_URL`：完整 endpoint，优先级更高
+
+## 调用
+
 ```bash
-python {baseDir}/scripts/zhihu-search.py '{"query":"如何理解 rave 文化","count":5}'
+python3 {baseDir}/scripts/zhihu-search.py '{"query":"如何理解 rave 文化","count":5}'
 ```
 
-## 输入约定
-传入 JSON 参数：
-```json
-{"query":"...", "count":10}
-```
-规则：
-- `query` 必填，且不能为空字符串（自动 `strip`）。
-- `count` 可选；脚本自动限制到 1-10。
+`query` 必填；`count` 默认为 10，并限制到 1-10。
 
-## 输出约定
+## 响应参数
 
-### 成功
-返回 JSON：
-- `code`, `message`
-- `item_count`
-- `items[]`，包含 `title`, `summary`, `url`, `author_name`, `vote_up_count`, `comment_count`, `edit_time`
+- `Code`：状态码，`0` 表示成功。
+- `Message`：状态说明。
+- `Data.HasMore`：是否还有更多结果。
+- `Data.SearchHashId`：本次搜索标识。
+- `Data.EmptyReason`：无搜索结果时的原因说明。
+- `Data.Items`：搜索结果列表；每项包含 `Title`、`ContentType`、`ContentID`、`ContentText`、`Url`、`CommentCount`、`VoteUpCount`、`AuthorName`、`AuthorAvatar`、`AuthorBadge`、`AuthorBadgeText`、`EditTime`、`AuthorityLevel`、`RankingScore` 和 `CommentInfoList`。
 
-### 失败
-`error` 字段为动态错误描述：
-```json
-{"error":"query is required","exit_code":1}
-{"error":"HTTP 403","body":"Forbidden","exit_code":1}
-```
+命令失败时以非零状态结束。根据错误信息检查输入参数、认证配置、网络状态或调用频率。

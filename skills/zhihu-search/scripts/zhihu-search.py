@@ -13,8 +13,6 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 
-SUMMARY_MAX_LENGTH = 300
-
 DEFAULT_BASE_URL = "https://developer.zhihu.com"
 REQUEST_TIMEOUT_SECONDS = 5
 
@@ -22,7 +20,7 @@ REQUEST_TIMEOUT_SECONDS = 5
 def print_usage() -> None:
     print(
         "Usage:\n"
-        "  python zhihu-search.py "
+        "  python3 zhihu-search.py "
         '\'{"query":"如何理解 rave 文化","count":5}\'\n\n'
         "Environment:\n"
         "  ZHIHU_ACCESS_SECRET      Bearer auth token\n"
@@ -37,6 +35,23 @@ def die(message: str, *, body: Any | None = None) -> NoReturn:
         payload["body"] = body
     print(json.dumps(payload, ensure_ascii=False))
     raise SystemExit(1)
+
+
+def emit_raw(body_text: str) -> None:
+    secret = os.getenv("ZHIHU_ACCESS_SECRET", "")
+    if secret:
+        body_text = body_text.replace(secret, "***")
+    sys.stdout.write(body_text)
+    if not body_text.endswith("\n"):
+        sys.stdout.write("\n")
+
+
+def die_http(err: HTTPError) -> NoReturn:
+    body_text = err.read().decode("utf-8", errors="replace")
+    if body_text:
+        emit_raw(body_text)
+        raise SystemExit(1)
+    die(f"HTTP {err.code}")
 
 
 def parse_payload(raw: str) -> Dict[str, Any]:
@@ -74,40 +89,7 @@ def get_endpoint() -> str:
     return f"{base_url.rstrip('/')}/api/v1/content/zhihu_search"
 
 
-
-def _truncate(text: str) -> str:
-    """截断过长的摘要文本，保持输出紧凑。"""
-    if len(text) <= SUMMARY_MAX_LENGTH:
-        return text
-    return text[:SUMMARY_MAX_LENGTH] + "…"
-
-def build_result(api_resp: Dict[str, Any]) -> Dict[str, Any]:
-    data = api_resp.get("Data") if isinstance(api_resp.get("Data"), dict) else {}
-    items = data.get("Items") if isinstance(data.get("Items"), list) else []
-    normalized_items = []
-    for item in items:
-        if not isinstance(item, dict):
-            continue
-        normalized_items.append(
-            {
-                "title": item.get("Title", ""),
-                "url": item.get("Url", ""),
-                "author_name": item.get("AuthorName", ""),
-                "summary": _truncate(item.get("ContentText", "")),
-                "vote_up_count": item.get("VoteUpCount", 0),
-                "comment_count": item.get("CommentCount", 0),
-                "edit_time": item.get("EditTime", 0),
-            }
-        )
-
-    return {
-        "code": api_resp.get("Code", -1),
-        "message": api_resp.get("Message", ""),
-        "item_count": len(normalized_items),
-        "items": normalized_items,
-    }
-
-def request_zhihu(query: str, count: int) -> Dict[str, Any]:
+def request_zhihu(query: str, count: int) -> str:
     secret = os.getenv("ZHIHU_ACCESS_SECRET", "").strip()
     if not secret:
         die("Set ZHIHU_ACCESS_SECRET first (Bearer auth only)")
@@ -127,15 +109,15 @@ def request_zhihu(query: str, count: int) -> Dict[str, Any]:
         with urlopen(req, timeout=REQUEST_TIMEOUT_SECONDS) as resp:
             body_text = resp.read().decode("utf-8", errors="replace")
     except HTTPError as err:
-        body_text = err.read().decode("utf-8", errors="replace")
-        die(f"HTTP {err.code}", body=body_text)
+        die_http(err)
     except (URLError, TimeoutError):
         die("HTTP request failed (timeout or network error)")
 
     try:
-        return json.loads(body_text)
+        json.loads(body_text)
     except json.JSONDecodeError:
         die("Non-JSON response from API")
+    return body_text
 
 
 def main() -> None:
@@ -151,10 +133,7 @@ def main() -> None:
     query = parse_query(payload)
     count = parse_count(payload)
 
-    api_resp = request_zhihu(query, count)
-
-    result = build_result(api_resp)
-    print(json.dumps(result, ensure_ascii=False))
+    emit_raw(request_zhihu(query, count))
 
 
 if __name__ == "__main__":

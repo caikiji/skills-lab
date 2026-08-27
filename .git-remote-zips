@@ -1,0 +1,5 @@
+[zip "https://developer.zhihu.com/download/zhihu_search_skills.zip"]
+target = skills/zhihu-search
+strip = 1
+sha256 = a11c735d43ca3aaf9afd4eb533bd1017b90421f246f27fcd86f413630b843f5d
+updated = 2026-08-27
