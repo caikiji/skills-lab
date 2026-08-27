@@ -52,6 +52,8 @@ LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 META_KEY_RE = re.compile(r"^([A-Za-z_-]+):\s*(.*)$")
 FENCE_RE = re.compile(r"^(?:`{3,}|~{3,})")
 NUM_ITEM_RE = re.compile(r"^(?:\d+[.、)]|[-*+]\s)")
+# 行内代码段在扫描前剥离：引用违禁词举例属"提及"而非"使用"
+INLINE_CODE_RE = re.compile(r"`[^`]*`")
 
 
 class Finding(NamedTuple):
@@ -129,7 +131,7 @@ def scan_words(
     """大小写无关地扫描特征词，同一行同一词只报一次；linenos 与 body 行一一对应。"""
     lowered_words = [(w, w.lower()) for w in words]
     for offset, line in enumerate(body.splitlines()):
-        low_line = line.lower()
+        low_line = INLINE_CODE_RE.sub("", line).lower()
         for display, needle in lowered_words:
             if needle in low_line:
                 findings.append(
