@@ -10,9 +10,8 @@ description: >-
 
 ## 它是什么
 
-以独立进程常驻的 Jupyter 会话：`start` 一次，之后任意次 `exec` 都能读到之前的
-变量，`stop` 才结束——tmux 对 shell 的 attach 语义。走标准 Jupyter 协议
-（jupyter_client + connection file），不依赖特定工具的内部机制。
+- 以独立进程常驻：`start` 一次，之后任意次 `exec` 都能读到之前的变量，`stop` 才结束——tmux 对 shell 的 attach 语义。
+- 实现：走标准 Jupyter 协议（jupyter_client + connection file），不依赖特定工具的内部机制。
 
 ## 配置
 
