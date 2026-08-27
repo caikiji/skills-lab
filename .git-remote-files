@@ -38,8 +38,3 @@ commit = 3b3fad96af16a10759d930941b4520ba0c40edae
 branch = main
 target = skills/xlsx
 
-[file "skills/zhihu-search" from "https://github.com/setwhite/pi-setup.git"]
-commit = c18ba2fd538baa55f07d9692e494207d4d0cff2b
-branch = master
-target = skills/zhihu-search
-
