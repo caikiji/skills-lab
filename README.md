@@ -37,6 +37,7 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 | `agents-md` | 生成/诊断仓库根级 AGENTS.md |
 | `commit-style` | 按 Conventional Commits 规范生成/校验提交信息 |
 | `html-card` | 生成网页卡片/可视化 HTML |
+| `jupyter-attach` | 长驻 Jupyter 会话管理（tmux 式 attach，跨调用持久状态） |
 | `mcp-builder` | MCP server 开发（Python/Node） |
 | `readme-md` | 生成/精简仓库根级 README.md |
 | `skill-creator` | 创建/优化技能 |
