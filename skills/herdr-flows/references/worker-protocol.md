@@ -1,6 +1,15 @@
 # worker 生命周期协议（herdr-flows 附录）
 
-## 启动失败降级（pi 冷启动检测可超 120s）
+## 前置：agent 识别与集成（pi 必查）
+
+`agent start` 等待的是「识别出 kind 且 ready」，识别失败即满超时（名字释放但 pi 进程大概率活着）。排查按序：
+
+1. `herdr integration status` 确认目标 agent 已装集成。pi 未装的典型症状：`agent start` 满超时报 `timeout`、面板状态永远 `unknown`。安装：`herdr integration install pi`（写入 `~/.pi/agent/extensions/herdr-agent-state.ts`，由钩子向服务端上报 idle/working/blocked）。
+2. 装了集成的 agent 钩子是**唯一状态权威**，屏幕清单不再回退——画面画得再标准也不会被「认出」，此路禁止再排查。
+3. 屏幕规则缺口走本地覆盖：配置目录 `%APPDATA%\herdr\agent-detection\<kind>.toml`（Windows 平台配置目录是 Roaming；改后 `herdr server reload-agent-manifests`，以返回的 `local_override_shadowing_remote: true` 为准）。本地覆盖路径放错（如放进 Local\herder 状态目录或嵌 local/ 子目录）会被静默忽略。
+4. 以上都正常仍不 ready → 属引擎级兼容问题，带证据提上游 issue，不要继续耗在重试上。
+
+## 启动失败降级
 
 `agent start` 超时 ≠ pi 没起来（名字释放但进程大概率活着）：
 
@@ -19,7 +28,7 @@
 | 场景 | 动作 |
 |------|------|
 | 判断面板里是否活 pi | read visible 找 `(模型名) • max` 状态栏；禁止发文字探测（会被当真消耗一轮对话）|
-| 退出 pi 归还面板 | esc -> ctrl+c ctrl+c，看到 `To resume this session:` + shell 提示符即成功 |
+| 退出 pi 归还面板 | 首选注入 `/quit`；或 **零间隔连续两次** `send-keys ctrl+c`（两条命令间不 sleep，间隔 ≥0.5s 会被双击判定静默吞掉）；看到 `To resume this session:` + shell 提示符即成功 |
 | worker 卡死 | 先 esc 中断生成，再决定打回还是终止 |
 | 接力复用 | 同一 pi 会话上下文延续，第二份简报可以很短；要全新上下文才另起面板 |
 
@@ -43,6 +52,10 @@ spawn(process.execPath, [
 | `pane send-keys <id> <key>` | - | 只接受键名（enter/esc/ctrl+c/方向键），传文本报 `invalid_key` |
 
 相邻两次注入会拼进同一行（`echo A` + `echo B` → `echo Aecho B`），节奏靠主控显式 sleep 或 enter 控制。
+
+## Git Bash（MSYS）路径转换坑
+
+Git Bash 会把以 `/` 开头的参数改写成本地路径（如 `/quit` 变成 `C:/Program Files/Git/quit`），`pane run`、`send-text`、`send-keys` 全部中招。凡参数以 `/` 开头，命令前缀加 `MSYS_NO_PATHCONV=1`；改写后的参数发给 agent 会被当成消息消耗一轮对话，报错则是 `invalid_key`/语法错。
 
 ## 并发写入规则
 

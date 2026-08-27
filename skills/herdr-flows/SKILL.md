@@ -40,7 +40,7 @@ herdr agent prompt worker-01 "<任务描述>。完成后把结论写入 .temp/re
 
 ### 启动失败降级 / 生命周期 / 并发写入
 
-`agent start` 超时 ≠ pi 没起来；启动降级、pane 注入模式、pi 退出按键序列、并发写入纪律见 [references/worker-protocol.md](references/worker-protocol.md)。
+`agent start` 超时 ≠ pi 没起来；先查 `herdr integration status`（识别链路前置），再降级 pane 注入模式；pi 退出按键序列、并发写入纪律见 [references/worker-protocol.md](references/worker-protocol.md)。
 
 ## B 长驻服务（dev server / watcher）
 
