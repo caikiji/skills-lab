@@ -26,7 +26,18 @@ description: 执行任何 git 提交（commit/amend/rebase/squash）前必须读
 2. 读仓库惯例：`git log --oneline -20` 看现有风格，读 `AGENTS.md`/`CLAUDE.md` 的提交规则（语言、scope 习惯、中文语义）。
 3. 按规则草拟提交信息。
 4. 自检：逐条核对规则，不符重写。
-5. 提交前检查：
+5. 文档同步检查：对照下表扫描本次 diff，命中则先按对应 skill 更新文档并一并纳入本提交。
+
+   | 本次改动 | 需检视 |
+   |---------|--------|
+   | 命令/脚本入口增删改名 | readme-style（快速开始）+ agents-style（常用命令） |
+   | 安装、构建方式变化 | readme-style（快速开始） |
+   | 新增用户可见能力 | readme-style（特性章） |
+   | 团队约定、禁区变化 | agents-style（约定/边界章） |
+   | 新增深文档 | 两者索引章 |
+
+   纯内部重构、测试、格式化直接跳过；查过但无需更新也在回复中说一句"文档已检视"。
+6. 提交前检查：
    - 核对文件清单：`git status --short` + `git diff --cached --stat`，只包含本次改动才能提交。
    - 只 add 精确路径，不用 `git add -A` / `git add .`。
    - 暂存区混入无关文件：`git restore --staged <路径>` 撤出暂存，确认后再提交。
