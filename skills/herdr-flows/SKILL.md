@@ -11,7 +11,11 @@ herdr skill 教命令细节，本 skill 定义工作流与纪律。要求 HERDR_
 
 1. **准备 pane**：`herdr pane split --current --direction down --cwd "$PWD" --no-focus`，从 `.result.pane.pane_id` 取 ID；面板须停在交互 shell 提示符、无前台命令。
 2. **启动**：`herdr agent start worker-01 --kind claude --pane <pane-id> --timeout 30000`；默认 claude。返回成功 = 识别且 ready；启动失败先 `herdr integration status`，未装集成则 `herdr integration install claude`，仍不 ready 走 [references/agent-lifecycle.md](references/agent-lifecycle.md) 的 pane 注入降级。
-3. **派活**：`herdr agent prompt worker-01 "<任务>。完整结论写入 .temp/reports/worker-01.md，回复只需该路径。" --wait --timeout 600000`；`--wait` 等首个 settled（idle/done/blocked）；agent 自有参数放 `--` 之后。发起 `--wait`/`wait` 前必须先 `agent get` 快照——已知 blocked 或异常状态时先处理再等，禁止带阻塞态进等待。
+3. **派活**：起点须带白名单 `-- --allowedTools "Bash(node:*),Bash(herdr:*)"`——herdr 白名单是子 agent 可反向通信的前提（无它每条反向消息都弹审批）；再 `agent prompt worker-01 "<任务>。完整结论写入 .temp/reports/worker-01.md，回复只需该路径。" --wait --timeout 600000`；`--wait` 等首个 settled（idle/done/blocked）；agent 自有参数放 `--` 之后。
+  发起 `--wait`/`wait` 前必须先 `agent get` 快照——已知 blocked 或异常状态时先处理再等，禁止带阻塞态进等待。
+
+**双向通信**：子 agent 可反向给主 pane 发消息（`herdr pane run <主控pane-id> "[名字] 内容"`），派活简报必须告知主控 pane id（从 `herdr pane current --current` 取）。
+协议模板与长文交换（.temp/msg/）见 [references/chat-briefing.md](references/chat-briefing.md)，协议本体 [herdr-chat](../herdr-chat/SKILL.md)。
 4. **验收**：以报告文件为准（输出可能落在 alternate screen 读不回）；`wait-output` 命中只是信号，命中与未命中都必须 `cat` 报告文件二次验证（输出回显可造成假阳性）；`blocked` = 卡审批 UI，读屏后问用户，不替答；审批 UI 的 `enter` 可能被吞，确认后必须重新读屏。
 5. **收尾**：`agent get` 确认回到 idle/done（不阻塞），仍在 working/blocked 先 esc/ctrl+c 处理，禁止带阻塞子 agent 关闭或复用面板；`agent list` 确认无残留；退出 agent 归还面板（注入 `/exit`，前缀 `MSYS_NO_PATHCONV=1`）。
 
