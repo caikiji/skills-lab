@@ -21,15 +21,15 @@ herdr skill 教命令细节，本 skill 定义工作流与纪律。要求 HERDR_
 
 打回重做 / 卡死中断 / 接力复用 / 并发写入见 [references/agent-lifecycle.md](references/agent-lifecycle.md)。
 
-## pane 操作
+## 布局纪律
 
-新建/拆分三决策：
-
-- 方向：宽面板向右拆，窄或高面板向下拆；禁止重复同向拆出窄列（<100 列不可读）。
-- 参数：`--direction right|down --cwd "$PWD" --no-focus`；后台活一律 `--no-focus` 保主 pane 焦点，比率用 `--ratio`。
-- 命名归还：`pane rename <id> 语义名`；用完 `pane close` 还布局；串行任务共用一个 pane 排队，不另开 tab。
-
-其它常用：`pane run`（命令+回车原子发）、`pane read --source recent-unwrapped`（日志/现场）、`pane wait-output --match`（等文本，必带 `--timeout`）、`pane zoom --toggle`（临时放大）、`pane move`（搬 pane 后改用新 ID）。
+- **主 pane 固定左半**：`herdr pane split --current --direction right --ratio 0.5 --cwd "$PWD" --no-focus`；用户主要关注主 pane，一切新增从右半开始，禁止把主 pane 挤窄（<100 列不可读）。
+- **右半从上往下堆叠**：对右侧 pane 用 `--direction down` 依次下拆（带 `--no-focus`）；禁止重复同向向右拆。
+- **每个 pane 必命名**：新建后立即 `pane rename <id> 语义名`；串行任务共用一个 pane 排队，不另开 tab。
+- **时刻 list**：每次操作前后跑 `herdr pane list`（自建 pane 登记清单对照），发现非预期 pane 立即查明：不认识的确认归属后再动；收尾时 list 必须回到「只有主 pane 和用户既有 pane」，有残留必清。
+- **堆积过多拆出**：`pane move <id> --new-tab --label <label>` 拆到独立 tab；用户关注的留前台，次要的放背后，move 后从 JSON 刷新引用。
+- **关闭必验证**：`pane get <id>` 核对 label/pane_id 与自建登记一致后才 `pane close`；用户面板只读，误关如实报告并给恢复命令。
+- 其它常用：`pane run`（命令+回车原子发）、`pane read --source recent-unwrapped`（日志/现场）、`pane wait-output --match`（必带 `--timeout`）、`pane zoom --toggle`（临时放大）。
 
 ## 长命令进面板（当后台任务）
 
@@ -45,11 +45,12 @@ herdr skill 教命令细节，本 skill 定义工作流与纪律。要求 HERDR_
 
 1. 乐观检查：先查再等——read 看现场、看结果文件、看反向消息；查不到才进入等待。
 2. 等待用短轮询不用等待命令：`sleep 3` 一轮 + 真实检查，循环上限 6-8 轮（约 25s），超限先看现场再定；禁止把等待交给工具状态机（`--wait` 等）和长睡盲等。
-3. 确需物理缓冲也先短后长：1s → 5s → 30s，每次醒来必须真实检查。
-4. 锁死防呆：发现 working 超长（>60s 无进展）先读屏，暴露问题优先于等待结果。
-5. 阻塞下沉：耗时或需持续输入的命令放其它 pane；主 pane 保持轻快，绝不干等。
-6. 忙时不发指令：agent 生成期注入可能被吞；多轮意图合并成一条简报。
-7. 白名单：写操作（send/run/close/resize）前核对 pane_id 在自建登记清单；用户面板只读；误操作用户面板如实报告并给恢复命令。
+3. **timeout 只是坑底不是时长**：`wait-output`/`--wait` 的 `--timeout` 是防止无限阻塞的闹铃，不是任务时长预算——设 15~60s（默认 30s），超时先 read/agent get 看现场再决定续等或上报；长任务一律走第 2 条轮询，禁止一次拉 600s/900s 黑盒等待。
+4. 确需物理缓冲也先短后长：1s → 5s → 30s，每次醒来必须真实检查。
+5. 锁死防呆：发现 working 超长（>60s 无进展）先读屏，暴露问题优先于等待结果。
+6. 阻塞下沉：耗时或需持续输入的命令放其它 pane；主 pane 保持轻快，绝不干等。
+7. 忙时不发指令：agent 生成期注入可能被吞；多轮意图合并成一条简报。
+8. 白名单：写操作（send/run/close/resize）前核对 pane_id 在自建登记清单；用户面板只读；误操作用户面板如实报告并给恢复命令。
 
 ## 常见坑
 

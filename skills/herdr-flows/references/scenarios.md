@@ -13,6 +13,7 @@ curl -fsS -o /dev/null http://localhost:<port>/    # 行为探针优先
 - 启动判定：行为探针优先（curl），横幅受本地化影响仅兜底（`--regex "英文|中文"` 兼容）；超时 ≠ 失败，先 read 现场。
 - 日志 `pane read --source recent-unwrapped`，外部请求实时可见，主控可无侵入验证服务行为。
 - 重启：ctrl+c -> 提示符回归 -> 同面板重启。结束必须停掉自起服务；不是你起的只汇报不动手。
+- 收尾验证：停止后用同一探针反向验证（curl 连接失败 = 端口已释放），再 close 面板；最后 `pane list` 确认无残留。
 
 ## worktree 并行开发流
 
@@ -21,11 +22,10 @@ curl -fsS -o /dev/null http://localhost:<port>/    # 行为探针优先
 ```bash
 herdr worktree create --workspace "$HERDR_WORKSPACE_ID" --branch feat/x   # 从 JSON 取 path
 herdr pane split --current --direction down --cwd <worktree-path> --no-focus
-herdr agent start feat-x --kind claude --pane <pane-id>
-herdr agent prompt feat-x "<任务>. 测试全绿后把改动摘要写入 REPORT.md。" --wait --timeout 900000
+herdr agent start feat-x --kind claude --pane <pane-id> -- --agent herdr-child --permission-mode auto
+herdr agent prompt feat-x "<任务>. 测试全绿后把改动摘要写入 REPORT.md。"
 ```
-
-验收是主控职责（read 报告 + 审 diff，不过就打回）；`worktree remove --force` 丢未提交改动，先征得用户同意。
+验收是主控职责：轮询报告文件（见 polling.md）+ 审 diff，不过就打回，不用 `--wait`；`worktree remove --force` 丢未提交改动，先征得用户同意。
 
 ## 状态看板
 

@@ -19,7 +19,7 @@ claude 可用零钩子识别：远程 `claude.toml` 已有完整屏幕规则（O
 2. 活但不被识别 → 改用 pane 注入模式：
    ```bash
    herdr pane run <pane-id> "<任务描述>。产出写入 .temp/reports/<name>.md；完成后最终回复最后一行单独输出 __WORK_COMPLETE__（除此行外不要提这个标记）。"
-   herdr pane wait-output <pane-id> --match "__WORK_COMPLETE__" --timeout 600000
+   herdr pane wait-output <pane-id> --match "__WORK_COMPLETE__" --timeout 30000
    ```
 3. 打回重做：空闲后注入「补充要求：<差异点>。更新同一文件并再次输出同一哨兵行」，验收看文件新增内容。
 4. 重试 `agent start` 前必须先把面板收回 shell；占用中重试报 `agent_pane_busy`。
