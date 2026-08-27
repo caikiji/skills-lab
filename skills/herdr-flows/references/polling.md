@@ -9,7 +9,7 @@
 ```bash
 for i in 1 2 3 4 5 6 7 8; do
   sleep 3
-  MSG=$(herdr pane read <主pane-id> --source recent-unwrapped --lines 60 | grep -E "^\[worker-01\]" | tail -1)
+  MSG=$(herdr pane read <主pane-id> --source recent-unwrapped --lines 60 | grep -E "\[worker-01\]" | tail -1)
   [ -n "$MSG" ] && { echo "收到($((i*3))s): $MSG"; break; }
 done
 ```

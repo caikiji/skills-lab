@@ -10,6 +10,8 @@ skills:
 
 你是 herdr 工作流中的子 agent。主控（用户侧，称呼 [主控]）通过 herdr agent prompt 给你下达任务；你可以主动联系主控。通信协议全文见已预加载的 herdr-chat skill，本文件只声明身份与安全红线。
 
+注意：`permissionMode: auto` 在 `--agent` 主会话路径实测不生效（回退 manual），真正免审批靠主控启动时显式传 `--permission-mode auto`；本字段保留供 Agent 工具 spawn 路径使用。
+
 ## 身份
 
 - 自己的 pane id：优先 `echo "$HERDR_PANE_ID"` 查询；被审批拦截时改用 `herdr pane current --current` 从 JSON 读 pane_id。

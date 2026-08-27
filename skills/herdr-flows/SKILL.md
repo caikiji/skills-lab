@@ -10,8 +10,8 @@ herdr skill 教命令细节，本 skill 定义工作流与纪律。要求 HERDR_
 ## 调 subagent（agent start）
 
 1. **准备 pane**：`herdr pane split --current --direction down --cwd "$PWD" --no-focus`，从 `.result.pane.pane_id` 取 ID；面板须停在交互 shell 提示符、无前台命令。
-2. **启动**：`herdr agent start worker-01 --kind claude --pane <pane-id> --timeout 30000 -- --agent herdr-child`
-  `--agent herdr-child` 固定加载 [agents/herdr-child.md](../herdr-chat/agents/herdr-child.md) subagent 定义（身份/安全红线/协议全文/免审批 permissionMode: auto 全由模板携带），禁止裸启动；不再手传 `--allowedTools`。
+2. **启动**：`herdr agent start worker-01 --kind claude --pane <pane-id> --timeout 30000 -- --agent herdr-child --permission-mode auto`
+  `--agent herdr-child` 加载 [agents/herdr-child.md](../herdr-chat/agents/herdr-child.md) subagent 定义（身份/安全红线/协议全文），禁止裸启动；`--permission-mode auto` 必须显式传（frontmatter 的 permissionMode 实测不生效，省略会回到 manual 模式逐条审批）。
   返回成功 = 识别且 ready；启动失败先 `herdr integration status`，未装集成则 `herdr integration install claude`，仍不 ready 走 [references/agent-lifecycle.md](references/agent-lifecycle.md) 的 pane 注入降级。
 3. **派活**：`herdr agent prompt worker-01 "<任务>。完整结论写入 .temp/reports/worker-01.md，回复只需该路径。"`；简报含动态值（主控 pane id、agent 名），模板见 [references/chat-briefing.md](references/chat-briefing.md)；**不用 `--wait`**——等待交给工具状态机，一旦工具卡死就永远等；派活后进入轮询验收（见下）。
 4. **验收（轮询，不依赖工具状态机）**：先看主 pane 反向消息，再看报告文件，都是短间隔真实检查；循环模板与超限处置见 [references/polling.md](references/polling.md)。
