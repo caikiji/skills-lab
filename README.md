@@ -45,6 +45,7 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 | `readme-md` | 生成/精简仓库根级 README.md |
 | `skill-feedback` | 沉淀技能使用中的踩坑与已验证替代方案为反思报告（落盘项目 .temp） |
 | `skill-creator` | 创建/优化技能 |
+| `skill-style` | 技能编写规范与 lint：创建/修改/优化 SKILL.md 的质量红线 |
 | `xlsx` | Excel 文档处理 |
 | `zhihu-search` | 知乎内容搜索 |
 
