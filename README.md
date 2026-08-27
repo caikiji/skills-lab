@@ -38,6 +38,7 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 | `analyze-sessions` | 分析 pi 会话历史（成本统计/提示词挖掘/会话检索） |
 | `commit-style` | 按 Conventional Commits 规范生成/校验提交信息 |
 | `herdr` | 控制 Herdr 终端多路复用器（面板/标签页/工作区） |
+| `herdr-chat` | 子 agent 与主控在 Herdr 内双向通信协议（pane 反向注入+长文文件交换） |
 | `herdr-flows` | 基于 Herdr 的工作流集：多 agent 并行编排、长驻服务面板、worktree 开发流、状态看板、交互式程序驱动 |
 | `html-card` | 生成网页卡片/可视化 HTML |
 | `jupyter-attach` | 长驻 Jupyter 会话管理（tmux 式 attach，跨调用持久状态） |
