@@ -1,5 +1,5 @@
 ---
-name: readme-md
+name: readme-style
 description: 创建或修改 README.md 前必须读取并遵守本 skill。按 4 章骨架生成或精简仓库根级 README.md，只装新读者 3 分钟能上手的内容；只处理仓库根的单文件。
 ---
 
