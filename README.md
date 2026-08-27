@@ -1,6 +1,6 @@
 # skills-lab
 
-可复用的 AI 技能与配置集合：技能经 [git-fetch-file](https://github.com/andrewmcwattersandco/git-fetch-file) 从上游源仓库同步（溯源见 `.git-remote-files`），`install.sh` 一键安装到本机 pi / Claude Code / Codex。
+可复用的 AI 技能与配置集合：技能经 [git-fetch-file](https://github.com/andrewmcwattersandco/git-fetch-file) 从上游源仓库同步（溯源见 `.git-remote-files`），zip 直链分发的用 `fetch-zip.sh`（溯源见 `.git-remote-zips`）；`install.sh` 一键安装到本机 pi / Claude Code / Codex。
 
 ## 特性
 
@@ -48,7 +48,8 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 
 ## 文档
 
-- **同步上游**：`git fetch-file pull`；首次配置 git-fetch-file 见下方"源码同步"
+- **同步上游**：`git fetch-file pull`；首次配置 git-fetch-file 见下方“源码同步”
+- **同步 zip 分发技能**：`./fetch-zip.sh <url> <target> [--strip]` 添加并登记清单；`./fetch-zip.sh pull` 重放更新；`list` 查看，详见脚本头部注释
 - **configs 部署格式**：`deploy.yaml`（`src` / `dest` / `mode`，部署前先备份到 `<dest>.backup/<时间戳>/`）
 - **行为说明**：覆盖与备份策略、自定义仓库/目录的环境变量、安全提示（`curl \| sh` 会执行远程代码，请确认来源可信）
 - **贡献**：新增技能须含 `skills/<name>/SKILL.md`（name/description）并更新本表；`install.sh` / `deploy.yaml` 改动需本地实测后提交；提交信息用中文。详见 [AGENTS.md](AGENTS.md)
