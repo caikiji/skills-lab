@@ -35,7 +35,9 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 | 技能 | 使用场景 |
 |------|---------|
 | `agents-md` | 生成/诊断仓库根级 AGENTS.md |
+| `analyze-sessions` | 分析 pi 会话历史（成本统计/提示词挖掘/会话检索） |
 | `commit-style` | 按 Conventional Commits 规范生成/校验提交信息 |
+| `herdr` | 控制 Herdr 终端多路复用器（面板/标签页/工作区） |
 | `html-card` | 生成网页卡片/可视化 HTML |
 | `jupyter-attach` | 长驻 Jupyter 会话管理（tmux 式 attach，跨调用持久状态） |
 | `mcp-builder` | MCP server 开发（Python/Node） |
