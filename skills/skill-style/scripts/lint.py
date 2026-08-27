@@ -3,7 +3,7 @@
 
 用法：python lint.py <技能目录或 SKILL.md 路径>...（目录须直接包含 SKILL.md）
 检查分三类：元数据/链接硬校验、词表扫描（中英双语，扩词直接改顶部常量）、
-散文段结构检查。frontmatter 为简版解析，description 仅支持单行书写。
+散文段结构检查。frontmatter 解析支持单行键值与 YAML 块标量（>- 与 | 系）。
 退出码：有 error 为 1，否则 0。
 """
 from __future__ import annotations
@@ -50,6 +50,8 @@ VAGUE_WORDS: tuple[str, ...] = (
 
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 META_KEY_RE = re.compile(r"^([A-Za-z_-]+):\s*(.*)$")
+# YAML 块标量标记：值在后续缩进行里
+BLOCK_SCALARS = {">-", ">", ">+", "|-", "|", "|+"}
 FENCE_RE = re.compile(r"^(?:`{3,}|~{3,})")
 NUM_ITEM_RE = re.compile(r"^(?:\d+[.、)]|[-*+]\s)")
 # 行内代码段在扫描前剥离：引用违禁词举例属"提及"而非"使用"
@@ -66,17 +68,34 @@ class Finding(NamedTuple):
 
 
 def split_frontmatter(text: str) -> tuple[dict[str, str], int]:
-    """返回 (元数据字典, 正文起始零基行号)。无 frontmatter 时正文从第 0 行开始。"""
+    """返回 (元数据字典, 正文起始零基行号)；支持块标量续行，无 frontmatter 时从第 0 行起。"""
     lines = text.splitlines()
     if not lines or lines[0].strip() != "---":
         return {}, 0
     meta: dict[str, str] = {}
-    for idx, line in enumerate(lines[1:], start=1):
+    idx = 1
+    while idx < len(lines):
+        line = lines[idx]
         if line.strip() == "---":
             return meta, idx + 1
         m = META_KEY_RE.match(line)
-        if m:
+        if m is None:
+            idx += 1
+            continue
+        if m.group(2).strip() in BLOCK_SCALARS:
+            chunks: list[str] = []
+            idx += 1
+            while (
+                idx < len(lines)
+                and lines[idx].strip() != "---"
+                and (not lines[idx].strip() or lines[idx][:1] in " \t")
+            ):
+                chunks.append(lines[idx].strip())
+                idx += 1
+            meta[m.group(1)] = " ".join(c for c in chunks if c)
+        else:
             meta[m.group(1)] = m.group(2).strip()
+            idx += 1
     return meta, 0
 
 
