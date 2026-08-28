@@ -10,7 +10,7 @@ description: 用户要求把分析输出做成卡片时启用（消息含触发�
 # 流程
 
 1. 分析目标代码，按 references/card-types.md 拆卡：总卡先行，子卡 3~8 张，总张数 4~9。卡片读者是没读过代码的人：要点写机制不写符号清单，规则见 references/style-rules.md C12~C15。
-2. 卡片写入 <工作目录>/.temp/cardify/<主题>.md；格式与硬约束见 references/style-rules.md，参照 references/examples.md 的正例。锚点必须 文件:行号 或目录路径，代码由工具自动提取。
+2. 卡片写入 <工作目录>/.temp/cardify/<主题>.md；格式与硬约束见 references/style-rules.md，参照 references/examples.md 的正例。锚点必须 文件:起始~结束 范围或目录路径，代码由工具自动提取。
 3. 跑 `python <本技能目录>/scripts/build_html.py --check <卡片文件>`；报错按行号修完重跑，直到通过。
 4. 对话中贴出卡片正文。用户要 HTML 时跑 `python <本技能目录>/scripts/build_html.py <卡片文件> -o <输出.html>`，报告输出路径。
 

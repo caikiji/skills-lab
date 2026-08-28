@@ -113,6 +113,17 @@ details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
   border-bottom-color: currentColor;
 }
 details[open] > summary { color: var(--text); font-weight: 600; }
+.cl { display: block; }
+.cl::before {
+  content: attr(data-ln);
+  color: var(--muted);
+  display: inline-block;
+  width: 3em;
+  margin-right: 1em;
+  text-align: right;
+  user-select: none;
+  opacity: 0.7;
+}
 .outline-root {
   background: var(--panel);
   border: 1px solid var(--border);

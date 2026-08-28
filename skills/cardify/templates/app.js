@@ -34,6 +34,11 @@ function codeRefLabel(block) {
     : block.file + ":" + block.start + "~" + block.end;
 }
 
+function numberedCode(block) {
+  return block.text.split("\n").map((line, i) =>
+    '<span class="cl" data-ln="' + (block.start + i) + '">' + esc(line) + "</span>").join("\n");
+}
+
 function codeDetails(card) {
   let idx = 0;
   const parts = [];
@@ -44,7 +49,7 @@ function codeDetails(card) {
   }
   (card.codeBlocks || []).forEach((b) => {
     parts.push('<details id="code-' + card.num + "-" + idx + '"><summary>' +
-      esc(codeRefLabel(b)) + "</summary><pre><code>" + esc(b.text) + "</code></pre></details>");
+      esc(codeRefLabel(b)) + "</summary><pre><code>" + numberedCode(b) + "</code></pre></details>");
     idx += 1;
   });
   return parts.join("");

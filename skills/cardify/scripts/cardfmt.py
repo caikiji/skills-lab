@@ -22,6 +22,8 @@ ONE_SENTENCE_MAX: int = 40
 POINT_MAX: int = 5
 POINT_MAX_LEN: int = 60
 CODE_MAX_LINES: int = 15
+CODE_SPAN_MIN: int = 5   # 代码引用最小跨度：单行引用看不到逻辑
+CODE_SPAN_MAX: int = 20  # 代码引用最大跨度：太长破坏浓缩
 # 动作词标记：要点必须含其一，否则是纯符号罗列不成知识
 VERB_MARKERS: tuple[str, ...] = (
     "负责", "用于", "因为", "触发", "校验", "检查", "保存", "读取", "发送",
@@ -249,18 +251,34 @@ def validate_points(card: Card) -> list[str]:
 
 
 def validate_anchors(card: Card) -> list[str]:
-    """C15：锚点须含 文件:行号 或为目录路径，纯符号名报错。"""
+    """C15/C16：锚点须含 文件:行号 或为目录路径，代码引用必须为 5~20 行范围。"""
     errors: list[str] = []
     texts: list[tuple[str, str]] = [("一句话", card.one)]
     texts.extend((f"要点{idx}", p) for idx, p in enumerate(card.points, start=1))
     for label, text in texts:
         for m in ANCHOR_RE.finditer(text):
             content = m.group(1)
-            if CODE_REF_RE.search(content) or DIR_REF_RE.match(content):
+            if DIR_REF_RE.match(content):
                 continue
-            errors.append(
-                f"卡{card.num}{label}：锚点须含 文件:行号 或目录路径，纯符号名无法回代码验证（{content}）"
-            )
+            for ref in CODE_REF_RE.finditer(content):
+                start = int(ref.group(2))
+                end = int(ref.group(3)) if ref.group(3) else start
+                span = end - start + 1
+                if span < CODE_SPAN_MIN:
+                    errors.append(
+                        f"卡{card.num}{label}：代码引用须为范围 文件:起始~结束（跨度 {CODE_SPAN_MIN}~{CODE_SPAN_MAX} 行），"
+                        f"单行引用看不到逻辑（{ref.group(0)}）"
+                    )
+                    break
+                if span > CODE_SPAN_MAX:
+                    errors.append(
+                        f"卡{card.num}{label}：代码引用跨度 {span} 行超上限 {CODE_SPAN_MAX} 行，请缩小到逻辑块（{ref.group(0)}）"
+                    )
+                    break
+            if not CODE_REF_RE.search(content):
+                errors.append(
+                    f"卡{card.num}{label}：锚点须含 文件:行号 或目录路径，纯符号名无法回代码验证（{content}）"
+                )
     return errors
 
 
