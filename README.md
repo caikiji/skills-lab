@@ -43,6 +43,7 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 | `herdr-flows` | 基于 Herdr 的工作流集：多 agent 并行编排、长驻服务面板、worktree 开发流、状态看板、交互式程序驱动 |
 | `html-card` | 生成网页卡片/可视化 HTML |
 | `jupyter-attach` | 长驻 Jupyter 会话管理（tmux 式 attach，跨调用持久状态） |
+| `qq-send` | 通过 QQ 官方机器人向个人用户发消息/文件/图片（一次性 CLI，agent 经 bash 调用） |
 | `mcp-builder` | MCP server 开发（Python/Node） |
 | `readme-style` | 生成/精简仓库根级 README.md |
 | `skill-feedback` | 沉淀技能使用中的踩坑与已验证替代方案为反思报告（落盘项目 .temp） |

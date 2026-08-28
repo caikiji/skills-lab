@@ -1,0 +1,9 @@
+[project]
+name = "qq-send"
+version = "0.1.0"
+description = "通过 QQ 官方机器人向个人用户发送文件/图片/文本的 CLI"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.31",
+    "websocket-client>=1.6",
+]
