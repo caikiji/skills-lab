@@ -36,6 +36,7 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 |------|---------|
 | `agents-style` | 生成/诊断仓库根级 AGENTS.md |
 | `analyze-sessions` | 分析 pi 会话历史（成本统计/提示词挖掘/会话检索） |
+| `code-style` | 约束 agent 生成代码的可维护性（体量/结构/信息三抓手 + 变更导航） |
 | `commit-style` | 按 Conventional Commits 规范生成/校验提交信息 |
 | `herdr` | 控制 Herdr 终端多路复用器（面板/标签页/工作区） |
 | `herdr-chat` | 子 agent 与主控在 Herdr 内双向通信协议（pane 反向注入+长文文件交换） |
