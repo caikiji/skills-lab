@@ -18,9 +18,11 @@ BANNED_WORDS: tuple[str, ...] = (
 MIN_TOTAL: int = 4
 MAX_TOTAL: int = 9
 TITLE_MAX: int = 12
-ONE_SENTENCE_MAX: int = 40
+ONE_BODY_MIN: int = 8   # 一句话正文下限：防电报体（锚点不计入）
+ONE_BODY_MAX: int = 40  # 一句话正文上限：防长句（锚点不计入）
 POINT_MAX: int = 5
-POINT_MAX_LEN: int = 60
+POINT_BODY_MIN: int = 12  # 要点正文下限：防电报体（锚点不计入）
+POINT_BODY_MAX: int = 60  # 要点正文上限：防长文（锚点不计入）
 CODE_MAX_LINES: int = 15
 CODE_SPAN_MIN: int = 5   # 代码引用最小跨度：单行引用看不到逻辑
 CODE_SPAN_MAX: int = 20  # 代码引用最大跨度：太长破坏浓缩
@@ -179,6 +181,8 @@ def validate(topic: str, cards: list[Card]) -> list[str]:
         errors.append(f"卡号须为 1..{total} 连续编号，当前 {sorted(nums)}")
     if cards[0].ctype != "总卡":
         errors.append("第一张卡必须是总卡")
+    if not any(c.ctype == "决策卡" for c in cards):
+        errors.append("每套卡片至少 1 张决策卡：记录设计取舍与原因")
     for card in cards:
         errors.extend(validate_card(card, cards))
     return errors
@@ -198,10 +202,14 @@ def validate_card(card: Card, cards: list[Card]) -> list[str]:
         errors.append(f"{where}：标题不得以大写标识符开头，请用中文概念命名")
     if not card.one:
         errors.append(f"{where}：缺一句话")
-    elif len(card.one) > ONE_SENTENCE_MAX:
-        errors.append(f"{where}：一句话超 {ONE_SENTENCE_MAX} 字")
-    elif not ANCHOR_RE.search(card.one):
-        errors.append(f"{where}：一句话缺锚点（成对中文括号内的代码实体）")
+    else:
+        body = ANCHOR_RE.sub("", card.one)
+        if len(body) < ONE_BODY_MIN:
+            errors.append(f"{where}：一句话正文 {len(body)} 字不足 {ONE_BODY_MIN} 字")
+        if len(body) > ONE_BODY_MAX:
+            errors.append(f"{where}：一句话正文超 {ONE_BODY_MAX} 字（锚点不计入）")
+        if not ANCHOR_RE.search(card.one):
+            errors.append(f"{where}：一句话缺锚点（成对中文括号内的代码实体）")
     if not card.points:
         errors.append(f"{where}：至少一条要点")
     if card.ctype == "总卡":
@@ -237,8 +245,11 @@ def validate_points(card: Card) -> list[str]:
     if len(card.points) > POINT_MAX:
         errors.append(f"{where}：要点超 {POINT_MAX} 条")
     for idx, point in enumerate(card.points, start=1):
-        if len(point) > POINT_MAX_LEN:
-            errors.append(f"{where}要点{idx}：超 {POINT_MAX_LEN} 字")
+        body = ANCHOR_RE.sub("", point)
+        if len(body) < POINT_BODY_MIN:
+            errors.append(f"{where}要点{idx}：正文 {len(body)} 字不足 {POINT_BODY_MIN} 字，请写全机制（触发条件/动作/后果）")
+        if len(body) > POINT_BODY_MAX:
+            errors.append(f"{where}要点{idx}：正文超 {POINT_BODY_MAX} 字（锚点不计入），请拆分")
         if "。" in point:
             errors.append(f"{where}要点{idx}：只能一个句子，去掉句号或拆成多条")
         if not ANCHOR_RE.search(point):
