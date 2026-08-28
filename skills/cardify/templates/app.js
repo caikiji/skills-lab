@@ -35,19 +35,51 @@ function codeRefLabel(block) {
 }
 
 function codeDetails(card) {
-  const blocks = (card.codeBlocks || []).map((b) =>
-    "<details><summary>" + esc(codeRefLabel(b)) + "</summary><pre><code>" +
-    esc(b.text) + "</code></pre></details>");
+  let idx = 0;
+  const parts = [];
   if (card.code) {
-    blocks.unshift("<details><summary>代码</summary><pre><code>" +
+    parts.push('<details id="code-' + card.num + '-0"><summary>代码</summary><pre><code>' +
       esc(card.code) + "</code></pre></details>");
+    idx = 1;
   }
-  return blocks.join("");
+  (card.codeBlocks || []).forEach((b) => {
+    parts.push('<details id="code-' + card.num + "-" + idx + '"><summary>' +
+      esc(codeRefLabel(b)) + "</summary><pre><code>" + esc(b.text) + "</code></pre></details>");
+    idx += 1;
+  });
+  return parts.join("");
+}
+
+function matchBlock(card, anchorText) {
+  const m = anchorText.match(/([\w./\\-]+):(\d+)(?:~(\d+))?/);
+  if (!m) return null;
+  const start = parseInt(m[2], 10);
+  const end = m[3] ? parseInt(m[3], 10) : start;
+  const found = (card.codeBlocks || []).findIndex((b) =>
+    b.file === m[1] && b.start === start && b.end === end);
+  if (found < 0) return null;
+  return found + (card.code ? 1 : 0);
+}
+
+function renderText(card, text) {
+  // 锚点渲染为弱化小字；命中代码块时加联动引用
+  let html = "";
+  let last = 0;
+  const re = /（[^（）]*）/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    html += esc(text.slice(last, m.index));
+    const idx = matchBlock(card, m[0].slice(1, -1));
+    const ref = idx !== null ? ' data-ref="code-' + card.num + "-" + idx + '"' : "";
+    html += '<span class="anchor"' + ref + ">" + esc(m[0]) + "</span>";
+    last = m.index + m[0].length;
+  }
+  return html + esc(text.slice(last));
 }
 
 function cardHtml(card) {
   const color = TYPE_COLORS[card.type] || "#888";
-  const points = card.points.map((p) => "<li>" + esc(p) + "</li>").join("");
+  const points = card.points.map((p) => "<li>" + renderText(card, p) + "</li>").join("");
   const links = []
     .concat(card.linksIn.map((n) => "← 卡" + n), card.linksOut.map((n) => "→ 卡" + n))
     .map((t) => '<a data-link="' + t.match(/\d+/)[0] + '">' + t + "</a>")
@@ -56,7 +88,7 @@ function cardHtml(card) {
     '<article class="card" style="--type-color:' + color + '" data-num="' + card.num + '">',
     '<div class="head"><span class="num">卡 ' + card.num + "/" + DATA.total + "</span>",
     '<span class="badge">' + esc(card.type) + "</span><h2>" + esc(card.title) + "</h2></div>",
-    '<p class="one">' + esc(card.one) + "</p>",
+    '<p class="one">' + renderText(card, card.one) + "</p>",
     "<ul>" + points + "</ul>",
     codeDetails(card),
     links ? '<div class="links">' + links + "</div>" : "",
@@ -151,6 +183,15 @@ function switchView(name) {
 tabs.forEach((t) => t.addEventListener("click", () => switchView(t.dataset.view)));
 
 document.addEventListener("click", (e) => {
+  const anchor = e.target.closest(".anchor[data-ref]");
+  if (anchor) {
+    const details = document.getElementById(anchor.dataset.ref);
+    if (details) {
+      details.open = true;
+      details.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+    return;
+  }
   const link = e.target.closest("a[data-link]");
   if (!link) return;
   switchView("flow");

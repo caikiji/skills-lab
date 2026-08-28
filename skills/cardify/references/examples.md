@@ -2,6 +2,8 @@
 
 ## 正例（支付模块，5 卡）
 
+卡片读者是没读过这段代码的人。自测：删掉所有锚点括号，卡片仍能读懂。
+
 ```markdown
 # 支付模块
 
@@ -14,27 +16,27 @@
 关联：→ 卡2 ｜ → 卡3
 
 ◆ 卡 2/5 ｜ 概念卡 · 入口
-一句话：下单统一进PayService.Create落单（pay/service.go）
-- Create 校验订单状态为待支付后建支付单（pay/service.go:32 CheckState）
-- 支付单号 out_trade_no 由订单号派生，全局唯一（pay/service.go:48）
+一句话：所有支付请求统一进一个入口落单（pay/service.go）
+- 下单先校验订单状态，只有待支付的单才建支付单（pay/service.go:32 CheckState）
+- 支付单号由订单号派生，保证一单只对应一个支付单（pay/service.go:48 GenTradeNo）
 关联：→ 卡3
 
 ◆ 卡 3/5 ｜ 流程卡 · 数据流
-一句话：状态机单向流转，终态不可逆（pay/service.go:45）。
-- 状态：待支付→支付中→已支付/已失败（pay/service.go:45）
-- 回调写库前先按 out_trade_no 查重（pay/callback.go:120 dedupByTradeNo）
+一句话：支付状态只能往前走，不允许回退（pay/service.go:45）
+- 状态按待支付→支付中→已支付/已失败单向流转（pay/service.go:45~52）
+- 回调写库前按支付单号查重，重复通知只处理一次（pay/callback.go:120 dedupByTradeNo）
 关联：← 卡2 ｜ → 卡4
 
 ◆ 卡 4/5 ｜ 流程卡 · 回调
-一句话：回调统一进队列串行消费（pay/callback.go）。
-- 回调消息入 channel 队列，单 goroutine 串行处理（pay/callback.go:30）
-- 处理超时 5s 直接返回失败重试（pay/callback.go:66 timeout）
+一句话：第三方回调统一进队列串行消费（pay/callback.go）
+- 回调消息进入队列后由单 goroutine 串行处理，避免并发写库（pay/callback.go:30 worker）
+- 处理超过 5 秒直接返回失败，等待第三方重试（pay/callback.go:66 timeout）
 关联：← 卡3 ｜ → 卡5
 
 ◆ 卡 5/5 ｜ 陷阱卡 · 坑
-一句话：重试会打爆串行队列，靠超时保护（pay/callback.go:66）。
-- 第三方网络抖动会连续重试，队列无上限（pay/callback.go:30）
-- 已支付订单重复回调会覆盖失败状态，靠查重拦截（pay/callback.go:120）
+一句话：重试会打爆串行队列，靠超时止损（pay/callback.go:66）
+- 网络抖动会导致第三方连续重试，而队列不设上限（pay/callback.go:30）
+- 已支付订单收到重复回调时，查重会拦截状态覆盖（pay/callback.go:120）
 关联：← 卡4
 ```
 
@@ -44,7 +46,18 @@
 
 ✗ 一句话：支付模块是交易闭环的价值中枢，以状态机为核心引擎，通过幂等机制构筑金融级可靠性护城河。
 　（禁用词：闭环/核心/护城河；无锚点括号）
-✓ 一句话：支付模块（pay/）管订单从下单到收款的状态流转，重复回调靠 out_trade_no 去重。
+✓ 一句话：管订单从下单到收款的状态流转（pay/），靠 out_trade_no 去重。
+
+### 符号罗列 vs 讲解（C12~C14 拦什么）
+
+| 符号罗列（✗） | 讲解（✓） |
+|---------------|----------|
+| `HeroDropId 普通池，保底走 Big/SmallLuckyDropId（HeroDrawId）` | `普通池直接掉落，触发保底时改走大小保底池（HeroDrawId）` |
+| `CostItemTenTimes 优先于混合计费（CostItemTenTimes）` | `十连整包计费优先于混合计费（CostItemTenTimes）` |
+| `桶按 LuckyCounterType 分组共享（CollectAllLuckyCounterTypes）` | `同类型抽卡共享保底计数，跨卡池累计（CollectAllLuckyCounterTypes）` |
+| `HeroRecruit 与 Quick 注册到分发表（playerClientHandlerMap）` | `抽卡协议注册在玩家分发表，由统一入口分发（playerClientHandlerMap）` |
+
+符号罗列的共同病：把符号名当主体、没有动作、读不出机制。机检会报"不得以大写标识符开头"或"缺动作词"。
 
 ### 常见错误与修法
 
@@ -52,6 +65,9 @@
 |------|---------|------|
 | 要点缺锚点 | 错误: 卡3要点1：缺锚点 | 补 `（pay/service.go:45）` |
 | 禁用词 | 错误: 卡2一句话：出现禁用词「核心」 | 删形容词，直接写实体 |
+| 要点以大写符号开头 | 错误: 卡2要点1：不得以大写标识符开头 | 中文陈述事实，符号移进锚点括号 |
+| 要点无动作词 | 错误: 卡2要点2：缺动作词 | 写清机制，如"查重会拦截状态覆盖" |
+| 标题以大写符号开头 | 错误: 卡5：标题不得以大写标识符开头 | 用中文概念命名，如"保底桶" |
 | 总卡要点与子卡不一致 | 错误: 卡1：总卡缺子卡标题 回调 | 总卡要点逐字等于子卡标题 |
 | 编号断链 | 错误: 关联卡号 9 超出 1..5 | 改为实际卡号 |
 | 一句话超长 | 错误: 卡5：一句话超 40 字 | 拆掉修饰，保留主语+动作 |

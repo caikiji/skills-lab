@@ -22,6 +22,18 @@ ONE_SENTENCE_MAX: int = 40
 POINT_MAX: int = 5
 POINT_MAX_LEN: int = 60
 CODE_MAX_LINES: int = 15
+# 动作词标记：要点必须含其一，否则是纯符号罗列不成知识
+VERB_MARKERS: tuple[str, ...] = (
+    "负责", "用于", "因为", "触发", "校验", "检查", "保存", "读取", "发送",
+    "计算", "判断", "选择", "优先", "重置", "累计", "共享", "写入", "查询",
+    "调用", "返回", "失败", "成功", "支持", "防止", "避免", "基于", "通过",
+    "进入", "生成", "执行", "更新", "记录", "派生", "随机", "替换", "剔除",
+    "模拟", "统计", "上报", "注册", "解析", "转换", "监听", "超时", "重试",
+    "保护", "拦截", "限制", "依赖", "实现", "扣费", "抽取", "掉落", "回包",
+    "查重", "流转", "判定", "命中", "展示", "复用", "等待", "收取", "落单",
+    "置位", "清除", "合并", "分发", "同步", "缓存", "匹配", "排序", "过滤",
+    "聚合", "分组", "监控", "降级", "限流", "补偿",
+)
 
 ANCHOR_RE = re.compile(r"（[^（）\n]{1,60}）")  # 锚点：成对中文括号
 CODE_REF_RE = re.compile(r"([A-Za-z0-9_./\\-]+):(\d+)(?:~(\d+))?")  # 文件:行号 或 文件:起始~结束
@@ -179,6 +191,8 @@ def validate_card(card: Card, cards: list[Card]) -> list[str]:
         errors.append(f"{where}：缺标题")
     elif len(card.title) > TITLE_MAX:
         errors.append(f"{where}：标题超 {TITLE_MAX} 字")
+    elif card.title[0].isascii() and card.title[0].isupper():
+        errors.append(f"{where}：标题不得以大写标识符开头，请用中文概念命名")
     if not card.one:
         errors.append(f"{where}：缺一句话")
     elif len(card.one) > ONE_SENTENCE_MAX:
@@ -225,6 +239,10 @@ def validate_points(card: Card) -> list[str]:
             errors.append(f"{where}要点{idx}：只能一个句子，去掉句号或拆成多条")
         if not ANCHOR_RE.search(point):
             errors.append(f"{where}要点{idx}：缺锚点（成对中文括号内写代码实体或 文件:行号）")
+        if point[0].isascii() and (point[0].isupper() or point[0] == "_"):
+            errors.append(f"{where}要点{idx}：不得以大写标识符开头，用中文陈述事实、符号只进锚点")
+        if not any(marker in point for marker in VERB_MARKERS):
+            errors.append(f"{where}要点{idx}：缺动作词，纯符号罗列不成知识")
     return errors
 
 

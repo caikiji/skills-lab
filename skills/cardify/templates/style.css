@@ -99,6 +99,20 @@ body {
   font-size: 13px;
 }
 details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+.anchor {
+  color: var(--muted);
+  font-size: 0.82em;
+  margin: 0 2px;
+}
+.anchor[data-ref] {
+  cursor: pointer;
+  border-bottom: 1px dashed var(--border);
+}
+.anchor[data-ref]:hover {
+  color: var(--type-color);
+  border-bottom-color: currentColor;
+}
+details[open] > summary { color: var(--text); font-weight: 600; }
 .outline-root {
   background: var(--panel);
   border: 1px solid var(--border);
