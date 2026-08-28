@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title id="page-title">卡片视图</title>
+<style>
+/*__STYLE__*/
+</style>
+</head>
+<body>
+<header class="topbar">
+  <h1 id="topic">卡片</h1>
+  <nav class="tabs">
+    <button class="tab active" data-view="flow">卡片流</button>
+    <button class="tab" data-view="graph">关系图</button>
+    <button class="tab" data-view="outline">大纲</button>
+  </nav>
+</header>
+<main>
+  <section id="view-flow" class="view active"></section>
+  <section id="view-graph" class="view">
+    <div class="graph-toolbar">
+      <button id="btn-layout">布局：分层</button>
+    </div>
+    <div id="graph"></div>
+    <aside id="graph-detail" class="detail hidden"></aside>
+  </section>
+  <section id="view-outline" class="view"></section>
+</main>
+<!-- VENDOR_JS -->
+<script type="application/json" id="cards-data">__CARDS_JSON__</script>
+<script>
+/*__APP_JS__*/
+</script>
+</body>
+</html>
