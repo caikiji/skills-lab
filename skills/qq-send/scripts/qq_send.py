@@ -37,7 +37,7 @@ FILE_TYPE_FILE = 4
 MSG_TYPE_TEXT = 0
 MSG_TYPE_MEDIA = 7
 
-CONFIG_DIR = Path.home() / ".qq-send"
+CONFIG_DIR = Path.home() / ".config" / "qq-send"
 CONFIG_PATH = CONFIG_DIR / "config.json"
 TOKEN_PATH = CONFIG_DIR / "token.json"
 OPENID_PATH = CONFIG_DIR / "openid.json"

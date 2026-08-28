@@ -14,8 +14,8 @@ python "<SKILL_DIR>/scripts/qq_send.py" <子命令> [参数]  # uv 不可用且�
 
 ## 流程
 
-1. 确定收件人 openid：读 `~/.qq-send/openid.json`；缓存缺失或收件人与缓存不符时，运行 `listen`（默认等 120 秒，可 `--timeout` 调整），并提示用户用目标 QQ 给机器人发一条私聊。
-2. 确认凭据：运行 `status` 检查配置就绪；缺 appid/client_secret 时提示用户填 `~/.qq-send/config.json` 或环境变量 `QQ_BOT_APPID` / `QQ_BOT_SECRET`，等用户完成后再继续。
+1. 确定收件人 openid：读 `~/.config/qq-send/openid.json`；缓存缺失或收件人与缓存不符时，运行 `listen`（默认等 120 秒，可 `--timeout` 调整），并提示用户用目标 QQ 给机器人发一条私聊。
+2. 确认凭据：运行 `status` 检查配置就绪；缺 appid/client_secret 时提示用户填 `~/.config/qq-send/config.json` 或环境变量 `QQ_BOT_APPID` / `QQ_BOT_SECRET`，等用户完成后再继续。
 3. 发送：
    - 文本：`text --content "内容"`
    - 本地文件：`file --path <绝对路径> --content "说明"`（路径必须存在，≤200MB）
@@ -33,6 +33,6 @@ python "<SKILL_DIR>/scripts/qq_send.py" <子命令> [参数]  # uv 不可用且�
 
 - 仅 C2C 单聊；群聊/频道不支持。
 - 文本单条受官方 4000 字节上限约束：中文约 1300 字、英文约 4000 字符，超限拆多条或写文件走 file。
-- 配置与缓存固定读写 `~/.qq-send/`，与当前工作目录无关；各子命令完整帮助见 `-h`。
+- 配置与缓存固定读写 `~/.config/qq-send/`，与当前工作目录无关；各子命令完整帮助见 `-h`。
 - 官方 API 文档：<https://bot.qq.com/wiki/develop/api-v2/server-inter/message/overview.html>
 
