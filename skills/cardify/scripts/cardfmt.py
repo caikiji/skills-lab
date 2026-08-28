@@ -35,8 +35,9 @@ VERB_MARKERS: tuple[str, ...] = (
     "聚合", "分组", "监控", "降级", "限流", "补偿",
 )
 
-ANCHOR_RE = re.compile(r"（[^（）\n]{1,60}）")  # 锚点：成对中文括号
+ANCHOR_RE = re.compile(r"（([^（）\n]{1,60})）")  # 锚点：成对中文括号，捕获组为括号内容
 CODE_REF_RE = re.compile(r"([A-Za-z0-9_./\\-]+):(\d+)(?:~(\d+))?")  # 文件:行号 或 文件:起始~结束
+DIR_REF_RE = re.compile(r"^[\w./\\-]+/$")  # 目录锚点（模块级引用）
 CARD_HEAD_RE = re.compile(r"^◆ 卡 (\d+)/(\d+) ｜ (.+)$")
 ONE_RE = re.compile(r"^一句话：(.*)$")
 LINK_RE = re.compile(r"^关联：(.*)$")
@@ -206,6 +207,7 @@ def validate_card(card: Card, cards: list[Card]) -> list[str]:
     else:
         errors.extend(validate_points(card))
     errors.extend(validate_code(card))
+    errors.extend(validate_anchors(card))
     errors.extend(validate_links(card, cards[0].total))
     errors.extend(check_banned(where, card.one))
     for idx, point in enumerate(card.points, start=1):
@@ -243,6 +245,22 @@ def validate_points(card: Card) -> list[str]:
             errors.append(f"{where}要点{idx}：不得以大写标识符开头，用中文陈述事实、符号只进锚点")
         if not any(marker in point for marker in VERB_MARKERS):
             errors.append(f"{where}要点{idx}：缺动作词，纯符号罗列不成知识")
+    return errors
+
+
+def validate_anchors(card: Card) -> list[str]:
+    """C15：锚点须含 文件:行号 或为目录路径，纯符号名报错。"""
+    errors: list[str] = []
+    texts: list[tuple[str, str]] = [("一句话", card.one)]
+    texts.extend((f"要点{idx}", p) for idx, p in enumerate(card.points, start=1))
+    for label, text in texts:
+        for m in ANCHOR_RE.finditer(text):
+            content = m.group(1)
+            if CODE_REF_RE.search(content) or DIR_REF_RE.match(content):
+                continue
+            errors.append(
+                f"卡{card.num}{label}：锚点须含 文件:行号 或目录路径，纯符号名无法回代码验证（{content}）"
+            )
     return errors
 
 
