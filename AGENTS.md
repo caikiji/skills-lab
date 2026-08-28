@@ -5,7 +5,7 @@
 ## 约定
 
 - 新增技能须创建 `skills/<name>/SKILL.md`（含 name/description），并更新 README 技能表
-- **用户要求写/建 skill 时，默认在当前项目 `skills/<name>/` 开发**，未经确认不得写入用户级目录或其它仓库（如 `~/.pi/agent/skills/`）
+- **写/改 skill 一律在项目 `skills/<name>/` 内进行**：新增、修改、评审都只碰项目副本；用户级目录（`~/.pi/agent/skills/` 等）是 install.sh 的安装产物，禁止手改，同步走 `install.sh`
 - `install.sh` / `deploy.yaml` 改动需本地测试（configs 部署用临时目录验证）
 - 提交信息用中文
 
