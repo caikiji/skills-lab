@@ -31,6 +31,8 @@ PHILOSOPHY_WORDS: tuple[str, ...] = (
     "核心理念", "设计理念", "设计思想", "取舍权", "喧宾夺主",
     "应运而生", "至关重要", "不可或缺", "赋能", "事半功倍",
     "保驾护航", "让我们", "有的放矢",
+    "透明化", "智能化", "人性化", "高效化", "精细化",
+    "供审阅", "供参考", "一目了然", "先给结论", "方便用户", "便于用户",
     "essentially", "importantly,", "seamless", "empower",
     "ecosystem", "philosophy", "game changer", "let's ", "let us ",
     "of course,", "goes without saying", "feel free", "in lieu of",
