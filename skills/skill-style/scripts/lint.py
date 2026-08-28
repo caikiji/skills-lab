@@ -36,6 +36,14 @@ PHILOSOPHY_WORDS: tuple[str, ...] = (
     "of course,", "goes without saying", "feel free", "in lieu of",
     "at a high level", "this is important", "productively",
 )
+# R4 元叙述/类比标记：来源、动机、原理类说明（使用方不关心），命中即 error
+# 收录依据：herdr-flows 会话中出现过的“这是我们实战跑出来的”“实测不生效”等写法
+NARRATIVE_WORDS: tuple[str, ...] = (
+    "我们实战", "实战跑出来", "经验教训", "踩坑", "我们发现", "据此",
+    "实测不生效", "实测发现", "实测验证", "实测证明",
+    "与官方一致", "与官方不同", "此处以",
+    "打个比方", "相当于", "类比", "比喻", "说白了",
+)
 # R5 不可度量表述特征词，命中即 warn；扩词规则同上
 VAGUE_WORDS: tuple[str, ...] = (
     "适当", "酌情", "尽量", "适时", "必要时", "尽可能",
@@ -239,6 +247,7 @@ def check_skill(path: Path, findings: list[Finding]) -> None:
     check_meta(path, meta, findings)
     check_lines(path, text, findings)
     scan_words(path, body_no_fence, linenos, PHILOSOPHY_WORDS, "E", "R4", findings)
+    scan_words(path, body_no_fence, linenos, NARRATIVE_WORDS, "E", "R4", findings)
     scan_words(path, body_no_fence, linenos, VAGUE_WORDS, "W", "R5", findings)
     check_prose(path, body_no_fence, linenos, findings)
     check_duplicates(path, body_no_fence, findings)
