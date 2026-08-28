@@ -17,8 +17,13 @@ from cardfmt import Card, cards_to_json, extract_code_refs, parse_md
 SKILL_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = SKILL_DIR / "templates"
 VENDOR_FILE = SKILL_DIR / "vendor" / "vis-network.min.js"
+HLJS_FILE = SKILL_DIR / "vendor" / "highlight.min.js"
+HLJS_CSS_LIGHT = SKILL_DIR / "vendor" / "highlight-github.css"
+HLJS_CSS_DARK = SKILL_DIR / "vendor" / "highlight-github-dark.css"
 JSON_PLACEHOLDER = "__CARDS_JSON__"
 VENDOR_PLACEHOLDER = "<!-- VENDOR_JS -->"
+HLJS_PLACEHOLDER = "<!-- HLJS_JS -->"
+HLJS_CSS_PLACEHOLDER = "/*__HLJS_CSS__*/"
 STYLE_PLACEHOLDER = "/*__STYLE__*/"
 APP_PLACEHOLDER = "/*__APP_JS__*/"
 # 只转义真正的危险序列：内联脚本提前闭合。全局 </ 会破坏正则字面量（如 /</）
@@ -104,11 +109,25 @@ def build_file(path: Path, out: Path, root: Path) -> int:
     if not VENDOR_FILE.exists():
         print(f"错误: 缺少 {VENDOR_FILE}，请重新拉取技能")
         return 1
+    for f in (HLJS_FILE, HLJS_CSS_LIGHT, HLJS_CSS_DARK):
+        if not f.exists():
+            print(f"错误: 缺少 {f}，请重新拉取技能")
+            return 1
     vendor = safe_inline(VENDOR_FILE.read_text(encoding="utf-8"))
+    hljs = safe_inline(HLJS_FILE.read_text(encoding="utf-8"))
+    hljs_css = (
+        "@media (prefers-color-scheme: light) {\n"
+        + HLJS_CSS_LIGHT.read_text(encoding="utf-8")
+        + "\n}\n@media (prefers-color-scheme: dark) {\n"
+        + HLJS_CSS_DARK.read_text(encoding="utf-8")
+        + "\n}"
+    )
     html = read_asset("view.html")
+    html = html.replace(HLJS_CSS_PLACEHOLDER, hljs_css)
     html = html.replace(STYLE_PLACEHOLDER, read_asset("style.css"))
     html = html.replace(APP_PLACEHOLDER, read_asset("app.js"))
     html = html.replace(VENDOR_PLACEHOLDER, f"<script>\n{vendor}\n</script>")
+    html = html.replace(HLJS_PLACEHOLDER, f"<script>\n{hljs}\n</script>")
     html = html.replace(JSON_PLACEHOLDER, payload)
     out.write_text(html, encoding="utf-8")
     print(f"已生成 {out}（{out.stat().st_size // 1024} KB）")
