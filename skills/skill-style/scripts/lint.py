@@ -207,6 +207,10 @@ def check_prose(
     flush()
 
 
+# R6 语义重复启发式：references 定义过的量化指标（如 `50 行`、`3 层`）在 SKILL.md 正文同现时报 warn
+METRIC_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(行|层|个|次|字符|秒|分钟|小时|天|%)")
+
+
 def check_duplicates(path: Path, body: str, findings: list[Finding]) -> None:
     """R6：正文中较长语句不得原样出现在 references/ 文件里（双方均已去代码围栏）。"""
     dup_candidates = {
@@ -218,14 +222,25 @@ def check_duplicates(path: Path, body: str, findings: list[Finding]) -> None:
     if not ref_dir.is_dir():
         return
     seen: set[str] = set()
+    ref_metrics: set[tuple[str, str]] = set()
     for ref in sorted(ref_dir.rglob("*.md")):
         ref_body, _ = strip_code_fences(ref.read_text(encoding="utf-8"), 0)
         for line in ref_body.splitlines():
+            ref_metrics.update(METRIC_RE.findall(line))
             stripped = line.strip()
             if stripped in dup_candidates and stripped not in seen:
                 seen.add(stripped)
                 findings.append(
                     Finding("W", path, None, f"R6 语句同时出现在 {ref.name}：「{stripped[:30]}…」")
+                )
+    # 语义重复：同值的量化指标（行/层/个）在 SKILL.md 与 references 同时出现视为同一规则两处定义
+    reported_metrics: set[tuple[str, str]] = set()
+    for line in body.splitlines():
+        for metric in METRIC_RE.findall(line):
+            if metric in ref_metrics and metric not in reported_metrics:
+                reported_metrics.add(metric)
+                findings.append(
+                    Finding("W", path, None, f"R6 指标「{metric[0]} {metric[1]}」同在 references 定义，请改为引用")
                 )
 
 
