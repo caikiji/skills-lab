@@ -48,6 +48,7 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 | `skill-creator` | 创建/优化技能 |
 | `skill-style` | 技能编写规范与 lint：创建/修改/优化 SKILL.md 的质量红线 |
 | `xlsx` | Excel 文档处理 |
+| `workflow` | 任务执行全程透明化检查点协议（理解/方案/复盘/汇报，量化触发） |
 | `zhihu-search` | 知乎内容搜索 |
 
 ## 文档
