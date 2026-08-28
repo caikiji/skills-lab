@@ -61,34 +61,13 @@ function codeRefLabel(block) {
     : block.file + ":" + block.start + "~" + block.end;
 }
 
-// ---- 卡片渲染 ----
-function codeDetails(card) {
-  let idx = 0;
-  const parts = [];
-  if (card.code) {
-    parts.push('<details id="code-' + card.num + '-0"><summary>代码</summary><pre><code>' +
-      esc(card.code) + "</code></pre></details>");
-    idx = 1;
-  }
-  (card.codeBlocks || []).forEach((b) => {
-    const lang = langOf(b.file);
-    parts.push('<details id="code-' + card.num + "-" + idx + '"><summary>' +
-      esc(codeRefLabel(b)) + "</summary><pre><code>" +
-      highlightCode(b, lang) + "</code></pre></details>");
-    idx += 1;
-  });
-  return parts.join("");
-}
-
 function matchBlock(card, anchorText) {
   const m = anchorText.match(/([\w./\\-]+):(\d+)(?:~(\d+))?/);
   if (!m) return null;
   const start = parseInt(m[2], 10);
   const end = m[3] ? parseInt(m[3], 10) : start;
-  const found = (card.codeBlocks || []).findIndex((b) =>
+  return (card.codeBlocks || []).findIndex((b) =>
     b.file === m[1] && b.start === start && b.end === end);
-  if (found < 0) return null;
-  return found + (card.code ? 1 : 0);
 }
 
 function renderText(card, text) {
@@ -125,7 +104,9 @@ function cardHtml(card) {
     '<span class="badge">' + esc(card.type) + "</span><h2>" + esc(card.title) + "</h2></div>",
     '<p class="one">' + renderText(card, card.one) + "</p>",
     "<ul>" + points + "</ul>",
-    codeDetails(card),
+    card.code
+      ? '<details class="handcode"><summary>代码</summary><pre><code>' + esc(card.code) + "</code></pre></details>"
+      : "",
     links ? '<div class="links">' + links + "</div>" : "",
     "</article>",
   ].join("\n");
@@ -147,7 +128,7 @@ document.getElementById("view-outline").innerHTML =
 
 // ---- 关系图 ----
 let network = null;
-let hierarchical = true;
+let hierarchical = false;
 
 function showDetail(card) {
   const box = document.getElementById("graph-detail");
@@ -184,11 +165,8 @@ function buildGraph() {
     });
   });
   const options = {
-    layout: {
-      hierarchical: { enabled: true, direction: "UD", sortMethod: "directed",
-        levelSeparation: 110, nodeSpacing: 90 },
-    },
-    physics: { enabled: false },
+    layout: { improvedLayout: true },
+    physics: { enabled: true, solver: "forceAtlas2Based" },
     interaction: { hover: true },
   };
   network = new vis.Network(container, { nodes, edges }, options);
@@ -203,9 +181,9 @@ document.getElementById("btn-layout").addEventListener("click", () => {
   if (!network) return;
   hierarchical = !hierarchical;
   network.setOptions(hierarchical
-    ? { layout: { hierarchical: { enabled: true, direction: "UD", sortMethod: "directed",
-        levelSeparation: 110, nodeSpacing: 90 } }, physics: { enabled: false } }
-    : { layout: { hierarchical: { enabled: false } },
+    ? { layout: { hierarchical: { enabled: true, direction: "UD", sortMethod: "hubsize",
+        levelSeparation: 150, nodeSpacing: 110, treeSpacing: 180 } }, physics: { enabled: false } }
+    : { layout: { hierarchical: { enabled: false }, improvedLayout: true },
         physics: { enabled: true, solver: "forceAtlas2Based" } });
   document.getElementById("btn-layout").textContent =
     "布局：" + (hierarchical ? "分层" : "力导向");
@@ -213,45 +191,26 @@ document.getElementById("btn-layout").addEventListener("click", () => {
 
 // ---- 代码浮层 ----
 const pop = document.getElementById("code-pop");
+const backdrop = document.getElementById("code-backdrop");
 const popFile = document.getElementById("pop-file");
 const popCode = document.getElementById("pop-code");
 
-function openPop(anchorEl, cardNum, idx) {
+function openPop(cardNum, idx) {
   const card = cards.find((c) => c.num === cardNum);
-  if (!card) return;
-  let label, lang, block;
-  if (idx === 0 && card.code) {
-    block = { text: card.code, start: 0 };
-    label = "代码";
-    lang = "";
-  } else if (card.codeBlocks && card.codeBlocks[idx - (card.code ? 1 : 0)]) {
-    block = card.codeBlocks[idx - (card.code ? 1 : 0)];
-    label = codeRefLabel(block);
-    lang = langOf(block.file);
-  } else {
-    return;
-  }
-  popFile.textContent = label;
-  popCode.innerHTML = block.start
-    ? highlightCode(block, lang)
-    : block.text.split("\n").map((line) => esc(line)).join("\n");
+  const block = card && card.codeBlocks && card.codeBlocks[idx];
+  if (!block) return;
+  popFile.textContent = codeRefLabel(block);
+  popCode.innerHTML = highlightCode(block, langOf(block.file));
+  backdrop.classList.remove("hidden");
   pop.classList.remove("hidden");
-  // 桌面定位：锚点下方，空间不足翻到上方；移动端样式固定为底部 sheet
-  const r = anchorEl.getBoundingClientRect();
-  const pw = pop.offsetWidth;
-  const ph = pop.offsetHeight;
-  let left = Math.min(r.left, window.innerWidth - pw - 12);
-  left = Math.max(12, left);
-  let top = r.bottom + 8;
-  if (top + ph > window.innerHeight - 12) top = Math.max(12, r.top - ph - 8);
-  pop.style.left = left + "px";
-  pop.style.top = top + "px";
 }
 
 function closePop() {
   pop.classList.add("hidden");
+  backdrop.classList.add("hidden");
 }
 
+backdrop.addEventListener("click", closePop);
 document.getElementById("pop-close").addEventListener("click", closePop);
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closePop();
@@ -280,7 +239,7 @@ document.addEventListener("click", (e) => {
   const anchor = e.target.closest(".anchor[data-ref]");
   if (anchor) {
     const ref = anchor.dataset.ref.split("-");
-    openPop(anchor, parseInt(ref[0], 10), parseInt(ref[1], 10));
+    openPop(parseInt(ref[0], 10), parseInt(ref[1], 10));
     return;
   }
   const link = e.target.closest("a[data-link]");
