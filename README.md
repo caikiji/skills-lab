@@ -37,8 +37,10 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 | `agents-style` | 生成/诊断仓库根级 AGENTS.md |
 | `code-style` | 约束 agent 生成代码的可维护性（体量/结构/信息三抓手 + 变更导航） |
 | `commit-style` | 按 Conventional Commits 规范生成/校验提交信息 |
+| `engineering` | 编码工作流技能包（Matt Pocock）：ask-matt/tdd/implement/code-review/to-spec 等 18 个，清单见包内 README |
 | `herdr` | 控制 Herdr 终端多路复用器（面板/标签页/工作区） |
 | `jupyter-attach` | 长驻 Jupyter 会话管理（tmux 式 attach，跨调用持久状态） |
+| `productivity` | 通用效率技能包（Matt Pocock）：grilling/handoff/teach 等 7 个，清单见包内 README |
 | `qq-send` | 通过 QQ 官方机器人向个人用户发消息/文件/图片（一次性 CLI，agent 经 bash 调用） |
 | `readme-style` | 生成/精简仓库根级 README.md |
 | `xlsx` | Excel 文档处理 |

@@ -8,13 +8,22 @@ commit = c18ba2fd538baa55f07d9692e494207d4d0cff2b
 branch = master
 target = configs/rpiv-web-tools
 
+[file "skills/engineering" from "https://github.com/mattpocock/skills.git"]
+commit = a97b873866675db1084216f49dec798070377603
+branch = main
+target = skills/engineering
+
 [file "skills/herdr" from "https://github.com/herdrdev/herdr.git"]
 commit = 2290257acb2085ce6842ba5c7e3ca50c3ba64f02
 branch = master
 target = skills/herdr
 
+[file "skills/productivity" from "https://github.com/mattpocock/skills.git"]
+commit = a97b873866675db1084216f49dec798070377603
+branch = main
+target = skills/productivity
+
 [file "skills/xlsx" from "https://github.com/anthropics/skills.git"]
 commit = 3b3fad96af16a10759d930941b4520ba0c40edae
 branch = main
 target = skills/xlsx
-
