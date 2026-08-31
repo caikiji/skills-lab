@@ -181,8 +181,17 @@ for arg in "$@"; do
     count=0
     backup_count=0
     for skill_dir in "$tmp_dir/repo"/skills/*/; do
-        [ -f "$skill_dir/SKILL.md" ] || continue
         name=$(basename "$skill_dir")
+        case "$name" in
+            deprecated)
+                echo "    跳过:退役技能目录 $name"
+                continue
+                ;;
+        esac
+        # 技能目录直接含 SKILL.md;包目录(如 engineering)递归含 SKILL.md,两种情况都安装
+        if [ ! -f "$skill_dir/SKILL.md" ] && [ -z "$(find "$skill_dir" -name SKILL.md -print -quit)" ]; then
+            continue
+        fi
         if [ -e "$target/$name" ]; then
             mkdir -p "$backup_dir/$stamp"
             mv "$target/$name" "$backup_dir/$stamp/$name"
@@ -191,10 +200,10 @@ for arg in "$@"; do
         cp -R "$skill_dir" "$target/"
         count=$((count + 1))
         # claude harness 额外部署技能内嵌 agents/ 到 ~/.claude/agents/(仅带 name frontmatter 的合法 subagent)
-        if [ "$arg" = "claude" ] && [ -d "$skill_dir/agents" ]; then
+        if [ "$arg" = "claude" ]; then
             agents_dir="$HOME/.claude/agents"
             mkdir -p "$agents_dir"
-            for agent_file in "$skill_dir/agents"/*.md; do
+            find "$skill_dir" -path "*/agents/*.md" 2>/dev/null | while read -r agent_file; do
                 { head -5 "$agent_file" | grep -q '^name:'; } || {
                     echo "    跳过非 subagent 文档:$(basename "$agent_file")"
                     continue
