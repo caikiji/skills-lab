@@ -8,25 +8,10 @@ commit = c18ba2fd538baa55f07d9692e494207d4d0cff2b
 branch = master
 target = configs/rpiv-web-tools
 
-[file "skills/analyze-sessions" from "https://github.com/amosblomqvist/pi-config.git"]
-commit = f82da563ab05d66729492d64c7ed4e96db3663f3
-branch = main
-target = skills/analyze-sessions
-
 [file "skills/herdr" from "https://github.com/herdrdev/herdr.git"]
-commit = d79fd746a96ddb5642939c9727baefce642d78e6
+commit = 2290257acb2085ce6842ba5c7e3ca50c3ba64f02
 branch = master
 target = skills/herdr
-
-[file "skills/mcp-builder" from "https://github.com/anthropics/skills.git"]
-commit = 3b3fad96af16a10759d930941b4520ba0c40edae
-branch = main
-target = skills/mcp-builder
-
-[file "skills/skill-creator" from "https://github.com/anthropics/skills.git"]
-commit = 3b3fad96af16a10759d930941b4520ba0c40edae
-branch = main
-target = skills/skill-creator
 
 [file "skills/xlsx" from "https://github.com/anthropics/skills.git"]
 commit = 3b3fad96af16a10759d930941b4520ba0c40edae

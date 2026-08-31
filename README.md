@@ -35,22 +35,13 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 | 技能 | 使用场景 |
 |------|---------|
 | `agents-style` | 生成/诊断仓库根级 AGENTS.md |
-| `analyze-sessions` | 分析 pi 会话历史（成本统计/提示词挖掘/会话检索） |
 | `code-style` | 约束 agent 生成代码的可维护性（体量/结构/信息三抓手 + 变更导航） |
 | `commit-style` | 按 Conventional Commits 规范生成/校验提交信息 |
-| `cardify` | 将代码分析输出切成互相索引的知识卡片，校验并构建三视图单文件 HTML（卡片流/关系图/大纲，可反推） |
 | `herdr` | 控制 Herdr 终端多路复用器（面板/标签页/工作区） |
-| `herdr-chat` | 子 agent 与主控在 Herdr 内双向通信协议（pane 反向注入+长文文件交换） |
-| `herdr-flows` | 基于 Herdr 的工作流集：多 agent 并行编排、长驻服务面板、worktree 开发流、状态看板、交互式程序驱动 |
 | `jupyter-attach` | 长驻 Jupyter 会话管理（tmux 式 attach，跨调用持久状态） |
 | `qq-send` | 通过 QQ 官方机器人向个人用户发消息/文件/图片（一次性 CLI，agent 经 bash 调用） |
-| `mcp-builder` | MCP server 开发（Python/Node） |
 | `readme-style` | 生成/精简仓库根级 README.md |
-| `skill-feedback` | 沉淀技能使用中的踩坑与已验证替代方案为反思报告（落盘项目 .temp） |
-| `skill-creator` | 创建/优化技能 |
-| `skill-style` | 技能编写规范与 lint：创建/修改/优化 SKILL.md 的质量红线 |
 | `xlsx` | Excel 文档处理 |
-| `workflow` | 任务执行全程透明化检查点协议（理解/方案/复盘/汇报，量化触发） |
 | `zhihu-search` | 知乎内容搜索 |
 
 ## 文档
