@@ -11,6 +11,3 @@ deployments:
   - src: rpiv-web-tools
     dest: ~/.config/rpiv-web-tools
     mode: copy
-  - src: extensions/pi-rtk-optimizer
-    dest: ~/.pi/agent/extensions/pi-rtk-optimizer
-    mode: copy
