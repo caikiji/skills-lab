@@ -28,7 +28,7 @@ curl -fsSL .../install.sh | sh -s -- pi claude       # pi + Claude Code
 curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部署配置
 ```
 
-支持的 harness 参数：`pi`（`~/.pi/agent/skills`）、`claude`（`~/.claude/skills`）、`codex`（`~/.codex/skills`）、`configs`（按 `deploy.yaml`），`--list` 查看全部。
+支持的 harness 参数：`pi`（`~/.pi/agent/skills`）、`claude`（`~/.claude/skills`）、`codex`（`~/.codex/skills`）、`configs`（按 `deploy.yaml`），`--list` 查看全部。configs 部署目标已存在时默认跳过，加 `--force` 才备份后覆盖。
 
 ## 技能列表
 
@@ -50,7 +50,7 @@ curl -fsSL .../install.sh | sh -s -- pi configs      # pi + 按 deploy.yaml 部�
 
 - **同步上游**：`git fetch-file pull`；首次配置 git-fetch-file 见下方“源码同步”
 - **同步 zip 分发技能**：`./fetch-zip.sh <url> <target> [--strip]` 添加并登记清单；`./fetch-zip.sh pull` 重放更新；`list` 查看，详见脚本头部注释
-- **configs 部署格式**：`deploy.yaml`（`src` / `dest` / `mode`，部署前先备份到 `<dest>.backup/<时间戳>/`）
+- **configs 部署格式**：`deploy.yaml`（`src` / `dest` / `mode`；目标已存在默认跳过，`--force` 才覆盖并先备份到 `<dest>.backup/<时间戳>/`）
 - **行为说明**：覆盖与备份策略、自定义仓库/目录的环境变量、安全提示（`curl \| sh` 会执行远程代码，请确认来源可信）
 - **贡献**：新增技能须含 `skills/<name>/SKILL.md`（name/description）并更新本表；`install.sh` / `deploy.yaml` 改动需本地实测后提交；提交信息用中文。详见 [AGENTS.md](AGENTS.md)
 

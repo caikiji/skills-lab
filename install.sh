@@ -9,6 +9,7 @@
 # 参数(可多个):
 #   pi / claude / codex   安装技能到对应 harness 目录
 #   configs               按 deploy.yaml 部署 configs/ 内容
+#   --force               部署 configs 时目标已存在则备份后覆盖;默认存在即跳过并警告
 #   --list                列出支持的 harness 及默认安装目录
 #
 # 环境变量:
@@ -23,6 +24,7 @@ set -eu
 REPO_URL="${SKILLS_LAB_REPO:-https://github.com/caikiji/skills-lab.git}"
 BRANCH="${SKILLS_LAB_BRANCH:-main}"
 KEEP="${SKILLS_BACKUP_KEEP:-5}"
+FORCE=0
 
 # harness 名称 -> 默认安装目录
 target_of() {
@@ -139,9 +141,15 @@ PYEOF
         fi
         mkdir -p "$(dirname "$dest")"
         if [ -e "$dest" ]; then
-            mkdir -p "$dest.backup/$stamp"
-            mv "$dest" "$dest.backup/$stamp/"
-            echo "    已备份旧 $src -> $dest.backup/$stamp/$(basename "$dest")"
+            if [ "$FORCE" = "1" ]; then
+                mkdir -p "$dest.backup/$stamp"
+                mv "$dest" "$dest.backup/$stamp/"
+                echo "    已备份旧 $src -> $dest.backup/$stamp/$(basename "$dest")"
+            else
+                echo "    警告:目标已存在,跳过 $src -> $dest(加 --force 才覆盖)"
+                skipped=$((skipped + 1))
+                continue
+            fi
         fi
         cp -R "$configs_dir/$src" "$dest"
         echo "    已部署 $src -> $dest"
@@ -164,7 +172,16 @@ git clone --quiet --depth 1 --branch "$BRANCH" "$REPO_URL" "$tmp_dir/repo"
 PY_BIN=$(find_python || true)
 
 installed=0
+# 先扫描 --force:与参数顺序无关,configs 部署优先解析
 for arg in "$@"; do
+    case "$arg" in
+        --force|-f) FORCE=1 ;;
+    esac
+done
+for arg in "$@"; do
+    case "$arg" in
+        --force|-f) continue ;;
+    esac
     if [ "$arg" = "configs" ]; then
         if deploy_configs "$tmp_dir/repo" "$PY_BIN" "$tmp_dir"; then
             installed=$((installed + 1))
